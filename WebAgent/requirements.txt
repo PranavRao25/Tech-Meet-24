@@ -1,0 +1,7 @@
+dspy_ai==2.4.9
+httpx
+langchain-text-splitters
+trafilatura
+google-api-python-client
+duckduckgo_search
+google-generativeai
