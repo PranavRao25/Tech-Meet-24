@@ -98,7 +98,7 @@ class BingSearch(dspy.Retrieve):
         is_valid_source: Callable = None,
         min_char_count: int = 150,
         snippet_chunk_size: int = 1000,
-        webpage_helper_max_threads=10,
+        webpage_helper_max_threads=5,
         mkt="en-US",
         language="en",
         **kwargs,
@@ -193,7 +193,12 @@ class BingSearch(dspy.Retrieve):
 
 class BraveRM(dspy.Retrieve):
     def __init__(
-        self, brave_search_api_key=None, k=3, is_valid_source: Callable = None
+        self, brave_search_api_key=None, 
+        k=3,
+        min_char_count:int = 100,
+        snippet_chunk_size:int = 1000,
+        webpage_helper_max_threads = 5,
+        is_valid_source: Callable = None
     ):
         super().__init__(k=k)
         if not brave_search_api_key and not os.environ.get("BRAVE_API_KEY"):
@@ -211,6 +216,13 @@ class BraveRM(dspy.Retrieve):
             self.is_valid_source = is_valid_source
         else:
             self.is_valid_source = lambda x: True
+            
+        self.webpage_helper = WebPageHelper(
+            min_char_count=min_char_count,
+            snippet_chunk_size=snippet_chunk_size,
+            max_thread_num=webpage_helper_max_threads,
+        )
+
 
     def get_usage_and_reset(self):
         usage = self.usage
@@ -237,6 +249,7 @@ class BraveRM(dspy.Retrieve):
         )
         self.usage += len(queries)
         collected_results = []
+        url_to_results = {}
         for query in queries:
             try:
                 headers = {
@@ -251,16 +264,23 @@ class BraveRM(dspy.Retrieve):
                 results = response.get("web", {}).get("results", [])
 
                 for result in results:
-                    collected_results.append(
-                        {
-                            "snippets": result.get("extra_snippets", []),
-                            "title": result.get("title"),
-                            "url": result.get("url"),
-                            "description": result.get("description"),
-                        }
-                    )
+                    url_to_results[result["url"]] = {
+                        "title": result["title"],
+                        "url": result["url"],
+                        "description": result.get("description", ""),
+                    }
+
             except Exception as e:
                 logging.error(f"Error occurs when searching query {query}: {e}")
+                
+        valid_url_to_snippets = self.webpage_helper.urls_to_snippets(
+            list(url_to_results.keys())
+        )
+        
+        for url in valid_url_to_snippets:
+            r = url_to_results[url]
+            r["snippets"] = valid_url_to_snippets[url]["snippets"]
+            collected_results.append(r)
 
         return collected_results
 
@@ -531,6 +551,171 @@ class GoogleSearch(dspy.Retrieve):
     
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+class SerperRM(dspy.Retrieve):
+    """Retrieve information from custom queries using Serper.dev."""
+
+    def __init__(
+        self,
+        serper_search_api_key=None,
+        k=3,
+        query_params=None,
+        ENABLE_EXTRA_SNIPPET_EXTRACTION=False,
+        min_char_count: int = 150,
+        snippet_chunk_size: int = 1000,
+        webpage_helper_max_threads=5,
+    ):
+        """Args:
+        serper_search_api_key str: API key to run serper, can be found by creating an account on https://serper.dev/
+        query_params (dict or list of dict): parameters in dictionary or list of dictionaries that has a max size of 100 that will be used to query.
+            Commonly used fields are as follows (see more information in https://serper.dev/playground):
+                q str: query that will be used with google search
+                type str: type that will be used for browsing google. Types are search, images, video, maps, places, etc.
+                gl str: Country that will be focused on for the search
+                location str: Country where the search will originate from. All locates can be found here: https://api.serper.dev/locations.
+                autocorrect bool: Enable autocorrect on the queries while searching, if query is misspelled, will be updated.
+                results int: Max number of results per page.
+                page int: Max number of pages per call.
+                tbs str: date time range, automatically set to any time by default.
+                qdr:h str: Date time range for the past hour.
+                qdr:d str: Date time range for the past 24 hours.
+                qdr:w str: Date time range for past week.
+                qdr:m str: Date time range for past month.
+                qdr:y str: Date time range for past year.
+        """
+        super().__init__(k=k)
+        self.usage = 0
+        self.query_params = None
+        self.ENABLE_EXTRA_SNIPPET_EXTRACTION = ENABLE_EXTRA_SNIPPET_EXTRACTION
+        self.webpage_helper = WebPageHelper(
+            min_char_count=min_char_count,
+            snippet_chunk_size=snippet_chunk_size,
+            max_thread_num=webpage_helper_max_threads,
+        )
+
+        if query_params is None:
+            self.query_params = {"num": k, "autocorrect": True, "page": 1}
+        else:
+            self.query_params = query_params
+            self.query_params.update({"num": k})
+        self.serper_search_api_key = serper_search_api_key
+        if not self.serper_search_api_key and not os.environ.get("SERPER_API_KEY"):
+            raise RuntimeError(
+                "You must supply a serper_search_api_key param or set environment variable SERPER_API_KEY"
+            )
+
+        elif self.serper_search_api_key:
+            self.serper_search_api_key = serper_search_api_key
+
+        else:
+            self.serper_search_api_key = os.environ["SERPER_API_KEY"]
+
+        self.base_url = "https://google.serper.dev"
+
+    def serper_runner(self, query_params):
+        self.search_url = f"{self.base_url}/search"
+
+        headers = {
+            "X-API-KEY": self.serper_search_api_key,
+            "Content-Type": "application/json",
+        }
+
+        response = requests.request(
+            "POST", self.search_url, headers=headers, json=query_params
+        )
+
+        if response == None:
+            raise RuntimeError(
+                f"Error had occurred while running the search process.\n Error is {response.reason}, had failed with status code {response.status_code}"
+            )
+
+        return response.json()
+
+    def get_usage_and_reset(self):
+        usage = self.usage
+        self.usage = 0
+        return {"SerperRM": usage}
+
+    def forward(self, query_or_queries: Union[str, List[str]], exclude_urls: List[str]):
+        """
+        Calls the API and searches for the query passed in.
+
+
+        Args:
+            query_or_queries (Union[str, List[str]]): The query or queries to search for.
+            exclude_urls (List[str]): Dummy parameter to match the interface. Does not have any effect.
+
+        Returns:
+            a list of dictionaries, each dictionary has keys of 'description', 'snippets' (list of strings), 'title', 'url'
+        """
+        queries = (
+            [query_or_queries]
+            if isinstance(query_or_queries, str)
+            else query_or_queries
+        )
+
+        self.usage += len(queries)
+        self.results = []
+        collected_results = []
+        for query in queries:
+            if query == "Queries:":
+                continue
+            query_params = self.query_params
+
+            # All available parameters can be found in the playground: https://serper.dev/playground
+            # Sets the json value for query to be the query that is being parsed.
+            query_params["q"] = query
+
+            # Sets the type to be search, can be images, video, places, maps etc that Google provides.
+            query_params["type"] = "search"
+
+            self.result = self.serper_runner(query_params)
+            self.results.append(self.result)
+
+        # Array of dictionaries that will be used by Storm to create the jsons
+        collected_results = []
+
+        if self.ENABLE_EXTRA_SNIPPET_EXTRACTION:
+            urls = []
+            for result in self.results:
+                organic_results = result.get("organic", [])
+                for organic in organic_results:
+                    url = organic.get("link")
+                    if url:
+                        urls.append(url)
+            valid_url_to_snippets = self.webpage_helper.urls_to_snippets(urls)
+        else:
+            valid_url_to_snippets = {}
+
+        for result in self.results:
+            try:
+                # An array of dictionaries that contains the snippets, title of the document and url that will be used.
+                organic_results = result.get("organic")
+                knowledge_graph = result.get("knowledgeGraph")
+                for organic in organic_results:
+                    snippets = [organic.get("snippet")]
+                    if self.ENABLE_EXTRA_SNIPPET_EXTRACTION:
+                        snippets.extend(
+                            valid_url_to_snippets.get(url.strip("'"), {}).get(
+                                "snippets", []
+                            )
+                        )
+                    collected_results.append(
+                        {
+                            "snippets": snippets,
+                            "title": organic.get("title"),
+                            "url": organic.get("link"),
+                            "description": (
+                                knowledge_graph.get("description")
+                                if knowledge_graph is not None
+                                else ""
+                            ),
+                        }
+                    )
+            except:
+                continue
+
+        return collected_results
+
 class Retriever:
     
     def __init__(self, available_retrievers: List):
@@ -547,6 +732,8 @@ class Retriever:
         for rm in self.available_retrievers:
             
             result = rm(query, exclude_urls)
+            print(query)
+            print(type(rm).__name__)
             if result == []:
                 print(f"{type(rm).__name__} failed")
             else:

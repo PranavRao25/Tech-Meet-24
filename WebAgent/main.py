@@ -1,6 +1,6 @@
 from deepsearch import DeepSearch
 from midsearch import MidSearch
-from search import DuckDuckGoSearchRM, GoogleSearch, Retriever
+from search import DuckDuckGoSearchRM, GoogleSearch, SerperRM, BraveRM, Retriever
 from models import OllamaClient, GoogleModel
 from abc import ABC
 from typing import List, Optional
@@ -19,7 +19,7 @@ def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
     """
     # Configuration for GoogleModel
     gemini_kwargs = {
-        'api_key': 'AIzaSyBwmkgjG0vpMOlo6b#Bx#Tmqc-Sq17-xcg',
+        'api_key': 'AIzaSyDQPQr_pWALivoVPqIKC6TfHi4AsUBGMm0',
         'temperature': 1.0,
         'top_p': 1
     }
@@ -37,9 +37,11 @@ def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
     }
 
     # Initialize retrievers
-    rm0 = GoogleSearch(google_search_api_key='AIz#SyA6kZJxpZUB-L3rZoxuMgL4yDeN36zWqOA', google_cse_id='d61efdd#650f94c6b', k=3)
+    rm2 = SerperRM(serper_search_api_key='b2c6cff35bd6afbf51f8dbd1579ce1ef398e0bfe', k=3)
+    rm0 = GoogleSearch(google_search_api_key='AIzaSyBHTIqsJNIWnDYO2sH7BByOziAeKCV4MJw', google_cse_id='d0b14c6884a6346d3', k=3, snippet_chunk_size=300)
     rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
-    retriever = Retriever(available_retrievers=[rm0, rm1])
+    rm3 = BraveRM(brave_search_api_key='BSAJmztarEbwaHpEI5SqjwpdbIORM_T', k=3, snippet_chunk_size=300)
+    retriever = Retriever(available_retrievers=[rm3, rm0, rm1, rm2])
 
     # Initialize DeepSearch
     deepsearcher = DeepSearch(
@@ -68,7 +70,7 @@ def medium(query: str, ground_truth_url: List[str]) -> str:
     """
     # Configuration for GoogleModel
     gemini_kwargs = {
-        'api_key': 'AIzaSyBwmkgjG0vpMOlo6b#Bx#Tmqc-Sq17-xcg',
+        'api_key': 'AIzaSyDQPQr_pWALivoVPqIKC6TfHi4AsUBGMm0',
         'temperature': 1.0,
         'top_p': 1
     }
@@ -85,9 +87,11 @@ def medium(query: str, ground_truth_url: List[str]) -> str:
     }
 
     # Initialize retrievers
-    rm0 = GoogleSearch(google_search_api_key='AIz#SyA6kZJxpZUB-L3rZoxuMgL4yDeN36zWqOA', google_cse_id='d61efdd#650f94c6b', k=3)
+    rm2 = SerperRM(serper_search_api_key='b2c6cff35bd6afbf51f8dbd1579ce1ef398e0bfe', k=3)
+    rm0 = GoogleSearch(google_search_api_key='AIzaSyBHTIqsJNIWnDYO2sH7BByOziAeKCV4MJw', google_cse_id='d0b14c6884a6346d3', k=3)
     rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
-    retriever = Retriever(available_retrievers=[rm0, rm1])
+    rm3 = BraveRM(brave_search_api_key='BSAJmztarEbwaHpEI5SqjwpdbIORM_T', k=3)
+    retriever = Retriever(available_retrievers=[rm3, rm0, rm1, rm2])
     
     # Initialize MidSearch
     midesearch = MidSearch(
@@ -112,9 +116,11 @@ def easy(query: str, exclude_urls: Optional[List[str]]) -> str:
         str: The result of the search.
     """
     # Initialize retrievers
-    rm0 = GoogleSearch(google_search_api_key='AIz#SyA6kZJxpZUB-L3rZoxuMgL4yDeN36zWqOA', google_cse_id='d61efdd#650f94c6b', k=3)
+    rm2 = SerperRM(serper_search_api_key='b2c6cff35bd6afbf51f8dbd1579ce1ef398e0bfe', k=3)    
+    rm0 = GoogleSearch(google_search_api_key='AIzaSyBHTIqsJNIWnDYO2sH7BByOziAeKCV4MJw', google_cse_id='d0b14c6884a6346d3', k=3)
     rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
-    retriever = Retriever(available_retrievers=[rm0, rm1])
+    rm3 = BraveRM(brave_search_api_key='BSAJmztarEbwaHpEI5SqjwpdbIORM_T', k=3)
+    retriever = Retriever(available_retrievers=[rm2, rm0, rm1, rm2])
 
     # Perform the search
     sources = retriever.forward(queries=[query], exclude_urls=exclude_urls)
@@ -141,7 +147,7 @@ class WebAgent(ABC):
     def __init__(self):
         # Configuration for GoogleModel
         gemini_kwargs = {
-            'api_key': 'AIzaSyBwmkgjG0vpMOlo6b#Bx#Tmqc-Sq17-xcg',
+            'api_key': 'AIzaSyDQPQr_pWALivoVPqIKC6TfHi4AsUBGMm0',
             'temperature': 1.0,
             'top_p': 1
         }
@@ -170,6 +176,8 @@ class WebAgent(ABC):
         
         # Determine the difficulty of the query
         difficulty = self.triage(prompt)[0]
+        
+        print(difficulty)
         
         # Handle the query based on its difficulty
         if 'Hard' in difficulty:
