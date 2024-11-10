@@ -1,5 +1,5 @@
 import numpy as np
-from db.embedders import COLBERT
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 
 class BaseModelClass:
     def __init__(self):
@@ -23,16 +23,16 @@ class BaseLLMClass:
 
 
 class colBERT(BaseModelClass):
-    def __init__(self):
-        self.model = COLBERT
+    def __init__(self, device:str='cpu'):
+        self.model = HuggingFaceEmbeddings(model_name="colbert-ir/colbertv2.0", model_kwargs={"device":device})
     def embed_query(self, query: str) -> np.ndarray:
         return np.array([self.model.embed_query(query)])
     def embed_docs(self, docs: list[str]) -> np.ndarray:
         return np.array(self.model.embed_documents(docs))
     
 class BGE_M3(BaseModelClass):
-    def __init__(self):
-        self.model = COLBERT
+    def __init__(self, device:str='cpu'):
+        self.model = HuggingFaceEmbeddings(model_name="BAAI/bge-m3", model_kwargs={"device":device})
     def embed_query(self, query: str) -> np.ndarray:
         return np.array([self.model.embed_query(query)])
     def embed_docs(self, docs: list[str]) -> np.ndarray:
