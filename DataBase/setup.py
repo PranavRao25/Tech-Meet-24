@@ -1,26 +1,32 @@
 import os
 import pathway as pw
-from pathway.xpacks.llm.embedders import GeminiEmbedder
+from pathway.xpacks.llm.embedders import SentenceTransformerEmbedder
 from pathway.xpacks.llm.splitters import TokenCountSplitter
 from pathway.xpacks.llm.vector_store import VectorStoreServer
 
-# This is what a peak coder would write
-os.environ["GOOGLE_API_KEY"] = 'AIzaSyDQPQr_pWALivoVPqIKC6TfHi4AsUBGMm0'
 pw.set_license_key("demo-license-key-with-telemetry")
 
 data_sources = []
 data_sources.append(
     pw.io.fs.read(
-        "./sample_documents",
+        "./documents",
         format="binary",
         mode="streaming",
         with_metadata=True,
     )
 )
 
+# for gdrive later on
+# data_sources.append(
+#     pw.io.gdrive.read(
+#         object_id="1234567890",
+#         service_user_credentials_file="credentials.json"
+#     )
+# )
+
 PATHWAY_PORT = 8765
 text_splitter = TokenCountSplitter()
-embedder = GeminiEmbedder(api_key=os.environ["GOOGLE_API_KEY"])
+embedder = SentenceTransformerEmbedder(model="dunzhang/stella_en_1.5B_v5")
 
 vector_server = VectorStoreServer(
     *data_sources,
