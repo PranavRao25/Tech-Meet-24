@@ -28,5 +28,12 @@ class colBERT(BaseModelClass):
     def embed_query(self, query: str) -> np.ndarray:
         return np.array([self.model.embed_query(query)])
     def embed_docs(self, docs: list[str]) -> np.ndarray:
-        embeddings = self.model.embed_documents(docs)
+        return np.array(self.model.embed_documents(docs))
+    
+class BGE_M3(BaseModelClass):
+    def __init__(self):
+        self.model = COLBERT
+    def embed_query(self, query: str) -> np.ndarray:
+        return np.array([self.model.embed_query(query)])
+    def embed_docs(self, docs: list[str]) -> np.ndarray:
         return np.array(self.model.embed_documents(docs))
