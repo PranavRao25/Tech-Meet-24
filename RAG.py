@@ -11,7 +11,7 @@ from ragas.metrics import (
 from langgraph.graph import END, StateGraph
 from QueryAgent.MCoTAgent import MCoTAgent
 from QueryAgent.CoTAgent import CoTAgent
-
+from rerankers.rerankers.reranker import *
 
 class Pipeline:
     def __init__(self, retrieval_agent, reranker):
@@ -54,13 +54,13 @@ class RAG:
     def ground_truth_prep(self):
         self.ground_truth = None
 
-    def reranker_prep(self, reranker, mode=""):
+    def reranker_prep(self, reranker, mode):
         if mode == "simple":
-            self.simple_reranker = reranker
+            self.simple_reranker = Reranker(reranker)
         elif mode == "intermediate":
-            self.intermediate_reranker = reranker
+            self.intermediate_reranker = Reranker(reranker)
         elif mode == "complex":
-            self.complex_reranker = reranker
+            self.complex_reranker = LLMReranker(reranker)
         else:
             raise ValueError("Incorrect mode")
 
