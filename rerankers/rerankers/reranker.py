@@ -7,6 +7,7 @@ class Reranker: # simple and intermediate reranker
         self.model = model
         self.k = k
     def rerank(self, query:str, docs:list[str]):
+        # rerank function
         query_embedding = self.model.embed_query(query)
         docs_embeddings = self.model.embed_docs(docs)
         scores:np.ndarray = cosine_similarity(query_embedding, docs_embeddings)[0]
