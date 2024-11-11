@@ -156,11 +156,11 @@ class RAG:
         # self.intermediate_pipeline = RunnableLambda(Pipeline(self.mcot_agent, self.intermediate_reranker).retrieve)
         # self.complex_pipeline = RunnableLambda(Pipeline(self.tot_agent, self.complex_reranker).retrieve)
 
-    def _context_prep(self):
+    def _context_prep(self, question:str):
         """
         Initializes an empty context.
         """
-        self.context = ""
+        self.context = self.vb(question)
 
     def _rag_graph(self):
         """
@@ -223,6 +223,7 @@ class RAG:
         Returns:
         str: The generated answer.
         """
+        self._rag_graph()
         self.question = question
         state = {"question": self.question, "context": "", "answer": ""}
         answer_state = self.ragchain.invoke(state)

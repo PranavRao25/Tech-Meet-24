@@ -3,6 +3,7 @@ from pathlib import Path
 import streamlit as st
 from transformers import AutoModel, AutoTokenizer
 import subprocess
+import threading
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
 
@@ -11,25 +12,29 @@ PATHWAY_PORT = 8765
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-# Function to run setup.py and experiment.py
-def run_scripts():
+
+# Function to start the VectorStoreServer
+def start_vector_store_server():
     try:
         # Run setup.py
-        setup_process = subprocess.run([sys.executable, 'Database/setup.py'], check=True)
+        setup_process = subprocess.run([sys.executable, '../DataBase/setup.py'], check=True)
         setup_process.check_returncode()  # Ensure setup.py ran successfully
 
         st.success("setup.py and experiment.py executed successfully.")
     except subprocess.CalledProcessError as e:
         st.error(f"Error occurred while running the scripts: {e}")
 
-# Run the setup.py and experiment.py before initializing the rest of the application
-run_scripts()
+server_thread = threading.Thread(target=start_vector_store_server)
+server_thread.daemon = True 
+server_thread.start()
+
+# Connect to the VectorStoreClient
 client = VectorStoreClient(
     host="127.0.0.1",
     port=PATHWAY_PORT,
 )
-from RAG import RAG  # Import your RAG class
 
+from RAG import RAG  # Import your RAG class
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
@@ -98,13 +103,6 @@ if question := st.chat_input("Type your question here:"):
         # Display the current answer immediately in the chat
         st.chat.message(f"**You:** {question}")
         st.chat.message(f"**Bot:** {answer}", is_user=False)
-
-        # Option to evaluate the answer quality
-        # if st.checkbox("Evaluate Answer Quality"):
-        #     with st.spinner("Running RAGAS evaluation..."):
-        #         evaluation_df = rag.ragas_evaluate(raise_exceptions=True)
-        #         st.subheader("Evaluation Metrics")
-        #         st.write(evaluation_df)
 
 # Sidebar footer
 st.sidebar.text("RAG Pipeline Chatbot with Streamlit")
