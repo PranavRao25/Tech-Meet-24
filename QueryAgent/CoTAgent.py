@@ -1,40 +1,8 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-from abc import ABC, abstractmethod
-from pathway.xpacks.llm.vector_store import VectorStoreClient
+from ContextAgent import *
 
-PATHWAY_PORT = 8765
-client = VectorStoreClient(
-    host="127.0.0.1",
-    port=PATHWAY_PORT,
-)
 
-class ContextAgent(ABC):
-    """
-    Base Class for Query Context Agents
-    """
+class CoTAgent(ContextAgent):
 
-    def __init__(self, vb, model_pair, reranker=None):
-        self.vb = vb
-        self.q_model = model_pair[0]  # llm
-        self.parser = model_pair[1]  # parser
-        self.cross_model = reranker
-
-    @abstractmethod
-    def query(self, question)->list[str]:
-        """
-            Retrieves total context for the user query
-        """
-        raise NotImplementedError('Implement Query function')
-
-    @abstractmethod
-    def fetch(self, question)->list[str]:
-        """
-            Retrieves context for a subquery by making a call to the Vector Database
-        """
-        raise NotImplementedError('Implement Fetch function')        
-    
-class ContextAgentCOT(ContextAgent):
-    
     def query(self, question):
         
         messages = [
@@ -69,18 +37,3 @@ class ContextAgentCOT(ContextAgent):
             answer += doc['text']
 
         return answer
-    
-if __name__ == "__main__":
-    
-    user_question = "what is pathway?"
-
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-1.5-pro",
-        temperature=0,
-        max_tokens=None,
-        timeout=None,
-        max_retries=2
-    )
-    
-    agent = ContextAgentCOT(client, (llm, None), None)
-    print(agent.query(user_question))

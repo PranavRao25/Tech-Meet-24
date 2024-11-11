@@ -1,1 +1,0 @@
-### This is to handle simple queries that are to fetched from database and this will be called by a MoE model. It is not really an CoT agent but a simple query handler. For a query just generate multiple sub queries and return the results.
