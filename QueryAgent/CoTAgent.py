@@ -1,4 +1,4 @@
-from ContextAgent import *
+from .ContextAgent import *
 
 
 class CoTAgent(ContextAgent):

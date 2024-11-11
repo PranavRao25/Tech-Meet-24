@@ -1,5 +1,5 @@
-from AlternateQueryAgent import *
-from SubQueryAgent import *
+from .AlternateQueryAgent import *
+from .SubQueryAgent import *
 from langchain_core.runnables import RunnableLambda
 
 

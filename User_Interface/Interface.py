@@ -33,20 +33,20 @@ from RAG import RAG  # Import your RAG class
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
-    model = AutoModel.from_pretrained("bge-m3")
-    tokenizer = AutoTokenizer.from_pretrained("bge-m3")
+    model = AutoModel.from_pretrained("BAAI/bge-m3")
+    tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-m3")
     return model, tokenizer
 
 @st.cache_resource
 def load_smol_lm():
-    model = AutoModel.from_pretrained("smol-LM")
-    tokenizer = AutoTokenizer.from_pretrained("smol-LM")
+    model = AutoModel.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     return model, tokenizer
 
 @st.cache_resource
 def load_colbert():
-    model = AutoModel.from_pretrained("ColBERT")
-    tokenizer = AutoTokenizer.from_pretrained("ColBERT")
+    model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
+    tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, tokenizer
 
 # Load all models

@@ -1,6 +1,6 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
-from ContextAgent import *
+from .ContextAgent import *
 from langchain_core.runnables import RunnableLambda
 
 
