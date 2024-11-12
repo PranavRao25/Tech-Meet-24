@@ -6,13 +6,13 @@ Create an Agentic RAG (Retrieval-Augmented Generation) system using Pathway that
 ---
 
 ## Setup the Environment
-1. Run the bash script: bash run.sh
-2. Run the command: streamlit run User_Interface/Interface.py
+Please follow the README.md file present in the code link
 
 ---
 
 ## Demonstration
-Video Link: https://drive.google.com/file/d/1SrfPSr168FxGsuQs-z9aJ3pcfDEg4tZl/view?usp=sharing
+Please check the video present in the video folder
+
 ---
 
 ## Pipeline
