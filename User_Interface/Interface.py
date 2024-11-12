@@ -8,6 +8,9 @@ from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import HuggingFaceHub
 import os
+from LLM_Agent.LLM_Agent import LLMAgent
+from rerankers.models.models import colBERT
+# from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = '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'
@@ -57,17 +60,19 @@ def load_smol_lm():
 
 @st.cache_resource
 def load_colbert():
-    model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
-    tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
-    return model, tokenizer
+    model = colBERT()
+    # model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
+    # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
+    return model, None
 
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
+gemini_model = LLMAgent(google_api_key="AIzaSyDMrrCnkl9tu3sJDHq4C-LYu0qHdbXAA00")
 colbert_model, colbert_tokenizer = load_colbert()
 
 # Initialize your RAG pipeline using these cached models
-rag = RAG(vb=client, llm=smol_lm_model)
+rag = RAG(vb=client, llm=gemini_model)
 
 # Initialize session state for question history if it doesn't exist
 if "history" not in st.session_state:
@@ -95,21 +100,21 @@ st.header("Ask the Chatbot")
 
 # Streamlit chat messages loop
 for entry in st.session_state.history:
-    st.chat.message(f"**You:** {entry['question']}")
-    st.chat.message(f"**Bot:** {entry['answer']}", is_user=False)
+    st.markdown(f"**You:** {entry['question']}")
+    st.markdown(f"**Bot:** {entry['answer']}")
 
 # Process new question if entered
 if question := st.chat_input("Type your question here:"):
     with st.spinner("Retrieving answer..."):
         # Get the answer from the RAG pipeline
         answer = rag.query(question)
-
+        print(type(answer))
         # Store question and answer in the session history
         st.session_state.history.append({"question": question, "answer": answer})
 
         # Display the current answer immediately in the chat
-        st.chat.message(f"**You:** {question}")
-        st.chat.message(f"**Bot:** {answer}", is_user=False)
+        st.markdown(f"**You:** {question}")
+        st.markdown(f"**Bot:** {answer}")
 
 # Sidebar footer
 st.sidebar.text("RAG Pipeline Chatbot with Streamlit")
