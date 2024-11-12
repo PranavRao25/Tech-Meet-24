@@ -4,31 +4,89 @@ from typing import Optional
 from sklearn.metrics.pairwise import cosine_similarity
 from rerankers.models.models import BaseModelClass, BaseLLMClass, colBERT, BGE_M3
 
-class Reranker: # simple and intermediate reranker
-    def __init__(self, model:BaseModelClass, k:Optional[int] = None):
+
+class Reranker:
+    """
+    Simple and intermediate reranker class that reranks documents based on their cosine similarity to the query.
+    """
+
+    def __init__(self, model: BaseModelClass, k: Optional[int] = None):
+        """
+        Initializes the Reranker with a model and an optional value for the number of top documents to return.
+
+        Parameters:
+        model (BaseModelClass): The embedding model used for computing document similarity.
+        k (Optional[int]): The number of top documents to return after reranking. If None, all documents are returned.
+        """
         self.model = model
         self.k = k
-    def rerank(self, query:str, docs:list[str]):
-        # rerank function
+
+    def rerank(self, query: str, docs: list[str]) -> list[str]:
+        """
+        Reranks documents based on their cosine similarity to the query.
+
+        Parameters:
+        query (str): The query text.
+        docs (list[str]): List of documents to be reranked.
+
+        Returns:
+        list[str]: A list of documents ordered by relevance to the query.
+        """
+
+        # Embed query and documents
         query_embedding = self.model.embed_query(query)
         docs_embeddings = self.model.embed_docs(docs)
-        scores:np.ndarray = cosine_similarity(query_embedding, docs_embeddings)[0]
+
+        # Compute cosine similarity between the query and each document
+        scores: np.ndarray = cosine_similarity(query_embedding, docs_embeddings)[0]
+
+        # Rank documents by descending similarity score
         if self.k is None:
             top_k = [docs[i] for i in (-scores).argsort()]
         else:
             top_k = [docs[i] for i in (-scores).argsort()[:self.k]]
+
         return top_k
-    __call__ = rerank
-    
-class LLMReranker: # complex reranker
-    def __init__(self, llm:BaseLLMClass, k:Optional[int]=None):
+
+    __call__ = rerank  # Enable the reranker to be called directly
+
+
+class LLMReranker:
+    """
+    Complex reranker class that uses a language model (LLM) to rerank documents based on relevance to the query.
+    """
+
+    def __init__(self, llm: BaseLLMClass, k: Optional[int] = None):
+        """
+        Initializes the LLMReranker with a language model and an optional value for the number of top documents to return.
+
+        Parameters:
+        llm (BaseLLMClass): The language model used for interpreting and ranking document relevance.
+        k (Optional[int]): The number of top documents to return after reranking. If None, all documents are returned.
+        """
         self.llm = llm
         self.k = k
-    def rerank(self, query:str, docs:list[str]):
-        # Create prompt for reranking
+
+    def rerank(self, query: str, docs: list[str]) -> None:
+        """
+        Reranks documents by prompting the language model to assess their relevance to the query.
+
+        Parameters:
+        query (str): The query text.
+        docs (list[str]): List of document chunks to be reranked.
+
+        Raises:
+        NotImplementedError: The rerank function for LLMReranker requires a model-specific implementation.
+        """
+
+        # Construct a prompt for the LLM to rank document chunks by relevance
         prompt = f"Given the query:\n'{query}'\n\nRank the following document chunks by relevance:\n"
         for i, doc in enumerate(docs):
             prompt += f"\nChunk {i + 1}:\n{doc}\n"
         prompt += "\n\nReturn the chunks ranked by relevance with a score between 0 (not relevant) to 10 (highly relevant)."
+
+        # Invoke the language model with the constructed prompt
         self.llm.invoke(prompt)
+
+        # The rerank logic should be implemented specifically for the LLM
         raise NotImplementedError()
