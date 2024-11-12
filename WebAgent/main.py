@@ -7,7 +7,7 @@ from typing import List, Optional
 
 
 import toml
-config = toml.load("config.toml")
+config = toml.load("../config.toml")
 
 GEMINI_API = config["GEMINI_API"]
 SERPER_API = config["SERPER_API"]

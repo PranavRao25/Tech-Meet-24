@@ -15,7 +15,7 @@ PATHWAY_PORT = 8765
 
 import toml
 
-config = toml.load("config.toml")
+config = toml.load("../config.toml")
 HF_TOKEN = config['HF_TOKEN']
 GOOGLE_API = config['GOOGLE_API']
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
