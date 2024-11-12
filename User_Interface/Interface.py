@@ -6,8 +6,11 @@ import subprocess
 import threading
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
+from langchain_community.llms import HuggingFaceHub
+import os
 
 PATHWAY_PORT = 8765
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = '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'
 
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -44,6 +47,10 @@ def load_bge_m3():
 
 @st.cache_resource
 def load_smol_lm():
+    return HuggingFaceHub(
+        repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+        model_kwargs = {"temperature":0.5, "max_length": 64, "max_new_tokens": 512}
+    )
     model = AutoModel.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     return model, tokenizer
@@ -56,7 +63,7 @@ def load_colbert():
 
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
-smol_lm_model, smol_lm_tokenizer = load_smol_lm()
+smol_lm_model = load_smol_lm()
 colbert_model, colbert_tokenizer = load_colbert()
 
 # Initialize your RAG pipeline using these cached models
