@@ -12,7 +12,13 @@ from pathway.xpacks.llm.vector_store import VectorStoreClient
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = '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'
+
+import toml
+
+config = toml.load("config.toml")
+HF_TOKEN = config['HF_TOKEN']
+GOOGLE_API = config['GOOGLE_API']
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
 
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -83,7 +89,7 @@ def load_colbert():
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
-gemini_model = LLMAgent(google_api_key="AIzaSyDMrrCnkl9tu3sJDHq4C-LYu0qHdbXAA00")
+gemini_model = LLMAgent(google_api_key=GOOGLE_API)
 colbert_model, colbert_tokenizer = load_colbert()
 client = vb_prep()
 

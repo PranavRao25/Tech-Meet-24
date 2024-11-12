@@ -5,6 +5,15 @@ from models import OllamaClient, GoogleModel
 from abc import ABC
 from typing import List, Optional
 
+
+import toml
+config = toml.load("config.toml")
+
+GEMINI_API = config["GEMINI_API"]
+SERPER_API = config["SERPER_API"]
+GOOGLE_API = config["GOOGLE_API"]
+BRAVE_API = config["BRAVE_API"]
+
 # Function to handle hard queries
 def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
     """
@@ -19,7 +28,7 @@ def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
     """
     # Configuration for GoogleModel
     gemini_kwargs = {
-        'api_key': 'AIzaSyDQPQr_pWALivoVPqIKC6TfHi4AsUBGMm0',
+        'api_key': GEMINI_API,
         'temperature': 1.0,
         'top_p': 1
     }
@@ -37,10 +46,10 @@ def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
     }
 
     # Initialize retrievers
-    rm2 = SerperRM(serper_search_api_key='b2c6cff35bd6afbf51f8dbd1579ce1ef398e0bfe', k=3)
-    rm0 = GoogleSearch(google_search_api_key='AIzaSyBHTIqsJNIWnDYO2sH7BByOziAeKCV4MJw', google_cse_id='d0b14c6884a6346d3', k=3, snippet_chunk_size=300)
+    rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3)
+    rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3, snippet_chunk_size=300)
     rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
-    rm3 = BraveRM(brave_search_api_key='BSAJmztarEbwaHpEI5SqjwpdbIORM_T', k=3, snippet_chunk_size=300)
+    rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3, snippet_chunk_size=300)
     retriever = Retriever(available_retrievers=[rm3, rm0, rm1, rm2])
 
     # Initialize DeepSearch
@@ -70,7 +79,7 @@ def medium(query: str, ground_truth_url: List[str]) -> str:
     """
     # Configuration for GoogleModel
     gemini_kwargs = {
-        'api_key': 'AIzaSyDQPQr_pWALivoVPqIKC6TfHi4AsUBGMm0',
+        'api_key': GEMINI_API,
         'temperature': 1.0,
         'top_p': 1
     }
@@ -87,10 +96,10 @@ def medium(query: str, ground_truth_url: List[str]) -> str:
     }
 
     # Initialize retrievers
-    rm2 = SerperRM(serper_search_api_key='b2c6cff35bd6afbf51f8dbd1579ce1ef398e0bfe', k=3)
-    rm0 = GoogleSearch(google_search_api_key='AIzaSyBHTIqsJNIWnDYO2sH7BByOziAeKCV4MJw', google_cse_id='d0b14c6884a6346d3', k=3)
+    rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3)
+    rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3)
     rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
-    rm3 = BraveRM(brave_search_api_key='BSAJmztarEbwaHpEI5SqjwpdbIORM_T', k=3)
+    rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3)
     retriever = Retriever(available_retrievers=[rm3, rm0, rm1, rm2])
     
     # Initialize MidSearch
@@ -116,10 +125,10 @@ def easy(query: str, exclude_urls: Optional[List[str]]) -> str:
         str: The result of the search.
     """
     # Initialize retrievers
-    rm2 = SerperRM(serper_search_api_key='b2c6cff35bd6afbf51f8dbd1579ce1ef398e0bfe', k=3)    
-    rm0 = GoogleSearch(google_search_api_key='AIzaSyBHTIqsJNIWnDYO2sH7BByOziAeKCV4MJw', google_cse_id='d0b14c6884a6346d3', k=3)
+    rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3)    
+    rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3)
     rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
-    rm3 = BraveRM(brave_search_api_key='BSAJmztarEbwaHpEI5SqjwpdbIORM_T', k=3)
+    rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3)
     retriever = Retriever(available_retrievers=[rm2, rm0, rm1, rm2])
 
     # Perform the search
@@ -147,7 +156,7 @@ class WebAgent(ABC):
     def __init__(self):
         # Configuration for GoogleModel
         gemini_kwargs = {
-            'api_key': 'AIzaSyDQPQr_pWALivoVPqIKC6TfHi4AsUBGMm0',
+            'api_key': GEMINI_API,
             'temperature': 1.0,
             'top_p': 1
         }
