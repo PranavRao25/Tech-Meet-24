@@ -95,7 +95,7 @@ if "history" not in st.session_state:
     st.session_state.history = []
 
 # Streamlit interface
-st.title("Chatbot using RAG Pipeline")
+st.title(".pathway Chatbot")
 
 # Sidebar for configuration
 st.sidebar.header("Pipeline Configuration")
@@ -112,7 +112,7 @@ rag.retrieval_agent_prep(
 rag.reranker_prep(reranker=colbert_model, mode=reranker_mode)
 
 # Main chat interface using `st.chat`
-st.header("Ask the Chatbot")
+st.header("Team_41")
 
 # Streamlit chat messages loop
 for entry in st.session_state.history:
