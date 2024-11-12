@@ -80,23 +80,30 @@ class LLMAgent:
     def process_query(
         self,
         question: str,
-        context: str
+        context: List[str]
     ) -> ResponseSchema:
         """
         Process a query using the provided context
-
+        
         Args:
             question: User's question
-            context: context as a string
-
+            context: List of context documents
+            
         Returns:
             Structured response containing answer, reasoning, and sources
         """
+        # Format context for the prompt
+        formatted_context = "\n".join([
+            f"Document {i+1}: {doc}"
+            for i, doc in enumerate(context)
+        ])
+        
+        # Get response from LLM
         response = self.chain.run(
-            context=context,
+            context=formatted_context,
             question=question
         )
-
+        
         # Parse and return structured output
         return self.output_parser.parse(response)
 
@@ -111,3 +118,12 @@ class LLMAgent:
     def get_reasoning(self, response: ResponseSchema) -> str:
         """Extract the reasoning from the response"""
         return response.reasoning
+    
+
+# llm=LLMAgent(google_api_key="api",model_name="gemini-pro")
+# context_france=["\
+# France, in Western Europe, encompasses medieval cities, alpine villages and Mediterranean beaches. Paris, its capital, is famed for its fashion houses, classical art museums including the Louvre and monuments like the Eiffel Tower. The country is also renowned for its wines and sophisticated cuisine. Lascaux’s ancient cave drawings, Lyon’s Roman theater and the vast Palace of Versailles attest to its rich history.\
+# ",
+# "France is really Beautiful."]
+# output=llm.process_query(question="What is the capital of France",context=context_france)
+# print(output)
