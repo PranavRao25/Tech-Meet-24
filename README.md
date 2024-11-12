@@ -6,13 +6,13 @@ Create an Agentic RAG (Retrieval-Augmented Generation) system using Pathway that
 ---
 
 ## Setup the Environment
-_To be completed_
+1. Run the bash script: bash run.sh
+2. Run the command: streamlit run User_Interface/Interface.py
 
 ---
 
 ## Demonstration
-_To be completed_
-
+Video Link: https://drive.google.com/file/d/1SrfPSr168FxGsuQs-z9aJ3pcfDEg4tZl/view?usp=sharing
 ---
 
 ## Pipeline
@@ -45,5 +45,31 @@ The individual modules are mostly ready, with integration and extensive testing 
 ---
 
 ## System Requirements
-_To be completed_
+1. Python 3.12
+2. Linux (with Bash terminal)
 
+### Library Requirements
+- pathway[all]
+- langchain
+- langchain_google_genai
+- pydantic
+- spacy
+- transformers
+- torch
+- langchain_core
+- scikit-learn
+- numpy
+- langchain_community
+- ragas
+- langgraph
+- backoff
+- streamlit
+- regex
+- dspy_ai==2.4.9
+- httpx
+- langchain-text-splitters
+- trafilatura
+- google-api-python-client
+- duckduckgo_search
+- google-generativeai
+- datasets
