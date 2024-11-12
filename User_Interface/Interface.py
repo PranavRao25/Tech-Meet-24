@@ -20,6 +20,14 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 
 # Function to start the VectorStoreServer
+@st.cache_resource
+def vb_prep():
+    return VectorStoreClient(
+        host="127.0.0.1",
+        port=PATHWAY_PORT,
+    )
+    
+@st.cache_resource
 def start_vector_store_server():
     try:
         # Run setup.py
@@ -30,15 +38,16 @@ def start_vector_store_server():
     except subprocess.CalledProcessError as e:
         st.error(f"Error occurred while running the scripts: {e}")
 
-server_thread = threading.Thread(target=start_vector_store_server)
-server_thread.daemon = True 
-server_thread.start()
+@st.cache_resource
+def thread():
+    return threading.Thread(target=start_vector_store_server)
+
+server_thread = thread()
+if not server_thread.daemon:
+    server_thread.daemon = True 
+    server_thread.start()
 
 # Connect to the VectorStoreClient
-client = VectorStoreClient(
-    host="127.0.0.1",
-    port=PATHWAY_PORT,
-)
 
 from RAG import RAG  # Import your RAG class
 # Define cached loading functions for each model
@@ -70,6 +79,7 @@ bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
 gemini_model = LLMAgent(google_api_key="AIzaSyDMrrCnkl9tu3sJDHq4C-LYu0qHdbXAA00")
 colbert_model, colbert_tokenizer = load_colbert()
+client = vb_prep()
 
 # Initialize your RAG pipeline using these cached models
 rag = RAG(vb=client, llm=gemini_model)
@@ -108,7 +118,6 @@ if question := st.chat_input("Type your question here:"):
     with st.spinner("Retrieving answer..."):
         # Get the answer from the RAG pipeline
         answer = rag.query(question)
-        print(type(answer))
         # Store question and answer in the session history
         st.session_state.history.append({"question": question, "answer": answer})
 

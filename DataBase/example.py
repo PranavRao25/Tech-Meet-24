@@ -6,4 +6,5 @@ client = VectorStoreClient(
     port=PATHWAY_PORT,
 )
 
-docs = client("What is the history of artificial intelligence and its applications today?")
+docs = client("it typically refers to a set of algorithms or techniques used to solve a particular problem or complete a specific task")
+print(docs)

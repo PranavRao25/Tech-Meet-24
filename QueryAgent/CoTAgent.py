@@ -1,5 +1,6 @@
 from .ContextAgent import *
-
+from langchain.prompts import ChatPromptTemplate
+from langchain.schema.runnable import RunnablePassthrough
 
 class CoTAgent(ContextAgent):
     """
@@ -21,32 +22,35 @@ class CoTAgent(ContextAgent):
         """
 
         # Define system and human messages for question decomposition
-        messages = [
-            (
-                "system",
-                "You are a structured assistant who decomposes complex questions into specific, three distinct sub-questions. "
-                "Your task is to identify each part needed to answer the main question thoroughly. "
-                "Provide each sub-question in a comma-separated list, without numbering or extra formatting, "
-                "to facilitate retrieval-augmented generation (RAG) processing.\n\n"
-                "Input format:\nMain question provided by the user.\n\n"
-                "Output format:\nA list of three sub-questions separated by commas, in a single line.\n\n"
-                "Example:\nInput: 'What is the history of artificial intelligence and its applications today?'\n"
-                "Output: 'What is the origin of artificial intelligence?, How did AI develop over the years?, What are the current applications of AI?'"
-            ),
-            ("human", question)
-        ]
+        template = f"""You are provided with a main question: {question}?
+                Your task is to generate three relevant sub-questions based on this main question, avoiding any repetition of the main question itself.
 
+                Guidelines:
+
+                    Ensure each sub-question directly relates to and explores aspects of the main question.
+                    Do not include any unrelated information.
+                    Do not provide answers—only generate sub-questions.
+
+                Output Format:
+
+                    sub-question: <sub_question>, <sub_question>, <sub_question>........
+            """
+        prompt = ChatPromptTemplate.from_template(template)
         # Fetch initial context based on the main question
-        answer = self.fetch(question=question)
+        answer = ""
 
         # Generate sub-questions using the q_model
-        subqueries = self.q_model.invoke(messages)
-
+        small_chain = {"question": RunnablePassthrough()} | prompt | self.q_model #.invoke(prompt.format(question=question))
+        subqueries = small_chain.invoke(question)[len(template):]
+        
+        # print(f"\n\nsubqueries : {subqueries}\n\n".upper())
         # Retrieve and accumulate answers for each sub-question
-        for subquery in subqueries.content.split(','):
+        for subquery in subqueries.split(','):
+            print(f"\n\nsubquery : {subquery}\n\n".upper())
             subquery = str(subquery).strip()  # Clean and format subquery
             answer += self.fetch(question=subquery)
 
+        print(f"answer: {answer}")
         return answer
 
     def fetch(self, question:str)->str:

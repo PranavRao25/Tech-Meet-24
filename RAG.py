@@ -182,29 +182,31 @@ class RAG:
             context = self.simple_pipeline.invoke(state["question"])
             return {"question": state["question"], "context": context, "answer": state["answer"]}
 
-        def fetch(state):
-            """
-            Fetches the context and updates the state.
-            """
-            self._context_prep()
-            return {"question": state["question"], "context": self.context, "answer": state["answer"]}
+        # def fetch(state):
+        #     """
+        #     Fetches the context and updates the state.
+        #     """
+        #     self._context_prep(state("question"))
+        #     return {"question": state["question"], "context": self.context, "answer": state["answer"]}
 
         def answer(state):
             """
             Generates an answer based on the updated state.
             """
-            return {"question": state["question"], "context": self.context, "answer": answer}
+            self.bot_answer = self.llm.process_query(state["question"], state["context"])
+            return {"question": state["question"], "context": state["context"], "answer": self.bot_answer}
 
         self.pipeline_setup()
         self.RAGraph = StateGraph(GraphState)
         self.RAGraph.set_entry_point("entry")
-        self.RAGraph.add_node("entry", RunnablePassthrough)
+        self.RAGraph.add_node("entry", RunnablePassthrough())
         self.RAGraph.add_node("simple pipeline", simple_pipeline)
         self.RAGraph.add_node("llm", answer)
-        self.RAGraph.add_node("fetch", fetch)
+        # self.RAGraph.add_node("fetch", fetch)
         self.RAGraph.add_edge("entry", "simple pipeline")
         self.RAGraph.add_edge("simple pipeline", "llm")
-        self.RAGraph.set_finish_point("llm")
+        # self.RAGraph.set_finish_point("llm")
+        self.RAGraph.add_edge("llm", END)
         self.ragchain = self.RAGraph.compile()
 
     def set(self):
@@ -223,9 +225,10 @@ class RAG:
         Returns:
         str: The generated answer.
         """
-        self._rag_graph()
+        
         self.question = question
         state = {"question": self.question, "context": "", "answer": ""}
+        self._rag_graph()
         answer_state = self.ragchain.invoke(state)
         self.answer = answer_state["answer"]
         return self.answer

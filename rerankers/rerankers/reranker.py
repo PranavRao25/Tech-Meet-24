@@ -32,12 +32,20 @@ class Reranker:
         Returns:
         list[str]: A list of documents ordered by relevance to the query.
         """
-
+        
+        if len(docs) == 0 or len(query) == 0:
+            return []
         # Embed query and documents
         query_embedding = self.model.embed_query(query)
         docs_embeddings = self.model.embed_docs(docs)
 
         # Compute cosine similarity between the query and each document
+        print(query_embedding.shape, docs_embeddings.shape)
+        print('--------------------------------------------------')
+        print("Q: ", query_embedding)
+        print('--------------------------------------------------')
+        print("D: ", docs_embeddings)
+        print('--------------------------------------------------')
         scores: np.ndarray = cosine_similarity(query_embedding, docs_embeddings)[0]
 
         # Rank documents by descending similarity score
