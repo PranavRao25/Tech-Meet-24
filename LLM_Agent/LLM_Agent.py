@@ -8,26 +8,27 @@ from pydantic import BaseModel, Field
 class ResponseSchema(BaseModel):
     """Schema for structured output"""
     answer: str = Field(description="The direct answer to the question")
-    reasoning: str = Field(description="Explanation of how the answer was derived from the context")
-    sources: List[str] = Field(description="List of sources used from the context")
+    # reasoning: str = Field(description="Explanation of how the answer was derived from the context")
+    # sources: List[str] = Field(description="List of sources used from the context")
 
 class GeminiOutputParser(BaseOutputParser):
     """Parser to structure the LLM output"""
 
     def parse(self, text: str) -> ResponseSchema:
         """Parse the LLM output into structured format"""
+        print('RESPONSE : ', text)
         try:
             # Split the response into sections
-            sections = text.split("\n\n")
-
-            answer = sections[0].replace("Answer: ", "").strip()
-            reasoning = sections[1].replace("Reasoning: ", "").strip()
-            sources = sections[2].replace("Sources: ", "").strip().split(", ")
+            # sections = text.split("\n\n")
+            # print('SECTIONS : ', sections)
+            answer = text.replace("Answer: ", "").strip()
+            # reasoning = sections[1].replace("Reasoning: ", "").strip()
+            # sources = sections[2].replace("Sources: ", "").strip().split(", ")
 
             return ResponseSchema(
                 answer=answer,
-                reasoning=reasoning,
-                sources=sources
+                reasoning='',
+                sources=''
             )
         except Exception as e:
             raise ValueError(f"Failed to parse LLM output: {e}")
@@ -54,15 +55,16 @@ class LLMAgent:
         # Define the prompt template
         self.prompt_template = PromptTemplate(
             input_variables=["context", "question"],
+            #
+            # Reasoning: [Explain how you arrived at the answer using the context]
+
+            # Sources: [List the relevant sources from the context]
             template="""
             You are a helpful AI assistant. Using the provided context, answer the question.
             Format your response in the following way:
 
             Answer: [Provide a clear, direct answer]
 
-            Reasoning: [Explain how you arrived at the answer using the context]
-
-            Sources: [List the relevant sources from the context]
 
             The inputs are
             Context: {context}
@@ -93,6 +95,7 @@ class LLMAgent:
             Structured response containing answer, reasoning, and sources
         """
         # Format context for the prompt
+        print(f"Context : {context}")
         formatted_context = "\n".join([
             f"Document {i+1}: {doc}"
             for i, doc in enumerate(context)

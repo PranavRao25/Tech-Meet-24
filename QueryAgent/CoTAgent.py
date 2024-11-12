@@ -37,7 +37,7 @@ class CoTAgent(ContextAgent):
             """
         prompt = ChatPromptTemplate.from_template(template)
         # Fetch initial context based on the main question
-        answer = ""
+        answer = []
 
         # Generate sub-questions using the q_model
         small_chain = {"question": RunnablePassthrough()} | prompt | self.q_model #.invoke(prompt.format(question=question))
@@ -45,12 +45,11 @@ class CoTAgent(ContextAgent):
         
         # print(f"\n\nsubqueries : {subqueries}\n\n".upper())
         # Retrieve and accumulate answers for each sub-question
-        for subquery in subqueries.split(','):
+        for subquery in subqueries.split('?'):
             print(f"\n\nsubquery : {subquery}\n\n".upper())
             subquery = str(subquery).strip()  # Clean and format subquery
-            answer += self.fetch(question=subquery)
+            answer.append(self.fetch(question=subquery))
 
-        print(f"answer: {answer}")
         return answer
 
     def fetch(self, question:str)->str:

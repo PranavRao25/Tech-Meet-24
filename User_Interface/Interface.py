@@ -8,8 +8,7 @@ from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import HuggingFaceHub
 import os
-from LLM_Agent.LLM_Agent import LLMAgent
-from rerankers.models.models import colBERT
+from pathway.xpacks.llm.vector_store import VectorStoreClient
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
@@ -22,34 +21,41 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 # Function to start the VectorStoreServer
 @st.cache_resource
 def vb_prep():
-    return VectorStoreClient(
-        host="127.0.0.1",
-        port=PATHWAY_PORT,
-    )
+    # return VectorStoreClient(
+    #     host="127.0.0.1",
+    #     port=PATHWAY_PORT,
+    # )
+
+    HOST = "127.0.0.1"
+    PORT = 8666
+
+    return VectorStoreClient(host=HOST, port=PORT)
     
-@st.cache_resource
-def start_vector_store_server():
-    try:
-        # Run setup.py
-        setup_process = subprocess.run([sys.executable, '../DataBase/setup.py'], check=True)
-        setup_process.check_returncode()  # Ensure setup.py ran successfully
+# @st.cache_resource
+# def start_vector_store_server():
+#     try:
+#         # Run setup.py
+#         setup_process = subprocess.run([sys.executable, '../DataBase/setup.py'], check=True)
+#         setup_process.check_returncode()  # Ensure setup.py ran successfully
 
-        st.success("setup.py and experiment.py executed successfully.")
-    except subprocess.CalledProcessError as e:
-        st.error(f"Error occurred while running the scripts: {e}")
+#         st.success("setup.py and experiment.py executed successfully.")
+#     except subprocess.CalledProcessError as e:
+#         st.error(f"Error occurred while running the scripts: {e}")
 
-@st.cache_resource
-def thread():
-    return threading.Thread(target=start_vector_store_server)
+# @st.cache_resource
+# def thread():
+#     return threading.Thread(target=start_vector_store_server)
 
-server_thread = thread()
-if not server_thread.daemon:
-    server_thread.daemon = True 
-    server_thread.start()
+# server_thread = thread()
+# if not server_thread.daemon:
+#     server_thread.daemon = True 
+#     server_thread.start()
 
 # Connect to the VectorStoreClient
 
 from RAG import RAG  # Import your RAG class
+from LLM_Agent.LLM_Agent import LLMAgent
+from rerankers.models.models import colBERT
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
