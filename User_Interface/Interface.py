@@ -9,12 +9,13 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import HuggingFaceHub
 import os
 from pathway.xpacks.llm.vector_store import VectorStoreClient
+import toml
+from RAG import RAG  # Import your RAG class
+from LLM_Agent.LLM_Agent import LLMAgent
+from rerankers.models.models import colBERT
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
-
-import toml
-
 
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -36,7 +37,8 @@ def vb_prep():
     PORT = 8666
 
     return VectorStoreClient(host=HOST, port=PORT)
-    
+
+
 # @st.cache_resource
 # def start_vector_store_server():
 #     try:
@@ -59,9 +61,7 @@ def vb_prep():
 
 # Connect to the VectorStoreClient
 
-from RAG import RAG  # Import your RAG class
-from LLM_Agent.LLM_Agent import LLMAgent
-from rerankers.models.models import colBERT
+
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
@@ -69,15 +69,14 @@ def load_bge_m3():
     tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-m3")
     return model, tokenizer
 
+
 @st.cache_resource
 def load_smol_lm():
     return HuggingFaceHub(
         repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
         model_kwargs = {"temperature":0.5, "max_length": 64, "max_new_tokens": 512}
     )
-    model = AutoModel.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
-    tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
-    return model, tokenizer
+
 
 @st.cache_resource
 def load_colbert():
@@ -86,15 +85,18 @@ def load_colbert():
     # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, None
 
+@st.cache_resource
+def load_moe():
+    return "microsoft/deberta-v3-small"
+
+
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
+moe_model = load_moe()
 gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
 client = vb_prep()
-
-# Initialize your RAG pipeline using these cached models
-rag = RAG(vb=client, llm=gemini_model)
 
 # Initialize session state for question history if it doesn't exist
 if "history" not in st.session_state:
@@ -108,14 +110,27 @@ st.sidebar.header("Pipeline Configuration")
 retrieval_mode = st.sidebar.selectbox("Select Retrieval Mode", ["simple", "intermediate", "complex"])
 reranker_mode = st.sidebar.selectbox("Select Reranker Mode", ["simple", "intermediate", "complex"])
 
+# Initialize your RAG pipeline using these cached models
+rag = RAG(vb=client, llm=gemini_model)
+
 # Configure the RAG pipeline with your parser
 rag.retrieval_agent_prep(
     q_model=smol_lm_model,
     parser=StrOutputParser(),  # Replace this with the actual parser you provide
     reranker=colbert_model,
-    mode=retrieval_mode
+    mode="simple"
 )
-rag.reranker_prep(reranker=colbert_model, mode=reranker_mode)
+
+rag.retrieval_agent_prep(
+    q_model=smol_lm_model,
+    parser=StrOutputParser(),  # Replace this with the actual parser you provide
+    reranker=colbert_model,
+    mode="intermediate"
+)
+rag.reranker_prep(reranker=colbert_model, mode="simple")
+rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
+rag.moe_prep(moe_model)
+rag.set()
 
 # Main chat interface using `st.chat`
 st.header("Team_41")

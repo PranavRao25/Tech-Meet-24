@@ -21,29 +21,28 @@ class SubQueryGenAgent:
         mode (bool): Determines if the agent uses only the question (True) or both question and context (False).
         """
 
-        self.q_model = agent_model[0]
-        self.parser = agent_model[1]
-        self.mode = mode
+        self._q_model = agent_model[0]
+        self._parser = agent_model[1]
+        self._mode = mode
 
-        if self.mode:
+        if self._mode:
             # Define prompt for mode with question only
-            self.prompt = ChatPromptTemplate.from_template(
+            self._prompt = ChatPromptTemplate.from_template(
                 """You are given a main Question {question}. You must generate a subquestion for the same. Output should in the format: sub-question : <sub_question>"""
             )
-            self.chain = {
+            self._chain = {
                              "question": RunnablePassthrough()
-                         } | self.prompt | self.q_model | self.parser
-
+                         } | self._prompt | self._q_model | self._parser
         else:
             # Define prompt for mode with question and context
-            self.context = ""
-            self.prompt = ChatPromptTemplate.from_template(
+            self._context = ""
+            self._prompt = ChatPromptTemplate.from_template(
                 """You are given a main Question {question} and a context {context}. You must generate a subquestion for the same. Output should in the format: sub-question : <sub_question>"""
             )
-            self.chain = {
+            self._chain = {
                              "question": RunnablePassthrough(),
-                             "context": RunnableLambda(lambda x: self.context)
-                         } | self.prompt | self.q_model | self.parser
+                             "context": RunnableLambda(lambda x: self._context)
+                         } | self._prompt | self._q_model | self._parser
 
     def sub_questions_gen(self, question:str)->str:
         """
@@ -55,7 +54,7 @@ class SubQueryGenAgent:
         Returns:
         str: Generated sub-question.
         """
-        return self.chain.invoke(question)
+        return self._chain.invoke(question)
 
 
 class SubQueryAgent(ContextAgent):
@@ -64,7 +63,6 @@ class SubQueryAgent(ContextAgent):
     It iteratively generates sub-questions and retrieves relevant contexts.
     """
 
-    turns = 3  # Default number of turns for generating progressive sub-questions
 
     def __init__(self, vb, model_pair, reranker=None, no_q=3):
         """
@@ -78,10 +76,10 @@ class SubQueryAgent(ContextAgent):
         """
 
         super().__init__(vb, model_pair, reranker)
-        self.prompt = ChatPromptTemplate.from_template("")
-        self.sub_q_gen1 = SubQueryGenAgent(model_pair, mode=True)  # Initial sub-question generation mode
-        self.sub_q_gen2 = SubQueryGenAgent(model_pair, mode=False)  # Progressive sub-question generation with context
-        self.turns = no_q
+        self._prompt = ChatPromptTemplate.from_template("")
+        self._sub_q_gen1 = SubQueryGenAgent(model_pair, mode=True)  # Initial sub-question generation mode
+        self._sub_q_gen2 = SubQueryGenAgent(model_pair, mode=False)  # Progressive sub-question generation with context
+        self._turns = no_q  # Default number of turns for generating progressive sub-questions
 
     def query(self, question:str) -> list[str]:
         """
@@ -95,21 +93,21 @@ class SubQueryAgent(ContextAgent):
         """
 
         # Generate initial sub-question and retrieve initial context
-        sub_q = self.sub_q_gen1.sub_questions_gen(question)
-        initial_context = self.fetch(sub_q)
+        sub_q = self._sub_q_gen1.sub_questions_gen(question)
+        initial_context = self._fetch(sub_q)
         total_contexts = [initial_context]
 
         # Iteratively generate and fetch contexts for progressive sub-questions
         context, query = initial_context, sub_q
-        for _ in range(self.turns):
-            self.sub_q_gen2.context = context  # Update context for the next sub-question generation
-            query = self.sub_q_gen2.sub_questions_gen(query)
-            context = self.fetch(query)
+        for _ in range(self._turns):
+            self._sub_q_gen2.context = context  # Update context for the next sub-question generation
+            query = self._sub_q_gen2.sub_questions_gen(query)
+            context = self._fetch(query)
             total_contexts.append(context)
 
         return total_contexts
 
-    def fetch(self, question:str) -> str:
+    def _fetch(self, question:str) -> str:
         """
         Fetches and retrieves documents based on the sub-question. Can optionally use reranker.
 
@@ -120,4 +118,4 @@ class SubQueryAgent(ContextAgent):
         str: Concatenated text content from retrieved documents.
         """
 
-        return self.vb.retrieve(question)
+        return self._vb.retrieve(question)

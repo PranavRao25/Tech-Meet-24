@@ -18,10 +18,10 @@ class ContextAgent(ABC):
         reranker (optional): A model for reranking retrieved contexts based on relevance.
         """
 
-        self.vb = vb
-        self.q_model = model_pair[0]  # Language model (LLM) for generating or interpreting queries
-        self.parser = model_pair[1]  # Parser model for processing or structuring query results
-        self.reranker = reranker  # Optional reranker model for prioritizing contexts
+        self._vb = vb
+        self._q_model = model_pair[0]  # Language model (LLM) for generating or interpreting queries
+        self._parser = model_pair[1]  # Parser model for processing or structuring query results
+        self._reranker = reranker  # Optional reranker model for prioritizing contexts
 
     @abstractmethod
     def query(self, question:str) -> list[str]:
@@ -37,7 +37,7 @@ class ContextAgent(ABC):
         raise NotImplementedError('Implement the query function')
 
     @abstractmethod
-    def fetch(self, question:str) -> list[str]:
+    def _fetch(self, question:str) -> list[str]:
         """
         Abstract method to retrieve context for a specific sub-query by querying a vector database.
 
