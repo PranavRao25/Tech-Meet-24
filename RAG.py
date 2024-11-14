@@ -9,7 +9,7 @@ from ragas.metrics import (
     context_precision
 )
 from langgraph.graph import END, StateGraph
-# from MOE.Query_Classifier import
+from MOE.Query_Classifier import QueryClassifier
 from QueryAgent.MCoTAgent import MCoTAgent
 from QueryAgent.CoTAgent import CoTAgent
 from rerankers.rerankers.reranker import *
@@ -119,7 +119,7 @@ class RAG:
         Parameters:
         model: The MoE model.
         """
-        self.moe = model
+        self.moe_agent = RunnableLambda(QueryClassifier(model_name=model).classify)
 
     def thresholder_prep(self, model):
         """
@@ -153,7 +153,7 @@ class RAG:
         Configures the retrieval pipelines.
         """
         self.simple_pipeline = RunnableLambda(Pipeline(self.cot_agent, self.simple_reranker).retrieve)
-        # self.intermediate_pipeline = RunnableLambda(Pipeline(self.mcot_agent, self.intermediate_reranker).retrieve)
+        self.intermediate_pipeline = RunnableLambda(Pipeline(self.mcot_agent, self.intermediate_reranker).retrieve)
         # self.complex_pipeline = RunnableLambda(Pipeline(self.tot_agent, self.complex_reranker).retrieve)
 
     def _context_prep(self, question:str):
@@ -175,11 +175,25 @@ class RAG:
             context: str
             answer: str
 
+        def classify_query(state):
+            # "simple"
+            # "intermediate"
+            # "complex"
+            return self.moe_agent.invoke(state['question'])
+
+
         def simple_pipeline(state):
             """
             Executes the simple pipeline for a given state.
             """
             context = self.simple_pipeline.invoke(state["question"])
+            return {"question": state["question"], "context": context, "answer": state["answer"]}
+
+        def intermediate_pipeline(state):
+            """
+            Executes the simple pipeline for a given state.
+            """
+            context = self.intermediate_pipeline.invoke(state["question"])
             return {"question": state["question"], "context": context, "answer": state["answer"]}
 
         # def fetch(state):
@@ -201,10 +215,19 @@ class RAG:
         self.RAGraph.set_entry_point("entry")
         self.RAGraph.add_node("entry", RunnablePassthrough())
         self.RAGraph.add_node("simple pipeline", simple_pipeline)
+        self.RAGraph.add_node("intermediate_pipeline", intermediate_pipeline)
         self.RAGraph.add_node("llm", answer)
-        # self.RAGraph.add_node("fetch", fetch)
-        self.RAGraph.add_edge("entry", "simple pipeline")
+        self.RAGraph.add_conditional_edges(
+            "entry",
+            classify_query,
+            {
+                "simple": "simple pipeline",
+                "intermediate": "intermediate pipeline",
+                "complex": "complex pipeline"
+            }
+        )
         self.RAGraph.add_edge("simple pipeline", "llm")
+        self.RAGraph.add_edge("intermediate pipeline", "llm")
         # self.RAGraph.set_finish_point("llm")
         self.RAGraph.add_edge("llm", END)
         self.ragchain = self.RAGraph.compile()
