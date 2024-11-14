@@ -6,6 +6,6 @@ PORT = 8666
 
 if __name__ == "__main__":
     client = VectorStoreClient(HOST, PORT)
-    output = client.query("who is Larth?")
+    output = client.query("what is pathway?")
     print(len(output))
     print(output)
