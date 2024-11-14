@@ -129,7 +129,7 @@ def easy(query: str, exclude_urls: Optional[List[str]]) -> str:
     rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3)
     rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
     rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3)
-    retriever = Retriever(available_retrievers=[rm2, rm0, rm1, rm2])
+    retriever = Retriever(available_retrievers=[rm2, rm0, rm1, rm3])
 
     # Perform the search
     sources = retriever.forward(queries=[query], exclude_urls=exclude_urls)

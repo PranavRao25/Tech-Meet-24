@@ -19,7 +19,7 @@ import toml
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-config = toml.load("config.toml")
+config = toml.load("../config.toml")
 HF_TOKEN = config['HF_TOKEN']
 GEMINI_API = config['GEMINI_API']
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
