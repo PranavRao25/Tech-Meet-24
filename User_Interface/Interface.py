@@ -15,14 +15,14 @@ PATHWAY_PORT = 8765
 
 import toml
 
-config = toml.load("../config.toml")
-HF_TOKEN = config['HF_TOKEN']
-GOOGLE_API = config['GOOGLE_API']
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
 
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
+config = toml.load("config.toml")
+HF_TOKEN = config['HF_TOKEN']
+GEMINI_API = config['GEMINI_API']
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
 
 # Function to start the VectorStoreServer
 @st.cache_resource
@@ -89,7 +89,7 @@ def load_colbert():
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
-gemini_model = LLMAgent(google_api_key=GOOGLE_API)
+gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
 client = vb_prep()
 
