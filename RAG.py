@@ -70,8 +70,8 @@ class RAG:
         vb: The vector database used for retrieval.
         llm: The language model used for generation and evaluation.
         """
-        self.vb = vb
-        self.llm = llm
+        self._vb = vb
+        self._llm = llm
 
     def retrieval_agent_prep(self, q_model, parser, reranker, mode):
         """
@@ -84,16 +84,16 @@ class RAG:
         mode (str): The mode of the retriever (simple, intermediate, complex).
         """
         if mode == "simple":
-            self.cot_agent = CoTAgent(self.vb, (q_model, parser), reranker)
+            self._cot_agent = CoTAgent(self._vb, (q_model, parser), reranker)
         elif mode == "intermediate":
-            self.mcot_agent = MCoTAgent(self.vb, (q_model, parser), reranker)
+            self._mcot_agent = MCoTAgent(self._vb, (q_model, parser), reranker)
         elif mode == "complex":
-            self.tot_agent = None
+            self._tot_agent = None
         else:
             raise ValueError("Incorrect mode")
 
     def ground_truth_prep(self):
-        self.ground_truth = None
+        self._ground_truth = None
 
     def reranker_prep(self, reranker, mode):
         """
@@ -104,11 +104,11 @@ class RAG:
         mode (str): The mode of the reranker (simple, intermediate, complex).
         """
         if mode == "simple":
-            self.simple_reranker = Reranker(reranker)
+            self._simple_reranker = Reranker(reranker)
         elif mode == "intermediate":
-            self.intermediate_reranker = Reranker(reranker)
+            self._intermediate_reranker = Reranker(reranker)
         elif mode == "complex":
-            self.complex_reranker = LLMReranker(reranker)
+            self._complex_reranker = LLMReranker(reranker)
         else:
             raise ValueError("Incorrect mode")
 
@@ -119,7 +119,7 @@ class RAG:
         Parameters:
         model: The MoE model.
         """
-        self.moe_agent = RunnableLambda(QueryClassifier(model_name=model).classify)
+        self._moe_agent = RunnableLambda(QueryClassifier(model_name=model).classify)
 
     def thresholder_prep(self, model):
         """
@@ -128,7 +128,7 @@ class RAG:
         Parameters:
         model: The thresholder model.
         """
-        self.thresholder = model
+        self._thresholder = model
 
     def web_search_prep(self, model):
         """
@@ -137,7 +137,7 @@ class RAG:
         Parameters:
         model: The web search model.
         """
-        self.web_search_agent = model
+        self._web_search_agent = model
 
     def step_back_prompt_prep(self, model):
         """
@@ -146,21 +146,21 @@ class RAG:
         Parameters:
         model: The step-back prompt model.
         """
-        self.step_back_agent = model
+        self._step_back_agent = model
 
-    def pipeline_setup(self):
+    def _pipeline_setup(self):
         """
         Configures the retrieval pipelines.
         """
-        self.simple_pipeline = RunnableLambda(Pipeline(self.cot_agent, self.simple_reranker).retrieve)
-        self.intermediate_pipeline = RunnableLambda(Pipeline(self.mcot_agent, self.intermediate_reranker).retrieve)
-        # self.complex_pipeline = RunnableLambda(Pipeline(self.tot_agent, self.complex_reranker).retrieve)
+        self._simple_pipeline = RunnableLambda(Pipeline(self._cot_agent, self._simple_reranker).retrieve)
+        self._intermediate_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker).retrieve)
+        # self.complex_pipeline = RunnableLambda(Pipeline(self._tot_agent, self._complex_reranker).retrieve)
 
     def _context_prep(self, question:str):
         """
         Initializes an empty context.
         """
-        self.context = self.vb(question)
+        self._context = self._vb(question)
 
     def _rag_graph(self):
         """
@@ -175,25 +175,25 @@ class RAG:
             context: str
             answer: str
 
-        def classify_query(state):
+        def _classify_query(state):
             # "simple"
             # "intermediate"
             # "complex"
-            return self.moe_agent.invoke(state['question'])
+            return self._moe_agent.invoke(state['question'])
 
 
-        def simple_pipeline(state):
+        def _simple_pipeline(state):
             """
             Executes the simple pipeline for a given state.
             """
-            context = self.simple_pipeline.invoke(state["question"])
+            context = self._simple_pipeline.invoke(state["question"])
             return {"question": state["question"], "context": context, "answer": state["answer"]}
 
-        def intermediate_pipeline(state):
+        def _intermediate_pipeline(state):
             """
             Executes the simple pipeline for a given state.
             """
-            context = self.intermediate_pipeline.invoke(state["question"])
+            context = self._intermediate_pipeline.invoke(state["question"])
             return {"question": state["question"], "context": context, "answer": state["answer"]}
 
         # def fetch(state):
@@ -201,36 +201,36 @@ class RAG:
         #     Fetches the context and updates the state.
         #     """
         #     self._context_prep(state("question"))
-        #     return {"question": state["question"], "context": self.context, "answer": state["answer"]}
+        #     return {"question": state["question"], "context": self._context, "answer": state["answer"]}
 
-        def answer(state):
+        def _answer(state):
             """
             Generates an answer based on the updated state.
             """
-            self.bot_answer = self.llm.process_query(state["question"], state["context"])
-            return {"question": state["question"], "context": state["context"], "answer": self.bot_answer}
+            bot_answer = self._llm.process_query(state["question"], state["context"])
+            return {"question": state["question"], "context": state["context"], "_answer": bot_answer}
 
-        self.pipeline_setup()
-        self.RAGraph = StateGraph(GraphState)
-        self.RAGraph.set_entry_point("entry")
-        self.RAGraph.add_node("entry", RunnablePassthrough())
-        self.RAGraph.add_node("simple pipeline", simple_pipeline)
-        self.RAGraph.add_node("intermediate_pipeline", intermediate_pipeline)
-        self.RAGraph.add_node("llm", answer)
-        self.RAGraph.add_conditional_edges(
+        self._pipeline_setup()
+        self._RAGraph = StateGraph(GraphState)
+        self._RAGraph.set_entry_point("entry")
+        self._RAGraph.add_node("entry", RunnablePassthrough())
+        self._RAGraph.add_node("simple pipeline", _simple_pipeline)
+        self._RAGraph.add_node("intermediate pipeline", _intermediate_pipeline)
+        self._RAGraph.add_node("llm", _answer)
+        self._RAGraph.add_conditional_edges(
             "entry",
-            classify_query,
+            _classify_query,
             {
                 "simple": "simple pipeline",
                 "intermediate": "intermediate pipeline",
                 "complex": "complex pipeline"
             }
         )
-        self.RAGraph.add_edge("simple pipeline", "llm")
-        self.RAGraph.add_edge("intermediate pipeline", "llm")
-        # self.RAGraph.set_finish_point("llm")
-        self.RAGraph.add_edge("llm", END)
-        self.ragchain = self.RAGraph.compile()
+        self._RAGraph.add_edge("simple pipeline", "llm")
+        self._RAGraph.add_edge("intermediate pipeline", "llm")
+        # self._RAGraph.set_finish_point("llm")
+        self._RAGraph.add_edge("llm", END)
+        self._ragchain = self._RAGraph.compile()
 
     def set(self):
         """
@@ -249,12 +249,12 @@ class RAG:
         str: The generated answer.
         """
         
-        self.question = question
-        state = {"question": self.question, "context": "", "answer": ""}
+        self._question = question
+        state = {"question": self._question, "context": "", "answer": ""}
         self._rag_graph()
-        answer_state = self.ragchain.invoke(state)
-        self.answer = answer_state["answer"]
-        return self.answer
+        answer_state = self._ragchain.invoke(state)
+        self._answer = answer_state["answer"]
+        return self._answer
 
     def ragas_evaluate(self, raise_exceptions=False):
         """
@@ -267,10 +267,10 @@ class RAG:
         DataFrame: Evaluation results as a DataFrame.
         """
         data = {
-            "question": [self.question],
-            "answer": [self.answer],
-            "contexts": [[self.context]],
-            "ground_truth": [self.ground_truth]
+            "question": [self._question],
+            "answer": [self._answer],
+            "contexts": [[self._context]],
+            "ground_truth": [self._ground_truth]
         }
         dataset = Dataset.from_dict(data)
         result = evaluate(
