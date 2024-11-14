@@ -44,10 +44,10 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 import pathway as pw
 
-splitter = CharacterTextSplitter()
+splitter = CharacterTextSplitter(separator="\n")
 
 embedder = HuggingFaceEmbeddings(model_name="dunzhang/stella_en_1.5B_v5")
-files = pw.io.fs.read("./documents/pathway_readme.md", format="binary", with_metadata=True)
+files = pw.io.fs.read("./documents/", format="binary", with_metadata=True)
 server = VectorStoreServer.from_langchain_components(files, embedder=embedder, splitter=splitter)
 
 HOST = "127.0.0.1"
