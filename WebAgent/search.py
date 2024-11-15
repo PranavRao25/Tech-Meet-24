@@ -732,8 +732,6 @@ class Retriever:
         for rm in self.available_retrievers:
             
             result = rm(query, exclude_urls)
-            print(query)
-            print(type(rm).__name__)
             if result == []:
                 print(f"{type(rm).__name__} failed")
             else:

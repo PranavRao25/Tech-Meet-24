@@ -10,15 +10,15 @@ from langchain_community.llms import HuggingFaceHub
 import os
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 import toml
-from RAG import RAG  # Import your RAG class
-from LLM_Agent.LLM_Agent import LLMAgent
-from rerankers.models.models import colBERT
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
 
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
+from RAG import RAG
+from LLM_Agent.LLM_Agent import LLMAgent
+from rerankers.models.models import colBERT
 
 config = toml.load("../config.toml")
 HF_TOKEN = config['HF_TOKEN']
