@@ -48,11 +48,11 @@ class CoTAgent(ContextAgent):
         for subquery in subqueries.split('?'):
             print(f"\n\nsubquery : {subquery}\n\n".upper())
             subquery = str(subquery).strip()  # Clean and format subquery
-            answer.append(self.fetch(question=subquery))
+            answer.append(self._fetch(question=subquery))
 
         return answer
 
-    def fetch(self, question:str)->str:
+    def _fetch(self, question:str)->str:
         """
         Fetches relevant documents based on the question and consolidates their text content.
 

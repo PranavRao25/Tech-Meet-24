@@ -20,3 +20,7 @@ pip install -r requirements.txt
 # Set up the database
 echo "Setting up the database..."
 python DataBase/setup.py
+# echo "Database setup completed"
+
+# # running the interface
+# streamlit run ./User_Interface/Interface.py
