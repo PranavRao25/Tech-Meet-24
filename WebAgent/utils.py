@@ -1,6 +1,7 @@
 import dspy
 from typing import OrderedDict
 
+
 def limit_word_count(input_string: str, max_word_count:int = 1000) -> str:
     """
     Limit the word count of an input string to a specified maximum, while preserving the integrity of complete lines.
@@ -30,6 +31,7 @@ def limit_word_count(input_string: str, max_word_count:int = 1000) -> str:
         limited_string = limited_string.strip() + "\n"
 
     return limited_string.strip()
+
 
 class Information:
     """Class to represent detailed information."""
@@ -68,6 +70,7 @@ class Information:
             "title": self.title,
         }
 
+
 class DialogueTurn:
     def __init__(
         self,
@@ -89,6 +92,7 @@ class DialogueTurn:
             }
         )
 
+
 class AskQuestion(dspy.Signature):
     """You are a student and you have a question. Break down your main question into smaller, precise topics. Based on that topic, Ask a thoughtful, relevant question to gather useful information through google search.
     Guidelines:
@@ -101,7 +105,8 @@ class AskQuestion(dspy.Signature):
     query = dspy.InputField(prefix="Main question that you have: ", format=str)
     conv = dspy.InputField(prefix="Conversation history:\n", format=str)
     question = dspy.OutputField(format=str)
-    
+
+
 class QuestionToQuery(dspy.Signature):
     """You want to answer the question using Google search. What do you type in the search box? Give the queries without saying any other word.
     Input format: Question.
@@ -113,7 +118,8 @@ class QuestionToQuery(dspy.Signature):
 
     question = dspy.InputField(prefix="Question you want to answer: ", format=str)
     queries = dspy.OutputField(format=str)
-    
+
+
 class AnswerQuestion(dspy.Signature):
     """You are an expert who can use information effectively. You have gathered the related information and will now use the information to write a article.
     Make your response as informative as possible, ensuring that every sentence is supported by the gathered information. Do not cite. If the [gathered information] is not directly related to the [topic] or [question], provide the most relevant answer based on the available information. 
