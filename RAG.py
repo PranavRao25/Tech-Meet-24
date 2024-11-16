@@ -230,7 +230,7 @@ class RAG:
         self._RAGraph.add_edge("intermediate pipeline", "llm")
         # self._RAGraph.set_finish_point("llm")
         self._RAGraph.add_edge("llm", END)
-        self._ragchain = self._RAGraph.compile()
+        self.ragchain = self._RAGraph.compile()
 
     def set(self):
         """
@@ -252,7 +252,7 @@ class RAG:
         self._question = question
         state = {"question": self._question, "context": "", "answer": ""}
         self._rag_graph()
-        answer_state = self._ragchain.invoke(state)
+        answer_state = self.ragchain.invoke(state)
         self._answer = answer_state["answer"]
         return self._answer
 

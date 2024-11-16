@@ -3,6 +3,7 @@ from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 import pathway as pw
+from pathway.xpacks.llm.parsers import ParseUnstructured
 
 splitter = CharacterTextSplitter(separator="\n")
 
@@ -15,16 +16,21 @@ fs_files = pw.io.fs.read(
     with_metadata=True
 )
 
-g_files = pw.io.gdrive.read(
-    object_id="1MqU_1lNODSPg22zI6IzL96O15UXMjEvj",
-    service_user_credentials_file="credentials.json",
-    with_metadata=True
-)
+# g_files = pw.io.gdrive.read(
+#     object_id="1MqU_1lNODSPg22zI6IzL96O15UXMjEvj",
+#     service_user_credentials_file="credentials.json",
+#     with_metadata=True
+# )
 
 documents.append(fs_files)
-documents.append(g_files)
+# documents.append(g_files)
 
-server = VectorStoreServer.from_langchain_components(*documents, embedder=embedder, splitter=splitter)
+server = VectorStoreServer.from_langchain_components(
+    *documents, 
+    embedder=embedder, 
+    splitter=None,
+    parser=ParseUnstructured()
+)
 
 HOST = "127.0.0.1"
 PORT = 8666
