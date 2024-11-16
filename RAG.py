@@ -124,7 +124,7 @@ class RAG:
         model: The MoE model.
         """
 
-        self._moe_agent = RunnableLambda(QueryClassifier(model_name=model).classify)
+        self._moe_agent = RunnableLambda(QueryClassifier(model=model).classify)
 
     def thresholder_prep(self, model):
         """

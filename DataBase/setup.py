@@ -3,10 +3,9 @@ from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 import pathway as pw
-from pathway.xpacks.llm.parsers import ParseUnstructured
+# from pathway.xpacks.llm.parsers import ParseUnstructured
 
 splitter = CharacterTextSplitter(separator="\n")
-
 embedder = HuggingFaceEmbeddings(model_name="dunzhang/stella_en_1.5B_v5")
 
 documents = []
@@ -26,10 +25,9 @@ documents.append(fs_files)
 # documents.append(g_files)
 
 server = VectorStoreServer.from_langchain_components(
-    *documents, 
+    fs_files, 
     embedder=embedder, 
-    splitter=None,
-    parser=ParseUnstructured()
+    splitter=splitter
 )
 
 HOST = "127.0.0.1"

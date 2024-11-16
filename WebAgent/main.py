@@ -1,7 +1,7 @@
-from deepsearch import DeepSearch
-from midsearch import MidSearch
-from search import DuckDuckGoSearchRM, GoogleSearch, SerperRM, BraveRM, Retriever
-from models import OllamaClient, GoogleModel
+from .deepsearch import DeepSearch
+from .midsearch import MidSearch
+from .search import DuckDuckGoSearchRM, GoogleSearch, SerperRM, BraveRM, Retriever
+from .models import OllamaClient, GoogleModel
 from abc import ABC
 from typing import List, Optional
 
