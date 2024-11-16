@@ -1,12 +1,25 @@
 from pathway.xpacks.llm.vector_store import VectorStoreServer
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from io import BytesIO
 import pathway as pw
+import pymupdf
 
-splitter = CharacterTextSplitter(separator="\n")
+embedder = HuggingFaceEmbeddings(model_name="colbert-ir/colbertv2.0") # change to Dunzhang
 
-embedder = HuggingFaceEmbeddings(model_name="dunzhang/stella_en_1.5B_v5")
+class PDFParser(pw.UDF):
+    def __wrapped__(self, contents: bytes) -> list[tuple[str, dict]]:
+        try:
+            docs: list[tuple[str, dict]] = [(contents.decode("utf-8"), {})]
+            return docs
+        except:
+            pdfile = BytesIO(contents)
+            doc = pymupdf.open(stream=pdfile, filetype="pdf")
+            text = ""
+            for page in doc:
+                text += page.get_text()
+            docs: list[tuple[str, dict]] = [(text, {}) ]
+            return docs
 
 documents = []
 fs_files = pw.io.fs.read(
@@ -23,8 +36,7 @@ g_files = pw.io.gdrive.read(
 
 documents.append(fs_files)
 documents.append(g_files)
-
-server = VectorStoreServer.from_langchain_components(*documents, embedder=embedder, splitter=splitter)
+server = VectorStoreServer.from_langchain_components(*documents, embedder=embedder, parser=PDFParser())
 
 HOST = "127.0.0.1"
 PORT = 8666
