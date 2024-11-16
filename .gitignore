@@ -2,5 +2,6 @@ __pycache__
 credentials.json
 test*
 Cache
+env
 # documents*
 # *.toml

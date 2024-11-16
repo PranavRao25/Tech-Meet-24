@@ -4,6 +4,7 @@ from search import Retriever
 import dspy
 import regex as re
 
+
 class Student(dspy.Module):
     """
     Simulate a student asking questions based on a given query and dialogue history.
@@ -56,6 +57,7 @@ class Student(dspy.Module):
             ).question
         
         return dspy.Prediction(question=question)
+
 
 class Teacher(dspy.Module):
     """Answer questions using search-based retrieval and answer generation. This module conducts the following steps:
@@ -117,6 +119,7 @@ class Teacher(dspy.Module):
                 answer = "No info here. Please ask another question."
 
         return dspy.Prediction(queries=queries, searched_results=searched_results, answer=answer)
+
 
 class ConvSimulator(dspy.Module):
     """Simulate a conversation between a Teacher and a Student."""
@@ -186,6 +189,7 @@ class ConvSimulator(dspy.Module):
             dlg_history.append(dlg_turn)
 
         return dspy.Prediction(dlg_history=dlg_history)
+
 
 class DeepSearch(dspy.Module):
     """
