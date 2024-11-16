@@ -10,6 +10,7 @@ from trafilatura import extract
 import backoff
 from dsp import backoff_hdlr, giveup_hdlr
 
+
 class WebPageHelper:
     """Helper class to process web pages.
 
@@ -89,6 +90,7 @@ class WebPageHelper:
             articles[u]["snippets"] = self.text_splitter.split_text(articles[u]["text"])
 
         return articles
+
 
 class BingSearch(dspy.Retrieve):
     def __init__(
@@ -190,6 +192,7 @@ class BingSearch(dspy.Retrieve):
             collected_results.append(r)
 
         return collected_results
+
 
 class BraveRM(dspy.Retrieve):
     def __init__(
@@ -551,6 +554,7 @@ class GoogleSearch(dspy.Retrieve):
     
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+
 class SerperRM(dspy.Retrieve):
     """Retrieve information from custom queries using Serper.dev."""
 
@@ -715,6 +719,7 @@ class SerperRM(dspy.Retrieve):
                 continue
 
         return collected_results
+
 
 class Retriever:
     

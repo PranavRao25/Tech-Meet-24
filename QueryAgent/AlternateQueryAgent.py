@@ -39,5 +39,7 @@ class AlternateQueryAgent:
         """
 
         # Generate alternate questions and include the original question in the list
-        mul_qs = (self._chain.invoke(question).split('\n')).append(question)
+
+        mul_qs = self._chain.invoke(question).split('\n')
+        # mul_qs = ().append(question)
         return mul_qs

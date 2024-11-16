@@ -3,7 +3,8 @@ from typing import Union
 from search import Retriever
 from typing import List
 from utils import QuestionToQuery, Information, limit_word_count
-    
+
+
 class Student(dspy.Module):
     """
     Answer questions using search-based retrieval and answer generation. This module conducts the following steps:

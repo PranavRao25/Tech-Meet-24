@@ -7,12 +7,14 @@ from typing import List, Optional
 
 
 import toml
-config = toml.load("../config.toml")
 
+
+config = toml.load("../config.toml")
 GEMINI_API = config["GEMINI_API"]
 SERPER_API = config["SERPER_API"]
 GOOGLE_API = config["GOOGLE_API"]
 BRAVE_API = config["BRAVE_API"]
+
 
 # Function to handle hard queries
 def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
@@ -65,6 +67,7 @@ def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
     # Perform the query
     return deepsearcher.query(query=query, ground_truth_url=ground_truth_url)
 
+
 # Function to handle medium queries
 def medium(query: str, ground_truth_url: List[str]) -> str:
     """
@@ -112,6 +115,7 @@ def medium(query: str, ground_truth_url: List[str]) -> str:
     # Perform the query
     return midesearch.query(query=query, ground_truth_url=ground_truth_url)
 
+
 # Function to handle easy queries
 def easy(query: str, exclude_urls: Optional[List[str]]) -> str:
     """
@@ -138,6 +142,7 @@ def easy(query: str, exclude_urls: Optional[List[str]]) -> str:
         info += source['snippets'][0]
         
     return info
+
 
 class WebAgent(ABC):
     """
@@ -197,7 +202,8 @@ class WebAgent(ABC):
             return easy(query, exclude_urls=[''])
         else:
             return "Unable to determine query difficulty."
-    
+
+
 if __name__ == '__main__':
 
     query = str(input())

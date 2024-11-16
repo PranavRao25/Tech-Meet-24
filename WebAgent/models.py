@@ -5,6 +5,7 @@ from dsp import ERRORS, backoff_hdlr, giveup_hdlr
 import os
 import backoff
 
+
 class OpenAIModel(dspy.OpenAI):
     """A wrapper class for dspy.OpenAI."""
 
@@ -86,6 +87,7 @@ class OpenAIModel(dspy.OpenAI):
             completions = [c for _, c in scored_completions]
 
         return completions
+
 
 class GoogleModel(dspy.dsp.modules.lm.LM):
     """A wrapper class for Google Gemini AP."""
@@ -212,6 +214,7 @@ class GoogleModel(dspy.dsp.modules.lm.LM):
             completions.append(response.parts[0].text)
 
         return completions
+
 
 class OllamaClient(dspy.OllamaLocal):
     """A wrapper class for dspy.OllamaClient."""
