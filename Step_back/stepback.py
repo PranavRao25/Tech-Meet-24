@@ -1,12 +1,11 @@
-from langchain.schema.output_parser import StrOutputParser
-from langchain.output_parsers import CommaSeparatedListOutputParser
+# from langchain.schema.output_parser import StrOutputParser
+# from langchain.output_parsers import CommaSeparatedListOutputParser
 from langchain.schema.runnable import RunnableLambda
 from transformers import pipeline
 
 class QuestionGen:
-    def __init__(self, q_model, parser=None):
+    def __init__(self, q_model):
         self.q_model = q_model
-        self.parser = parser or StrOutputParser()  # Default to StrOutputParser
         # Create prompt templates and processing chain
         self.few_shot_examples = self.create_few_shot_examples()
         self.question_gen_chain = self.create_question_generation_chain()
@@ -47,21 +46,27 @@ class QuestionGen:
             )
             # Use the Hugging Face model to generate output
             result = self.q_model(prompt, max_length=1000, num_return_sequences=1)
-            return result[0]["generated_text"]  # Extract the generated text
+            return result[0]["generated_text"].split("\nOutput:")[-1].split('\n')[0].split(',')  # Extract the generated text
 
         # Combine the model output with the parser
-        return RunnableLambda(generate_questions) | self.parser
+        return RunnableLambda(generate_questions) 
 
     def __call__(self, question):
         return self.question_gen_chain.invoke(question)
     
 def query(q_model, question):
-    stepback = QuestionGen(q_model,parser=CommaSeparatedListOutputParser)
+    stepback = QuestionGen(q_model)
     return stepback(question)
 
-q_model="YOUR_MODEL"
+q_model=pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
 question="YOUR_QUESTION"
 response=query(q_model,question)
 
 
 # q_model = pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
+# question = '''What happens to the pressure, P, of an ideal gas if the temperature is increased by a factor of 2 and the volume is increased by a factor of 8 ?'''
+# ['Output: What is the relationship between pressure and temperature?',
+#  ' What is the relationship between pressure and volume?']
+
+# question = '''If you have 3 moles of nitrogen and 4 moles of hydrogen to produce ammonia, which one will get exhausted first assuming a complete reaction?'''
+# [' What is the chemical equation for the reaction?', ' What is the mole ratio of nitrogen to hydrogen?', ' What is the reaction between nitrogen and hydrogen?']

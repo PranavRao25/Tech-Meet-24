@@ -1,13 +1,12 @@
 from pathway.xpacks.llm.vector_store import VectorStoreServer
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from io import BytesIO
 import pathway as pw
 import pymupdf
 
 embedder = HuggingFaceEmbeddings(model_name="colbert-ir/colbertv2.0") # change to Dunzhang
-splitter = CharacterTextSplitter(separator="\n") # some problem with splitter. even though seperator is "\n" it is not splitting at some "\n". ## note: it's actually a feature
+splitter = CharacterTextSplitter(separator="\n")
 class PDFParser(pw.UDF):
     def __wrapped__(self, contents: bytes) -> list[tuple[str, dict]]:
         try:
