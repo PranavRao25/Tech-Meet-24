@@ -14,16 +14,18 @@ PORT = 8666
 
 client = VectorStoreClient(HOST, PORT)
 
+
 class ToTAgent:
-    def __init__(self, client, threshold=7, breadth=5):
+    def __init__(self, client, threshold=7, breadth=5, model=ChatGoogleGenerativeAI(model="gemini-pro")):
         """
         Initialize the ToT Agent.
         :param client: Instance of a client for context retrieval
         :param threshold: Minimum relevance score to retain a context
         :param breadth: Number of subtopics to generate
         """
+
         self.client = client
-        self.model = ChatGoogleGenerativeAI(model="gemini-pro")
+        self.model = model
         self.threshold = threshold
         self.breadth = breadth
         self.deeped_contexts=set()

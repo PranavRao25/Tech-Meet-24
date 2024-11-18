@@ -12,6 +12,9 @@ from langgraph.graph import END, StateGraph
 from MOE.Query_Classifier import QueryClassifier
 from QueryAgent.MCoTAgent import MCoTAgent
 from QueryAgent.CoTAgent import CoTAgent
+from Step_back.stepback import QuestionGen
+from langchain.schema.runnable import RunnableLambda
+from transformers import pipeline
 from QueryAgent.ToTAgent import ToTAgent
 from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
@@ -23,7 +26,7 @@ class Pipeline:
     Utilizes LangChain's RunnableLambda for modularity and reusability.
     """
 
-    def __init__(self, retrieval_agent, reranker):
+    def __init__(self, retrieval_agent, reranker, step_back_agent=None):
         """
         Initializes the Pipeline with a retrieval agent and a reranker.
 
@@ -31,8 +34,10 @@ class Pipeline:
         retrieval_agent: The retrieval agent responsible for querying context.
         reranker: The reranker used to rank the retrieved context based on relevance.
         """
+
         self.simple_retrieval_agent = retrieval_agent
         self.simple_reranker = reranker
+        self.step_back_agent = step_back_agent  # takes a str and returns a list of str
 
     def retrieve(self, question):
         """
@@ -44,8 +49,16 @@ class Pipeline:
         Returns:
         list[str]: The ranked context.
         """
-        context = self.simple_retrieval_agent.query(question)
-        new_context = self.simple_reranker.rerank(question, context)
+
+        if self.step_back_agent is not None:
+            questions = self.step_back_agent(question)
+            contexts = []
+            for question in questions:
+                contexts += self.simple_retrieval_agent.query(question)
+        else:
+            contexts = self.simple_retrieval_agent.query(question)
+        new_context = self.simple_reranker.rerank(question, contexts)
+
         return new_context
 
 
@@ -88,11 +101,11 @@ class RAG:
         """
 
         if mode == "simple":
-            self._cot_agent = CoTAgent(self._vb, (q_model, parser), reranker)
+            self._cot_agent = RunnableLambda(CoTAgent(self._vb, (q_model, parser), reranker).query)
         elif mode == "intermediate":
-            self._mcot_agent = MCoTAgent(self._vb, (q_model, parser), reranker)
+            self._mcot_agent = RunnableLambda(MCoTAgent(self._vb, (q_model, parser), reranker).query)
         elif mode == "complex":
-            self._tot_agent = ToTAgent(self.vb, threshold=7, breadth=5)
+            self._tot_agent = None # RunnableLambda(ToTAgent(self._vb, (q_model, parser), reranker).query)
         else:
             raise ValueError("Incorrect mode")
 
@@ -155,7 +168,7 @@ class RAG:
         model: The step-back prompt model.
         """
 
-        self._step_back_agent = model
+        self._step_back_agent = QuestionGen(model)
 
     def _pipeline_setup(self):
         """
@@ -163,9 +176,9 @@ class RAG:
         """
 
         self._simple_pipeline = RunnableLambda(Pipeline(self._cot_agent, self._simple_reranker).retrieve)
-        self._intermediate_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker).retrieve)
+        self._intermediate_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker, step_back_agent=self._step_back_agent).retrieve)
         # why is it not getting the _tot_agent?
-        self._complex_pipeline = RunnableLambda(Pipeline(self._tot_agent, self._complex_reranker).retrieve)
+        self._complex_pipeline = RunnableLambda(Pipeline(self._tot_agent, self._complex_reranker, step_back_agent=self._step_back_agent).retrieve)
 
     def _context_prep(self, question:str):
         """
@@ -223,13 +236,13 @@ class RAG:
             return {"question": state["question"], "context": state["context"], "answer": state["answer"]}
 
         def _classify_answer(state):
-            q = state['question']
-            return 'llm' if q == True else 'web'
+            return 'llm' if state['question'] == True else 'web'
 
         def _answer(state):
             """
             Generates an answer based on the updated state.
             """
+
             bot_answer = self._llm.process_query(state["question"], state["context"])
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
@@ -253,12 +266,12 @@ class RAG:
             {
                 "simple": "simple pipeline",
                 "intermediate": "intermediate pipeline",
-                "complex": "complex pipeline"
+                "complex": END
             }
         )
         self._RAGraph.add_edge("simple pipeline", "thresholder")
         self._RAGraph.add_edge("intermediate pipeline", "thresholder")
-        self._RAGraph.add_edge("complex pipeline", "thresholder")
+        # self._RAGraph.add_edge("complex pipeline", "thresholder")
         self._RAGraph.add_conditional_edges(
             "thresholder",
             _classify_answer,
@@ -291,7 +304,7 @@ class RAG:
         self._question = question
         state = {"question": self._question, "context": "", "answer": ""}
         self._rag_graph()
-        answer_state = self.ragchain.invoke(state)
+        answer_state = self._ragchain.invoke(state)
         self._answer = answer_state["answer"]
         return self._answer
 

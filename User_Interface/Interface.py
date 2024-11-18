@@ -130,6 +130,7 @@ rag.retrieval_agent_prep(
 rag.reranker_prep(reranker=colbert_model, mode="simple")
 rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
 rag.moe_prep(moe_model)
+rag.step_back_prompt_prep(model=smol_lm_model)
 rag.set()
 
 # Main chat interface using `st.chat`
