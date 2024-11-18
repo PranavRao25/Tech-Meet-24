@@ -12,6 +12,7 @@ from langgraph.graph import END, StateGraph
 from MOE.Query_Classifier import QueryClassifier
 from QueryAgent.MCoTAgent import MCoTAgent
 from QueryAgent.CoTAgent import CoTAgent
+from QueryAgent.ToTAgent import ToTAgent
 from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
 
@@ -91,7 +92,7 @@ class RAG:
         elif mode == "intermediate":
             self._mcot_agent = MCoTAgent(self._vb, (q_model, parser), reranker)
         elif mode == "complex":
-            self._tot_agent = None
+            self._tot_agent = ToTAgent(self.vb, threshold=7, breadth=5)
         else:
             raise ValueError("Incorrect mode")
 
@@ -124,7 +125,7 @@ class RAG:
         model: The MoE model.
         """
 
-        self._moe_agent = RunnableLambda(QueryClassifier(model=model).classify)
+        # self._moe_agent = RunnableLambda(QueryClassifier(model=model).classify)
 
     def thresholder_prep(self, model):
         """
@@ -163,7 +164,8 @@ class RAG:
 
         self._simple_pipeline = RunnableLambda(Pipeline(self._cot_agent, self._simple_reranker).retrieve)
         self._intermediate_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker).retrieve)
-        # self.complex_pipeline = RunnableLambda(Pipeline(self._tot_agent, self._complex_reranker).retrieve)
+        # why is it not getting the _tot_agent?
+        self._complex_pipeline = RunnableLambda(Pipeline(self._tot_agent, self._complex_reranker).retrieve)
 
     def _context_prep(self, question:str):
         """
@@ -189,6 +191,9 @@ class RAG:
             # "simple"
             # "intermediate"
             # "complex"
+            import numpy
+            return numpy.random.choice(["simple", "intermediate", "complex"])
+            return "simple"
             return self._moe_agent.invoke(state['question'])
 
         def _simple_pipeline(state):
@@ -201,11 +206,19 @@ class RAG:
 
         def _intermediate_pipeline(state):
             """
-            Executes the simple pipeline for a given state.
+            Executes the intermediate pipeline for a given state.
             """
             context = self._intermediate_pipeline.invoke(state["question"])
             return {"question": state["question"], "context": context, "answer": state["answer"]}
-
+        
+        def _complex_pipeline(state):
+            """
+            Executes the complex pipeline for a given state.
+            """
+            
+            context = self._complex_pipeline.invoke(state["question"])
+            return {"question": state["question"], "context": context, "answer": state["answer"]}
+        
         def _threshold(state):
             return {"question": state["question"], "context": state["context"], "answer": state["answer"]}
 
@@ -230,6 +243,7 @@ class RAG:
         self._RAGraph.add_node("entry", RunnablePassthrough())
         self._RAGraph.add_node("simple pipeline", _simple_pipeline)
         self._RAGraph.add_node("intermediate pipeline", _intermediate_pipeline)
+        self._RAGraph.add_node("complex pipeline", _complex_pipeline)
         self._RAGraph.add_node("thresholder", _threshold)
         self._RAGraph.add_node("llm", _answer)
         self._RAGraph.add_node("web", _search)
