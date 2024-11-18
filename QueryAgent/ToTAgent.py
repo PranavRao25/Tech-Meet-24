@@ -14,6 +14,7 @@ PORT = 8666
 
 client = VectorStoreClient(HOST, PORT)
 
+
 class ToTAgent:
     def __init__(self, client, threshold=7, breadth=5):
         """
@@ -22,6 +23,7 @@ class ToTAgent:
         :param threshold: Minimum relevance score to retain a context
         :param breadth: Number of subtopics to generate
         """
+
         self.client = client
         self.model = ChatGoogleGenerativeAI(model="gemini-pro")
         self.threshold = threshold
