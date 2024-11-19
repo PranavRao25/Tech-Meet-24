@@ -1,5 +1,5 @@
 from pathway.xpacks.llm.vector_store import VectorStoreServer
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from io import BytesIO
 import pathway as pw

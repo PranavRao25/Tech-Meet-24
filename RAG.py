@@ -105,7 +105,7 @@ class RAG:
         elif mode == "intermediate":
             self._mcot_agent = RunnableLambda(MCoTAgent(self._vb, (q_model, parser), reranker).query)
         elif mode == "complex":
-            self._tot_agent = None
+            self._tot_agent = RunnableLambda(ToTAgent(self._vb, (q_model, parser), reranker).query)
         else:
             raise ValueError("Incorrect mode")
 
@@ -255,7 +255,7 @@ class RAG:
         self._RAGraph.add_node("entry", RunnablePassthrough())
         self._RAGraph.add_node("simple pipeline", _simple_pipeline)
         self._RAGraph.add_node("intermediate pipeline", _intermediate_pipeline)
-        # self._RAGraph.add_node("complex pipeline", _complex_pipeline)
+        self._RAGraph.add_node("complex pipeline", _complex_pipeline)
         self._RAGraph.add_node("thresholder", _threshold)
         self._RAGraph.add_node("llm", _answer)
         self._RAGraph.add_node("web", _search)
@@ -265,12 +265,12 @@ class RAG:
             {
                 "simple": "simple pipeline",
                 "intermediate": "intermediate pipeline",
-                "complex": END
+                "complex": "complex pipeline"
             }
         )
         self._RAGraph.add_edge("simple pipeline", "thresholder")
         self._RAGraph.add_edge("intermediate pipeline", "thresholder")
-        # self._RAGraph.add_edge("complex pipeline", "thresholder")
+        self._RAGraph.add_edge("complex pipeline", "thresholder")
         self._RAGraph.add_conditional_edges(
             "thresholder",
             _classify_answer,
