@@ -127,8 +127,17 @@ rag.retrieval_agent_prep(
     reranker=colbert_model,
     mode="intermediate"
 )
+
+rag.retrieval_agent_prep(
+    q_model=smol_lm_model,
+    parser=StrOutputParser(),  # Replace this with the actual parser you provide
+    reranker=colbert_model,
+    mode="complex"
+)
+
 rag.reranker_prep(reranker=colbert_model, mode="simple")
 rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
+rag.reranker_prep(reranker=bge_m3_model, mode="complex")
 rag.moe_prep(moe_model)
 rag.step_back_prompt_prep(model=smol_lm_model)
 rag.set()
