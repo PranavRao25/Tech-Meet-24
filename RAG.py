@@ -105,7 +105,7 @@ class RAG:
         elif mode == "intermediate":
             self._mcot_agent = RunnableLambda(MCoTAgent(self._vb, (q_model, parser), reranker).query)
         elif mode == "complex":
-            self._tot_agent = None # RunnableLambda(ToTAgent(self._vb, (q_model, parser), reranker).query)
+            self._tot_agent = None
         else:
             raise ValueError("Incorrect mode")
 
@@ -177,7 +177,6 @@ class RAG:
 
         self._simple_pipeline = RunnableLambda(Pipeline(self._cot_agent, self._simple_reranker).retrieve)
         self._intermediate_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker, step_back_agent=self._step_back_agent).retrieve)
-        # why is it not getting the _tot_agent?
         self._complex_pipeline = RunnableLambda(Pipeline(self._tot_agent, self._complex_reranker, step_back_agent=self._step_back_agent).retrieve)
 
     def _context_prep(self, question:str):
@@ -256,7 +255,7 @@ class RAG:
         self._RAGraph.add_node("entry", RunnablePassthrough())
         self._RAGraph.add_node("simple pipeline", _simple_pipeline)
         self._RAGraph.add_node("intermediate pipeline", _intermediate_pipeline)
-        self._RAGraph.add_node("complex pipeline", _complex_pipeline)
+        # self._RAGraph.add_node("complex pipeline", _complex_pipeline)
         self._RAGraph.add_node("thresholder", _threshold)
         self._RAGraph.add_node("llm", _answer)
         self._RAGraph.add_node("web", _search)
