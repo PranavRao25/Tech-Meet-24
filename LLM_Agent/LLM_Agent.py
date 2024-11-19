@@ -4,6 +4,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from pydantic import BaseModel, Field
+from langchain.schema.runnable import RunnablePassthrough, RunnableMap
 
 class ResponseSchema(BaseModel):
     """Schema for structured output"""
@@ -74,11 +75,17 @@ class LLMAgent:
         )
 
         # Create LangChain chain
-        self.chain = LLMChain(
-            llm=self.llm,
-            prompt=self.prompt_template
+        # self.chain = LLMChain(
+        #     llm=self.llm,
+        #     prompt=self.prompt_template
+        # )
+        
+        self.chain = (
+            RunnableMap({"question": RunnablePassthrough(), "context": RunnablePassthrough()})
+            | self.prompt_template
+            | self.llm
         )
-
+        
     def process_query(
         self,
         question: str,
@@ -102,10 +109,12 @@ class LLMAgent:
         ])
         
         # Get response from LLM
-        response = self.chain.run(
-            context=formatted_context,
-            question=question
-        )
+        response = self.chain.invoke(
+            {
+                "context": formatted_context, 
+                "question": question
+            }
+        ).content
         
         # Parse and return structured output
         return self.output_parser.parse(response).answer
