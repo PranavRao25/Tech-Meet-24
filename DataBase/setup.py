@@ -5,7 +5,7 @@ from io import BytesIO
 import pathway as pw
 import pymupdf
 
-embedder = HuggingFaceEmbeddings(model_name="colbert-ir/colbertv2.0") # change to Dunzhang
+embedder = HuggingFaceEmbeddings(model_name="colbert-ir/colbertv2.0") # change to dunzhang/stella_en_1.5B_v5
 splitter = CharacterTextSplitter(separator="\n")
 class PDFParser(pw.UDF):
     def __wrapped__(self, contents: bytes) -> list[tuple[str, dict]]:
