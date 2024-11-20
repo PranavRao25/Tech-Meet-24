@@ -12,21 +12,23 @@ os.environ["GOOGLE_API_KEY"] = config['GEMINI_API']
 HOST = "127.0.0.1"
 PORT = 8666
 
-client = VectorStoreClient(HOST, PORT)
-
 class ToTAgent:
-    def __init__(self, client, threshold=7, breadth=5):
+    def __init__(self, vb, model_pair: tuple, reranker, best:int=3, threshold:int=7, breadth:int=5, max_depth:int=2) -> None:
         """
         Initialize the ToT Agent.
-        :param client: Instance of a client for context retrieval
+        :param vb: Instance of a vb for context retrieval
         :param threshold: Minimum relevance score to retain a context
         :param breadth: Number of subtopics to generate
         """
-        self.client = client
-        self.model = ChatGoogleGenerativeAI(model="gemini-pro")
+
+        self.vb = vb
+        self.model = model_pair[0]
+        self.rereanker = reranker
         self.threshold = threshold
         self.breadth = breadth
         self.deeped_contexts=set()
+        self.max_depth=max_depth
+        self.best=best
         # self.relevant_contexts=set()
         
     def parse_topics(self, text: str) -> List[str]:
@@ -82,12 +84,12 @@ class ToTAgent:
             print("could not evaluate topic")
             return 0  # Return 0 if we can't parse a valid score
 
-    def recursive_retrieve(self, query: str, context: str, depth=0, max_depth=2) -> List[dict]:
+    def recursive_retrieve(self, query: str, context: str, depth=0) -> List[dict]:
         """
         Recursively retrieve, expand, and evaluate contexts.
         Now with improved topic handling and error checking.
         """
-        if depth >= max_depth:
+        if depth >= self.max_depth:
             return []
 
         topics = self.expand_thought(context)
@@ -102,7 +104,7 @@ class ToTAgent:
 
             if score >= self.threshold:
                 try:
-                    specific_contexts = self.client.query(topic)
+                    specific_contexts = self.vb.query(topic)
                     contexts = set()
                     for specific_context in specific_contexts:
                         contexts.add(specific_context['text'])
@@ -115,7 +117,7 @@ class ToTAgent:
                         if subcontext not in self.deeped_contexts:
                             self.deeped_contexts.add(subcontext)
                             deeper_contexts = self.recursive_retrieve(
-                                query, subcontext, depth + 1, max_depth
+                                query, subcontext, depth + 1, self.max_depth
                             )
                             relevant_contexts.update(deeper_contexts)
 
@@ -127,10 +129,10 @@ class ToTAgent:
         # self.relevant_contexts.update(relevant_contexts)
         return relevant_contexts
 
-    def query(self, query: str, max_depth=2) -> str:
+    def query(self, query: str) -> list[str]:
         """Run the ToT retrieval and generate an answer with improved error handling."""
         try:
-            initial_contexts = self.client.query(query)
+            initial_contexts = self.vb.query(query)
             # print("initial_contexts")
             # print(initial_contexts)
             if not initial_contexts:
@@ -148,22 +150,40 @@ class ToTAgent:
                     if context not in self.deeped_contexts:
                         self.deeped_contexts.add(context)
                         contexts = self.recursive_retrieve(
-                            query, context, depth=0, max_depth=max_depth
+                            query, context, depth=0, max_depth=self.max_depth
                         )
                         relevant_contexts.update(contexts)
 
             # if not relevant_contexts:
             #     return "No relevant contexts found to answer the query."
 
-            return relevant_contexts
+            final_context = self._clean(query, list(relevant_contexts))
+            return final_context
 
         except Exception as e:
             # print("relevant_contexts:")
             # print(self.relevant_contexts)
             return f"An error occurred while processing your query: {str(e)}"
+        
+    
+    def _clean(self, question: str, alternate_context: list[str]) -> list[str]:
+        """
+        Cleans the retrieved contexts by reranking and returning only the best contexts.
 
+        Parameters:
+        question (str): The original user question for reference during reranking.
+        alternate_context (list[str]): List of contexts generated from alternate queries.
 
-if __name__ == '__main__':
-            
-    tot=ToTAgent(client)
-    print(tot.query("What is Pathway and how is it related to Data Science?"))
+        Returns:
+        list[str]: A list of the top contexts after reranking.
+        """
+
+        # Rerank contexts and select the top 'best' number of contexts
+        context = self._reranker.rank(
+            query=question,
+            documents=alternate_context,
+            return_documents=True
+        )[:len(alternate_context) - self.best + 1]
+
+        # Return the text of the top contexts
+        return [c['text'] for c in context]

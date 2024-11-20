@@ -1,12 +1,13 @@
 import sys
 from pathlib import Path
 import streamlit as st
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import subprocess
 import threading
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import HuggingFaceHub
+from langchain_huggingface import HuggingFaceEndpoint
 import os
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 import toml
@@ -65,16 +66,18 @@ def vb_prep():
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
-    model = AutoModel.from_pretrained("BAAI/bge-m3")
+    model = AutoModelForCausalLM.from_pretrained("BAAI/bge-m3")
     tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-m3")
     return model, tokenizer
 
 
 @st.cache_resource
 def load_smol_lm():
-    return HuggingFaceHub(
+    return HuggingFaceEndpoint(
         repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
-        model_kwargs = {"temperature":0.5, "max_length": 64, "max_new_tokens": 512}
+        temperature = 0.5,  
+        max_new_tokens = 512,
+        model_kwargs = { "max_length" : "64" }
     )
 
 
@@ -127,9 +130,19 @@ rag.retrieval_agent_prep(
     reranker=colbert_model,
     mode="intermediate"
 )
+
+rag.retrieval_agent_prep(
+    q_model=smol_lm_model,
+    parser=StrOutputParser(),  # Replace this with the actual parser you provide
+    reranker=colbert_model,
+    mode="complex"
+)
+
 rag.reranker_prep(reranker=colbert_model, mode="simple")
 rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
+rag.reranker_prep(reranker=bge_m3_model, mode="complex")
 rag.moe_prep(moe_model)
+rag.step_back_prompt_prep(model=smol_lm_model)
 rag.set()
 
 # Main chat interface using `st.chat`
