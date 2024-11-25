@@ -23,4 +23,4 @@ python DataBase/setup.py
 # echo "Database setup completed"
 
 # # running the interface
-# streamlit run ./User_Interface/Interface.py
+streamlit run ./User_Interface/Interface.py

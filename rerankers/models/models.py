@@ -1,5 +1,5 @@
 import numpy as np
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 class BaseModelClass:
     def __init__(self):
