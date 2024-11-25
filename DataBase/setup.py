@@ -1,12 +1,15 @@
 from pathway.xpacks.llm.vector_store import VectorStoreServer
-from langchain_huggingface import HuggingFaceEmbeddings
+# from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from io import BytesIO
+from utils import IndexServer
 import pathway as pw
 import pymupdf
 
-embedder = HuggingFaceEmbeddings(model_name="dunzhang/stella_en_1.5B_v5") # change to Dunzhang
+embedder = HuggingFaceEmbeddings(model_name="colbert-ir/colbertv2.0") # change to dunzhang/stella_en_1.5B_v5
 splitter = CharacterTextSplitter(separator="\n")
+
 class PDFParser(pw.UDF):
     def __wrapped__(self, contents: bytes) -> list[tuple[str, dict]]:
         try:
@@ -36,7 +39,20 @@ fs_files = pw.io.fs.read(
 
 documents.append(fs_files)
 # documents.append(g_files)
-server = VectorStoreServer.from_langchain_components(*documents, embedder=embedder, splitter=splitter, parser=PDFParser())
+# server = VectorStoreServer.from_langchain_components(
+#     *documents, 
+#     embedder=embedder, 
+#     splitter=splitter, 
+#     parser=PDFParser(),
+#     )
+
+server = IndexServer.from_langchain_components(
+    *documents, 
+    embedder=embedder, 
+    splitter=splitter, 
+    parser=PDFParser(),
+    index="brute_force"
+    )
 
 HOST = "127.0.0.1"
 PORT = 8666
