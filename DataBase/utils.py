@@ -1,5 +1,5 @@
 from pathway.xpacks.llm.vector_store import VectorStoreServer
-from pathway.stdlib.indexing import default_usearch_knn_document_index, default_vector_document_index, default_lsh_knn_document_index, default_brute_force_knn_document_index, default_full_text_document_index
+from pathway.stdlib.indexing import default_usearch_knn_document_index, default_vector_document_index, default_lsh_knn_document_index, default_brute_force_knn_document_index
 from pathway.stdlib.indexing.data_index import _SCORE, DataIndex
 from typing import Callable
 import pathway as pw
@@ -8,7 +8,7 @@ INDEXES = {
     "usearch":default_usearch_knn_document_index,
     "vector_document":default_vector_document_index,
     "lsh":default_lsh_knn_document_index,
-    "brute_force":default_brute_force_knn_document_index
+    "brute_force":default_brute_force_knn_document_index,
 }
 
 def _give_build_fn(index_fn: Callable) -> Callable:
