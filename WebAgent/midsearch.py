@@ -1,8 +1,8 @@
 import dspy
 from typing import Union
-from search import Retriever
+from .search import Retriever
 from typing import List
-from utils import QuestionToQuery, Information, limit_word_count
+from .utils import QuestionToQuery, Information, limit_word_count
 
 
 class Student(dspy.Module):

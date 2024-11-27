@@ -70,10 +70,10 @@ def check_relevance_for_all_contexts(question, contexts):
 
     return results
 
-question=""
-contexts=[]
+# question=""
+# contexts=[]
 
-results = check_relevance_for_all_contexts(question, contexts)
+# results = check_relevance_for_all_contexts(question, contexts)
 
-for relevance_score in results:
-    print(f"\nRelevance Score: {relevance_score}")
+# for relevance_score in results:
+#     print(f"\nRelevance Score: {relevance_score}")

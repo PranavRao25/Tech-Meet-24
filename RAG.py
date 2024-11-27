@@ -54,9 +54,9 @@ class Pipeline:
             questions = self.step_back_agent(question)
             contexts = []
             for question in questions:
-                contexts += self.simple_retrieval_agent.query(question)
+                contexts += self.simple_retrieval_agent(question)
         else:
-            contexts = self.simple_retrieval_agent.query(question)
+            contexts = self.simple_retrieval_agent(question)
         new_context = self.simple_reranker.rerank(question, contexts)
 
         return new_context
