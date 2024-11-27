@@ -4,7 +4,6 @@ import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import subprocess
 import threading
-from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import HuggingFaceHub
 from langchain_huggingface import HuggingFaceEndpoint

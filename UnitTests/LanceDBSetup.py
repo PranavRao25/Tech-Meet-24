@@ -25,7 +25,7 @@ class TextDatabase:
             raise ValueError("Incorrect Data Format")
 
     def query(self, request, top_k=3)->List[dict]:
-        return self.tbl.search(request).limit(top_k).to_list()
+        return self.tbl.search(request, ).limit(top_k).to_list()
 
     def delete(self):
         self.db.drop_table(self.table_name)

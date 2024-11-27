@@ -1,13 +1,7 @@
 import re
 from typing import List
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
-from pathway.xpacks.llm.vector_store import VectorStoreClient
-import os
-import toml
 
-config = toml.load("../config.toml")
-os.environ["GOOGLE_API_KEY"] = config['GEMINI_API']
 
 HOST = "127.0.0.1"
 PORT = 8666
