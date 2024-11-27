@@ -17,7 +17,7 @@ class GeminiOutputParser(BaseOutputParser):
 
     def parse(self, text: str) -> ResponseSchema:
         """Parse the LLM output into structured format"""
-        print('RESPONSE : ', text)
+        # print('RESPONSE : ', text)
         try:
             # Split the response into sections
             # sections = text.split("\n\n")
@@ -102,7 +102,7 @@ class LLMAgent:
             Structured response containing answer, reasoning, and sources
         """
         # Format context for the prompt
-        print(f"Context : {context}")
+        # print(f"Context : {context}")
         formatted_context = "\n".join([
             f"Document {i+1}: {doc}"
             for i, doc in enumerate(context)

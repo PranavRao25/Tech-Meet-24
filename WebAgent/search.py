@@ -732,7 +732,8 @@ class Retriever:
         self.retriever = self.available_retrievers[self.counter]
     
     def search(self, query: str, exclude_urls: str = None):
-
+        
+        print(f"Searching with {query}")
         result = []
         for rm in self.available_retrievers:
             

@@ -4,6 +4,7 @@ import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import subprocess
 import threading
+from transformers import pipeline
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import HuggingFaceHub
@@ -73,12 +74,13 @@ def load_bge_m3():
 
 @st.cache_resource
 def load_smol_lm():
-    return HuggingFaceEndpoint(
-        repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
-        temperature = 0.5,  
-        max_new_tokens = 512,
-        model_kwargs = { "max_length" : "64" }
-    )
+    return pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")    
+    # return HuggingFaceEndpoint(
+    #     repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    #     temperature = 0.5,  
+    #     max_new_tokens = 512,
+    #     model_kwargs = { "max_length" : "64" }
+    # )
 
 
 @st.cache_resource
