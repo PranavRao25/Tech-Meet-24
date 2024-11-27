@@ -1,6 +1,6 @@
 from typing import List, Union, Tuple
-from .utils import AskQuestion, DialogueTurn, limit_word_count, QuestionToQuery, AnswerQuestion, Information
-from .search import Retriever
+from utils import AskQuestion, DialogueTurn, limit_word_count, QuestionToQuery, AnswerQuestion, Information
+from search import Retriever
 import dspy
 import regex as re
 

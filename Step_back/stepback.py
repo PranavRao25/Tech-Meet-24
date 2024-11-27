@@ -63,6 +63,8 @@ def query(q_model, question):
 # q_model=pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
 # question="YOUR_QUESTION"
 # response=query(q_model,question)
+# AutoModelForCausalLM.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+
 
 
 # q_model = pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
