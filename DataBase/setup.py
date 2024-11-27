@@ -51,7 +51,7 @@ server = IndexServer.from_langchain_components(
     embedder=embedder, 
     splitter=splitter, 
     parser=PDFParser(),
-    index="brute_force"
+    index="lsh"
     )
 
 HOST = "127.0.0.1"
@@ -59,3 +59,6 @@ PORT = 8666
 
 if __name__ == "__main__":
     server.run_server(host=HOST, port=PORT)
+
+# observation: whenever we start the server and add a new document, the first fetch will take some time. So its better to give a high
+# timout limit for the retriever client. Currently giving 60s
