@@ -54,9 +54,9 @@ class Pipeline:
             questions = self.step_back_agent(question)
             contexts = []
             for question in questions:
-                contexts += self.simple_retrieval_agent(question)
+                contexts += self.simple_retrieval_agent.invoke(question)
         else:
-            contexts = self.simple_retrieval_agent(question)
+            contexts = self.simple_retrieval_agent.invoke(question)
         new_context = self.simple_reranker.rerank(question, contexts)
 
         return new_context
@@ -126,7 +126,7 @@ class RAG:
         elif mode == "intermediate":
             self._intermediate_reranker = Reranker(reranker)
         elif mode == "complex":
-            self._complex_reranker = LLMReranker(reranker)
+            self._complex_reranker = Reranker(reranker)
         else:
             raise ValueError("Incorrect mode")
 
@@ -246,7 +246,7 @@ class RAG:
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         def _search(state):
-            answer = self._web_search_agent.invoke(state['question'])
+            answer = self.web_search_agent.invoke(state['question'])
             return {"question": state["question"], "context": state["context"], "answer": answer}
 
         self._pipeline_setup()

@@ -140,6 +140,7 @@ rag.retrieval_agent_prep(
     mode="complex"
 )
 
+# suppot them bgem3 shit
 rag.reranker_prep(reranker=colbert_model, mode="simple")
 rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
 rag.reranker_prep(reranker=bge_m3_model, mode="complex")
