@@ -20,12 +20,13 @@ class TextDatabase:
             else:
                 self.db.create_table(self.table_name, data)
                 self.tbl = self.db.open_table(self.table_name)
+                self.tbl.create_fts_index("content")
                 self.is_created = True
         else:
             raise ValueError("Incorrect Data Format")
 
     def query(self, request, top_k=3)->List[dict]:
-        return self.tbl.search(request, ).limit(top_k).to_list()
+        return self.tbl.search(request).limit(top_k).to_list()
 
     def delete(self):
         self.db.drop_table(self.table_name)
