@@ -4,6 +4,11 @@ import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import subprocess
 import threading
+<<<<<<< HEAD
+=======
+from transformers import pipeline
+from pathway.xpacks.llm.vector_store import VectorStoreClient
+>>>>>>> ee01989d6218374b37fc77d492de3f58c3cfb172
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import HuggingFaceHub
 from langchain_huggingface import HuggingFaceEndpoint
@@ -72,12 +77,13 @@ def load_bge_m3():
 
 @st.cache_resource
 def load_smol_lm():
-    return HuggingFaceEndpoint(
-        repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
-        temperature = 0.5,  
-        max_new_tokens = 512,
-        model_kwargs = { "max_length" : "64" }
-    )
+    return pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")    
+    # return HuggingFaceEndpoint(
+    #     repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    #     temperature = 0.5,  
+    #     max_new_tokens = 512,
+    #     model_kwargs = { "max_length" : "64" }
+    # )
 
 
 @st.cache_resource
@@ -137,6 +143,7 @@ rag.retrieval_agent_prep(
     mode="complex"
 )
 
+# suppot them bgem3 shit
 rag.reranker_prep(reranker=colbert_model, mode="simple")
 rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
 rag.reranker_prep(reranker=bge_m3_model, mode="complex")

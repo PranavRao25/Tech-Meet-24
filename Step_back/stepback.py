@@ -45,9 +45,7 @@ class QuestionGen:
                 f"Input: {question}\nOutput:"
             )
             # Use the Hugging Face model to generate output
-            print(f"prompt : {prompt}")
             result = self.q_model(prompt, max_length=1000, num_return_sequences=1)
-            print(f"result : {result}")
             return result[0]["generated_text"].split("\nOutput:")[-1].split('\n')[0].split(',')  # Extract the generated text
 
         # Combine the model output with the parser
@@ -63,6 +61,8 @@ def query(q_model, question):
 # q_model=pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
 # question="YOUR_QUESTION"
 # response=query(q_model,question)
+# AutoModelForCausalLM.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+
 
 
 # q_model = pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")

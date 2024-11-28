@@ -1,6 +1,6 @@
 from typing import List
 import lancedb
-
+import numpy as np
 
 class TextDatabase:
     def __init__(self, table_name):
@@ -11,7 +11,7 @@ class TextDatabase:
         try:
             self.tbl = self.db.open_table(self.table_name)
         except:
-           self.is_created = False
+            self.is_created = False
 
     def upsert(self, data):
         if isinstance(data, List) and all(isinstance(i, dict) for i in data):
@@ -23,46 +23,45 @@ class TextDatabase:
                 self.tbl.create_fts_index("content")
                 self.is_created = True
         else:
-            raise ValueError("Incorrect Data Format")
+            raise ValueError("Incorrect Data Format: Expected List[dict]")
 
-    def query(self, request, top_k=3)->List[dict]:
-        return self.tbl.search(request).limit(top_k).to_list()
+    def query(self, request_vector, top_k=3) -> List[dict]:
+        if isinstance(request_vector, np.ndarray):
+            return self.tbl.search(request_vector).limit(top_k).to_list()
+        else:
+            raise ValueError("Query must be a numpy array matching vector dimensions")
 
     def delete(self):
-        self.db.drop_table(self.table_name)
+        if self.table_name in self.db.table_names():
+            self.db.drop_table(self.table_name)
 
-    def is_empty(self)->bool:
+    def is_empty(self) -> bool:
         return self.tbl.count_rows() == 0
 
-# # to connect to a database
-# db = lancedb.connect('lancedb/test')
-# table_name = 'demo'  # table creation
-#
-# # open an existing table
-# tbl = db.open_table(table_name)
-#
-# # data structure
-# # add list of key-value pairs / json file contents
-# # each dictionary must have a vector key present
-# data = [
-#     {"vector":v, "metadata":"vec1"}
-#     for v in ([1,2,3],[2,3,4],[4,5,6])
-# ]
-#
-# # to add data into existing table
-# tbl.add(data)
-#
-# # to create and upsert data into it (the schema is inferred from the data
-# table = db.create_table(table_name, data=data)
-#
-# # to create an empty table, you must specify the schema
-#
-# # to query a table
-# query = "check check"
-# response = tbl.search(query).limit(5).to_pandas()  # convert to list/df/any format you want
-#
-# # to delete a table
-# db.drop_table(table_name)
-#
-# # count size of the db
-# size = tbl.count_rows()
+
+# Usage Example
+db = lancedb.connect('lancedb/test')
+table_name = 'demo'
+
+# Create a TextDatabase instance
+text_db = TextDatabase(table_name)
+
+# Define the data
+data = [
+    {"vector": np.array(v), "metadata": f"vec{i}"}
+    for i, v in enumerate([[1, 2, 3], [2, 3, 4], [4, 5, 6]])
+]
+
+# Add data to the table
+text_db.upsert(data)
+
+# Query the table
+query_vector = np.array([1, 2, 3])
+response = text_db.query(query_vector, top_k=2)
+print("Query Response:", response)
+
+# Check if the table is empty
+print("Is Table Empty?", text_db.is_empty())
+
+# Drop the table
+text_db.delete()

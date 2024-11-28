@@ -191,7 +191,7 @@ class WebAgent(ABC):
         # Determine the difficulty of the query
         difficulty = self.triage(prompt)[0]
         
-        print(difficulty)
+        # print(difficulty)
         
         # Handle the query based on its difficulty
         if 'Hard' in difficulty:

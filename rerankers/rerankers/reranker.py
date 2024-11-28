@@ -40,12 +40,12 @@ class Reranker:
         docs_embeddings = self.model.embed_docs(docs)
 
         # Compute cosine similarity between the query and each document
-        print(query_embedding.shape, docs_embeddings.shape)
-        print('--------------------------------------------------')
-        print("Q: ", query_embedding)
-        print('--------------------------------------------------')
-        print("D: ", docs_embeddings)
-        print('--------------------------------------------------')
+        # print(query_embedding.shape, docs_embeddings.shape)
+        # print('--------------------------------------------------')
+        # print("Q: ", query_embedding)
+        # print('--------------------------------------------------')
+        # print("D: ", docs_embeddings)
+        # print('--------------------------------------------------')
         scores: np.ndarray = cosine_similarity(query_embedding, docs_embeddings)[0]
 
         # Rank documents by descending similarity score
@@ -94,7 +94,7 @@ class LLMReranker:
         prompt += "\n\nReturn the chunks ranked by relevance with a score between 0 (not relevant) to 10 (highly relevant)."
 
         # Invoke the language model with the constructed prompt
-        self.llm.invoke(prompt)
+        self.llm(prompt)
 
         # The rerank logic should be implemented specifically for the LLM
         raise NotImplementedError()

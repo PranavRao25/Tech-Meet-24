@@ -43,8 +43,9 @@ class Student(dspy.Module):
                 f"You: {turn.user_utterance}\nTeacher: Omit the answer here due to space limit."
             )
         for turn in dialogue_turns[-4:]:
+            x = re.sub(r'\[\d+(?:,\s*\d+)*\]', '', turn.agent_utterance)
             conv.append(
-                f"You: {turn.user_utterance}\nTeacher: {re.sub(r'\[\d+(?:,\s*\d+)*\]', '', turn.agent_utterance)}"
+                f"You: {turn.user_utterance}\nTeacher: {x}"
             )
         conv = "\n".join(conv)
         conv = conv.strip() or "N/A"
