@@ -1,13 +1,11 @@
 # from langchain.schema.output_parser import StrOutputParser
 # from langchain.output_parsers import CommaSeparatedListOutputParser
 from langchain.schema.runnable import RunnableLambda
-from transformers import pipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from ..AutoWrapper import AutoWrapper
 
 class QuestionGen:
-    def __init__(self, q_model, q_tokenizer):
+    def __init__(self, q_model):
         self.q_model = q_model
-        self.q_tokenizer = q_tokenizer
         # Create prompt templates and processing chain
         self.few_shot_examples = self.create_few_shot_examples()
         self.question_gen_chain = self.create_question_generation_chain()
@@ -47,11 +45,7 @@ class QuestionGen:
                 f"Input: {question}\nOutput:"
             )
             # Use the Hugging Face model to generate output
-            prompt_vec = self.q_tokenizer(prompt, return_tensors="pt", max_length=1000, truncation=True)
-            prompt_ids = prompt_vec["input_ids"]
-            prompt_mask = prompt_vec["attention_mask"]
-            result = self.q_model.generate(prompt_ids, attention_mask=prompt_mask, max_length=1000, num_return_sequences=1)
-            results = self.q_tokenizer.batch_decode(result, skip_special_tokens=True)
+            results = self.q_model(prompt, max_length=100, num_return_sequences=1)
             return results[0].split("\nOutput:")[-1].split('\n')[0].split(',')[0]  # not sure about this though
 
         # Combine the model output with the parser
@@ -60,16 +54,15 @@ class QuestionGen:
     def __call__(self, question):
         return self.question_gen_chain.invoke(question)
     
-def query(q_model, q_tokenizer, question):
+def query(q_model, question):
     stepback = QuestionGen(q_model, q_tokenizer)
     return stepback(question)
 
 if __name__ == "__main__":
 
-    q_model=AutoModelForCausalLM.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
-    q_tokenizer=AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    model = AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     question="YOUR_QUESTION"
-    response=query(q_model, q_tokenizer, question)
+    response=query(model, question)
     print(response)
 
     # q_model = pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
