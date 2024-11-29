@@ -1,7 +1,6 @@
 # from langchain.schema.output_parser import StrOutputParser
 # from langchain.output_parsers import CommaSeparatedListOutputParser
 from langchain.schema.runnable import RunnableLambda
-from ..AutoWrapper import AutoWrapper
 
 class QuestionGen:
     def __init__(self, q_model):
@@ -13,7 +12,7 @@ class QuestionGen:
     def create_few_shot_examples(self):
         # Define few-shot examples for the prompt
         examples = [
-            {
+            {   
                 "input": "Could the members of The Police perform lawful arrests?",
                 "output": "What can the members of The Police do?, What is lawful arrests?"
             },
@@ -55,15 +54,16 @@ class QuestionGen:
         return self.question_gen_chain.invoke(question)
     
 def query(q_model, question):
-    stepback = QuestionGen(q_model, q_tokenizer)
+    stepback = QuestionGen(q_model)
     return stepback(question)
 
 if __name__ == "__main__":
 
-    model = AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
-    question="YOUR_QUESTION"
-    response=query(model, question)
-    print(response)
+    pass
+    # model = AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    # question="YOUR_QUESTION"
+    # response=query(model, question)
+    # print(response)
 
     # q_model = pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
     # question = '''What happens to the pressure, P, of an ideal gas if the temperature is increased by a factor of 2 and the volume is increased by a factor of 8 ?'''

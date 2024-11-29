@@ -150,7 +150,7 @@ class RAG:
 
         self._thresholder = model
 
-    def web_search_prep(self, model):
+    def web_search_prep(self):
         """
         Sets up a Web Search Agent.
 
@@ -166,6 +166,7 @@ class RAG:
 
         Parameters:
         model: The step-back prompt model.
+        tokenizer: The step-back prompt tokenizer.
         """
 
         self._step_back_agent = QuestionGen(model)
@@ -246,7 +247,7 @@ class RAG:
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         def _search(state):
-            answer = self.web_search_agent.invoke(state['question'])
+            answer = self._web_search_agent.invoke(state['question'])
             return {"question": state["question"], "context": state["context"], "answer": answer}
 
         self._pipeline_setup()

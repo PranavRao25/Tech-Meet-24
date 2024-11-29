@@ -64,7 +64,7 @@ class CoTAgent(ContextAgent):
         """
 
         # Retrieve documents based on the question
-        docs = self.vb(question)
+        docs = self._vb(question)
         answer = ""
 
         # Consolidate the text from each document into a single string
