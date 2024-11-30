@@ -5,7 +5,7 @@ import json
 
 class TextDatabase:
     def __init__(self, table_name):
-        self.db = lancedb.connect('lancedb/test')
+        self.db = lancedb.connect('UnitTests/lancedb_folder')
         self.table_name = table_name
 
         self.is_created = True
@@ -62,6 +62,7 @@ class TextDatabase:
             print(f"Data from {file_path} loaded successfully.")
         except Exception as e:
             print(f"Error loading JSON data: {e}")
+    __call__ = query
 
 
 # # Usage Example

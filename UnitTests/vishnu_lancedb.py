@@ -12,11 +12,11 @@ def chunk_text(text, chunk_size=200, overlap=50):
     return chunks
 
 # Step 1: Connect to LanceDB
-db_path = "UnitTests\lancedb_folder"
+db_path = "UnitTests/lancedb_folder"
 db = lancedb.connect(db_path)
 
 # Step 2: Read text files
-folder_path = r"../DataBase/documents"
+folder_path = r"DataBase/documents"
 files = [f for f in os.listdir(folder_path)]
 # Step 3: Prepare data with chunking
 data = []
@@ -52,7 +52,7 @@ import lancedb
 from sentence_transformers import SentenceTransformer
 model = SentenceTransformer('all-MiniLM-L6-v2')  # Choose an appropriate model
 
-db_path = "./lancedb_folder"
+db_path = "UnitTests/lancedb_folder"
 db = lancedb.connect(db_path)
 
 table=db.open_table('chunked_text_files')

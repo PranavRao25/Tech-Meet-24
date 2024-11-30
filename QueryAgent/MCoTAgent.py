@@ -1,7 +1,7 @@
 import sys
-sys.path.insert(0, '/Users/rachitsandeepjain/Tech-Meet-24/QueryAgent')
-from AlternateQueryAgent import *
-from SubQueryAgent import *
+# sys.path.insert(0, '/Users/rachitsandeepjain/Tech-Meet-24/QueryAgent')
+from QueryAgent.AlternateQueryAgent import *
+from QueryAgent.SubQueryAgent import *
 from langchain_core.runnables import RunnableLambda
 
 

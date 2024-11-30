@@ -205,6 +205,7 @@ class RAG:
             # "intermediate"
             # "complex"
             import numpy
+            return "simple"
             return numpy.random.choice(["simple", "intermediate", "complex"])
             return "simple"
             return self._moe_agent.invoke(state['question'])
@@ -236,6 +237,7 @@ class RAG:
             return {"question": state["question"], "context": state["context"], "answer": state["answer"]}
 
         def _classify_answer(state):
+            return 'llm'
             return 'llm' if state['question'] == True else 'web'
 
         def _answer(state):
