@@ -94,7 +94,7 @@ class LLMReranker:
         prompt += "\n\nReturn the chunks ranked by relevance with a score between 0 (not relevant) to 10 (highly relevant)."
 
         # Invoke the language model with the constructed prompt
-        self.llm.invoke(prompt)
+        self.llm(prompt)
 
         # The rerank logic should be implemented specifically for the LLM
         raise NotImplementedError()

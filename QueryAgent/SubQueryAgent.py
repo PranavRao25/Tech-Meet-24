@@ -118,4 +118,4 @@ class SubQueryAgent(ContextAgent):
         str: Concatenated text content from retrieved documents.
         """
 
-        return self._vb.retrieve(question)
+        return self._vb(question)

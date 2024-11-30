@@ -40,7 +40,7 @@ class CoTAgent(ContextAgent):
         answer = []
 
         # Generate sub-questions using the q_model
-        small_chain = {"question": RunnablePassthrough()} | prompt | self.q_model #.invoke(prompt.format(question=question))
+        small_chain = {"question": RunnablePassthrough()} | prompt | self._q_model #.invoke(prompt.format(question=question))
         subqueries = small_chain.invoke(question)[len(template):]
         
         # print(f"\n\nsubqueries : {subqueries}\n\n".upper())
@@ -64,7 +64,7 @@ class CoTAgent(ContextAgent):
         """
 
         # Retrieve documents based on the question
-        docs = self.vb(question)
+        docs = self._vb(question)
         answer = ""
 
         # Consolidate the text from each document into a single string

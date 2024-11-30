@@ -19,8 +19,9 @@ PATHWAY_PORT = 8765
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from RAG import RAG
+from AutoWrapper import AutoWrapper
 from LLM_Agent.LLM_Agent import LLMAgent
-from rerankers.models.models import colBERT
+from rerankers.models.models import colBERT, BGE_M3
 
 config = toml.load("../config.toml")
 HF_TOKEN = config['HF_TOKEN']
@@ -67,21 +68,22 @@ def vb_prep():
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
-    model = AutoModelForCausalLM.from_pretrained("BAAI/bge-m3")
-    tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-m3")
-    return model, tokenizer
-
+    return BGE_M3(), None
 
 @st.cache_resource
 def load_smol_lm():
-    return pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")    
+    # return pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    return AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     # return HuggingFaceEndpoint(
     #     repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
     #     temperature = 0.5,  
     #     max_new_tokens = 512,
     #     model_kwargs = { "max_length" : "64" }
     # )
-
+    
+@st.cache_resource
+def load_smol_lms():
+    return "HuggingFaceTB/SmolLM2-1.7B-Instruct"
 
 @st.cache_resource
 def load_colbert():
@@ -140,11 +142,13 @@ rag.retrieval_agent_prep(
     mode="complex"
 )
 
+# suppot them bgem3 shit
 rag.reranker_prep(reranker=colbert_model, mode="simple")
 rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
 rag.reranker_prep(reranker=bge_m3_model, mode="complex")
 rag.moe_prep(moe_model)
 rag.step_back_prompt_prep(model=smol_lm_model)
+rag.web_search_prep()
 rag.set()
 
 # Main chat interface using `st.chat`

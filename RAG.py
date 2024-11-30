@@ -54,9 +54,9 @@ class Pipeline:
             questions = self.step_back_agent(question)
             contexts = []
             for question in questions:
-                contexts += self.simple_retrieval_agent(question)
+                contexts += self.simple_retrieval_agent.invoke(question)
         else:
-            contexts = self.simple_retrieval_agent(question)
+            contexts = self.simple_retrieval_agent.invoke(question)
         new_context = self.simple_reranker.rerank(question, contexts)
 
         return new_context
@@ -126,7 +126,7 @@ class RAG:
         elif mode == "intermediate":
             self._intermediate_reranker = Reranker(reranker)
         elif mode == "complex":
-            self._complex_reranker = LLMReranker(reranker)
+            self._complex_reranker = Reranker(reranker)
         else:
             raise ValueError("Incorrect mode")
 
@@ -150,7 +150,7 @@ class RAG:
 
         self._thresholder = model
 
-    def web_search_prep(self, model):
+    def web_search_prep(self):
         """
         Sets up a Web Search Agent.
 
@@ -166,6 +166,7 @@ class RAG:
 
         Parameters:
         model: The step-back prompt model.
+        tokenizer: The step-back prompt tokenizer.
         """
 
         self._step_back_agent = QuestionGen(model)

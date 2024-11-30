@@ -1,7 +1,6 @@
 # from langchain.schema.output_parser import StrOutputParser
 # from langchain.output_parsers import CommaSeparatedListOutputParser
 from langchain.schema.runnable import RunnableLambda
-from transformers import pipeline
 
 class QuestionGen:
     def __init__(self, q_model):
@@ -13,7 +12,7 @@ class QuestionGen:
     def create_few_shot_examples(self):
         # Define few-shot examples for the prompt
         examples = [
-            {
+            {   
                 "input": "Could the members of The Police perform lawful arrests?",
                 "output": "What can the members of The Police do?, What is lawful arrests?"
             },
@@ -45,8 +44,8 @@ class QuestionGen:
                 f"Input: {question}\nOutput:"
             )
             # Use the Hugging Face model to generate output
-            result = self.q_model(prompt, max_length=1000, num_return_sequences=1)
-            return result[0]["generated_text"].split("\nOutput:")[-1].split('\n')[0].split(',')  # Extract the generated text
+            results = self.q_model(prompt, max_length=100, num_return_sequences=1)
+            return results[0].split("\nOutput:")[-1].split('\n')[0].split(',')[0]  # not sure about this though
 
         # Combine the model output with the parser
         return RunnableLambda(generate_questions) 
@@ -58,17 +57,18 @@ def query(q_model, question):
     stepback = QuestionGen(q_model)
     return stepback(question)
 
-# q_model=pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
-# question="YOUR_QUESTION"
-# response=query(q_model,question)
-# AutoModelForCausalLM.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+if __name__ == "__main__":
 
+    pass
+    # model = AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    # question="YOUR_QUESTION"
+    # response=query(model, question)
+    # print(response)
 
+    # q_model = pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    # question = '''What happens to the pressure, P, of an ideal gas if the temperature is increased by a factor of 2 and the volume is increased by a factor of 8 ?'''
+    # ['Output: What is the relationship between pressure and temperature?',
+    #  ' What is the relationship between pressure and volume?']
 
-# q_model = pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
-# question = '''What happens to the pressure, P, of an ideal gas if the temperature is increased by a factor of 2 and the volume is increased by a factor of 8 ?'''
-# ['Output: What is the relationship between pressure and temperature?',
-#  ' What is the relationship between pressure and volume?']
-
-# question = '''If you have 3 moles of nitrogen and 4 moles of hydrogen to produce ammonia, which one will get exhausted first assuming a complete reaction?'''
-# [' What is the chemical equation for the reaction?', ' What is the mole ratio of nitrogen to hydrogen?', ' What is the reaction between nitrogen and hydrogen?']
+    # question = '''If you have 3 moles of nitrogen and 4 moles of hydrogen to produce ammonia, which one will get exhausted first assuming a complete reaction?'''
+    # [' What is the chemical equation for the reaction?', ' What is the mole ratio of nitrogen to hydrogen?', ' What is the reaction between nitrogen and hydrogen?']
