@@ -1,0 +1,22 @@
+[
+    {
+        "vector": [0.1, 0.2, 0.3],
+        "metadata": "Introduction to Machine Learning"
+    },
+    {
+        "vector": [0.4, 0.5, 0.6],
+        "metadata": "Neural Networks and Deep Learning"
+    },
+    {
+        "vector": [0.7, 0.8, 0.9],
+        "metadata": "Natural Language Processing Overview"
+    },
+    {
+        "vector": [1.0, 1.1, 1.2],
+        "metadata": "Computer Vision Applications"
+    },
+    {
+        "vector": [1.3, 1.4, 1.5],
+        "metadata": "Reinforcement Learning Basics"
+    }
+]

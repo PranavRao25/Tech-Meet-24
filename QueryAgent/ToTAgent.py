@@ -179,7 +179,7 @@ class ToTAgent:
         """
 
         # Rerank contexts and select the top 'best' number of contexts
-        context = self._reranker.rank(
+        context = self._reranker.rerank(
             query=question,
             documents=alternate_context,
             return_documents=True

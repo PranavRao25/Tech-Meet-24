@@ -1,5 +1,7 @@
-from .AlternateQueryAgent import *
-from .SubQueryAgent import *
+import sys
+sys.path.insert(0, '/Users/rachitsandeepjain/Tech-Meet-24/QueryAgent')
+from AlternateQueryAgent import *
+from SubQueryAgent import *
 from langchain_core.runnables import RunnableLambda
 
 
@@ -11,7 +13,7 @@ class MCoTAgent:
     """
 
 
-    def __init__(self, vb, model_pair: tuple, reranker, best=3):
+    def __init__(self, vb, model_pair: tuple, reranker=None, best=3):
         """
         Initializes the MCoTAgent with a verbosity level, a pair of models, and a reranker.
 
@@ -27,6 +29,7 @@ class MCoTAgent:
         # Initialize sub-query generation using SubQueryAgent
         self._sub_q = RunnableLambda(SubQueryAgent(vb, model_pair).query)
         self._best = best  # Number of top contexts to return after reranking
+        self.output_file = "../mcotagentlogs"
 
     def query(self, question: str) -> list[str]:
         """
@@ -48,7 +51,8 @@ class MCoTAgent:
         for q in alt_qs:
             contexts = self._sub_q.invoke(q)
             alternate_context.append("\n".join(contexts))
-
+        # Log to file or console
+        self._log_output("Alternate Contexts:", alternate_context)
         # Clean and rerank the contexts based on relevance
         final_context = self._clean(question, alternate_context)
         return final_context
@@ -66,7 +70,7 @@ class MCoTAgent:
         """
 
         # Rerank contexts and select the top 'best' number of contexts
-        context = self._reranker.rank(
+        context = self._reranker.rerank(
             query=question,
             documents=alternate_context,
             return_documents=True
@@ -74,3 +78,26 @@ class MCoTAgent:
 
         # Return the text of the top contexts
         return [c['text'] for c in context]
+    def _default_reranker(self):
+        """
+        Provides a default reranker that returns all contexts without modification.
+        """
+        class DefaultReranker:
+            def rerank(self, query, documents, return_documents=False):
+                return [{"text": doc} for doc in documents]
+
+        return DefaultReranker()
+    def _log_output(self, title: str, content: list[str]):
+        """
+        Logs or writes output to a file.
+
+        Parameters:
+        title (str): Title or header for the content.
+        content (list[str]): The content to write or log.
+        """
+        output = f"{title}\n" + "\n".join(content) + "\n\n"
+        if self.output_file:
+            with open(self.output_file, "a") as f:
+                f.write(output)
+        else:
+            print(output)
