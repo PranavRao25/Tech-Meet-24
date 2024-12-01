@@ -2,7 +2,11 @@ import sys
 # sys.path.insert(0, '/Users/rachitsandeepjain/Tech-Meet-24/QueryAgent')
 from QueryAgent.AlternateQueryAgent import *
 from QueryAgent.SubQueryAgent import *
+import logging
 from langchain_core.runnables import RunnableLambda
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class MCoTAgent:
@@ -12,8 +16,7 @@ class MCoTAgent:
     and sub-queries for a given question.
     """
 
-
-    def __init__(self, vb, model_pair: tuple, reranker=None, best=3):
+    def __init__(self, vb, model_pair: tuple, best=3):
         """
         Initializes the MCoTAgent with a verbosity level, a pair of models, and a reranker.
 
@@ -23,13 +26,13 @@ class MCoTAgent:
         reranker: A reranking model used to rank the contexts based on relevance.
         """
 
-        self._reranker = reranker
         # Initialize alternate query generation using AlternateQueryAgent
         self._alt_q = RunnableLambda(AlternateQueryAgent(model_pair).multiple_question_generation)
         # Initialize sub-query generation using SubQueryAgent
         self._sub_q = RunnableLambda(SubQueryAgent(vb, model_pair).query)
         self._best = best  # Number of top contexts to return after reranking
         self.output_file = "../mcotagentlogs"
+        logger.info("MCoT Agent has been set up")
 
     def query(self, question: str) -> list[str]:
         """
@@ -44,49 +47,40 @@ class MCoTAgent:
         """
 
         # Generate alternate questions based on the input question
+        logger.info(f"Input question: {question}")
         alt_qs = self._alt_q.invoke(question)
         alternate_context = []
 
         # For each alternate question, generate sub-queries and collect their contexts
         for q in alt_qs:
+            logger.info(f"alt q: {q}")
             contexts = self._sub_q.invoke(q)
             alternate_context.append("\n".join(contexts))
         # Log to file or console
         self._log_output("Alternate Contexts:", alternate_context)
         # Clean and rerank the contexts based on relevance
-        final_context = self._clean(question, alternate_context)
+        final_context = self._clean(alternate_context)
         return final_context
 
-    def _clean(self, question: str, alternate_context: list[str]) -> list[str]:
+    def _clean(self, alternate_context: list[str]) -> list[str]:
         """
-        Cleans the retrieved contexts by reranking and returning only the best contexts.
+        Cleans the retrieved contexts by picking only the unique contexts
 
         Parameters:
-        question (str): The original user question for reference during reranking.
         alternate_context (list[str]): List of contexts generated from alternate queries.
 
         Returns:
         list[str]: A list of the top contexts after reranking.
         """
 
-        # Rerank contexts and select the top 'best' number of contexts
-        context = self._reranker.rerank(
-            query=question,
-            documents=alternate_context,
-            return_documents=True
-        )[:len(alternate_context) - self._best + 1]
+        unique_context = []
+        for context in alternate_context:
+            if context not in unique_context:
+                unique_context.append(context)
 
         # Return the text of the top contexts
-        return [c['text'] for c in context]
-    def _default_reranker(self):
-        """
-        Provides a default reranker that returns all contexts without modification.
-        """
-        class DefaultReranker:
-            def rerank(self, query, documents, return_documents=False):
-                return [{"text": doc} for doc in documents]
+        return unique_context
 
-        return DefaultReranker()
     def _log_output(self, title: str, content: list[str]):
         """
         Logs or writes output to a file.

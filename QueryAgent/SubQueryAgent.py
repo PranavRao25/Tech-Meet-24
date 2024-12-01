@@ -3,8 +3,11 @@ import sys
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
 from QueryAgent.ContextAgent import *
+import logging
 from langchain_core.runnables import RunnableLambda
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class SubQueryGenAgent:
     """
@@ -35,6 +38,7 @@ class SubQueryGenAgent:
             self._chain = {
                              "question": RunnablePassthrough()
                          } | self._prompt | self._q_model | self._parser
+            logger.info("Sub Query with question only")
         else:
             # Define prompt for mode with question and context
             self._context = ""
@@ -45,6 +49,9 @@ class SubQueryGenAgent:
                              "question": RunnablePassthrough(),
                              "context": RunnableLambda(lambda x: self._context)
                          } | self._prompt | self._q_model | self._parser
+            logger.info("Sub Query with question and context")
+
+        logger.info("Sub Query Gen Agent set")
 
     def sub_questions_gen(self, question:str)->str:
         """
@@ -56,6 +63,7 @@ class SubQueryGenAgent:
         Returns:
         str: Generated sub-question.
         """
+        logger.info("Sub queries being generated")
         return self._chain.invoke(question)
 
 
@@ -71,7 +79,7 @@ class SubQueryAgent(ContextAgent):
         Initializes the SubQueryAgent with verbosity, model pair, reranker, and number of queries.
 
         Parameters:
-        vb: Verbosity level or logging parameter.
+        vb: Vector Database
         model_pair (tuple): Pair of models to be used for sub-query generation and parsing.
         reranker (optional): Model for reranking contexts if applicable.
         no_q (int): Number of sub-questions to generate in progressive querying.
@@ -82,6 +90,7 @@ class SubQueryAgent(ContextAgent):
         self._sub_q_gen1 = SubQueryGenAgent(model_pair, mode=True)  # Initial sub-question generation mode
         self._sub_q_gen2 = SubQueryGenAgent(model_pair, mode=False)  # Progressive sub-question generation with context
         self._turns = no_q  # Default number of turns for generating progressive sub-questions
+        logger.info("Sub Query Agent set")
 
     def query(self, question:str) -> list[str]:
         """
@@ -96,6 +105,7 @@ class SubQueryAgent(ContextAgent):
 
         # Generate initial sub-question and retrieve initial context
         sub_q = self._sub_q_gen1.sub_questions_gen(question)
+        logger.info(f"sub question {sub_q}")
         initial_context = self._fetch(sub_q)
         total_contexts = [initial_context]
 
@@ -104,6 +114,7 @@ class SubQueryAgent(ContextAgent):
         for _ in range(self._turns):
             self._sub_q_gen2.context = context  # Update context for the next sub-question generation
             query = self._sub_q_gen2.sub_questions_gen(query)
+            logger.info(f"sub questions {query}")
             context = self._fetch(query)
             total_contexts.append(context)
 
@@ -119,5 +130,5 @@ class SubQueryAgent(ContextAgent):
         Returns:
         str: Concatenated text content from retrieved documents.
         """
-
+        logger.info("fetch from database")
         return self._vb(question)

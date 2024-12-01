@@ -21,14 +21,14 @@ def load_smol_lm():
     return AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     
 # Assuming `mcot_agent` is your implemented agent class/function
-def mcot_agent(query_vector, db_instance):
-    """
-    Retrieves relevant chunks using the query vector.
-    """
-    agent = MCoTAgent(db_instance, model_pair=(load_smol_lm(), StrOutputParser()))
-    # Perform a query on the database
-    results = [agent.query(query_vector)[0]]
-    return results
+# def mcot_agent(query_vector, db_instance):
+#     """
+#     Retrieves relevant chunks using the query vector.
+#     """
+#     agent = MCoTAgent(db_instance, model_pair=(load_smol_lm(), StrOutputParser()))
+#     # Perform a query on the database
+#     results = [agent.query(query_vector)[0]]
+#     return results
 
 if __name__ == "__main__":
     # Database setup
@@ -46,11 +46,15 @@ if __name__ == "__main__":
         # Embed the query string into a vector
         query_vector = embedding_model.encode(query_string)
         print(query_vector)
+
+        mcot_agent = MCoTAgent(text_db, model_pair=(load_smol_lm(), StrOutputParser()))
+        response = mcot_agent.query(query_string)
         # Call the mcot agent with the query vector
-        response = mcot_agent(query_vector, text_db)
+        # response = mcot_agent(query_vector, text_db)
         
-        print("\nRetrieved Chunks:")
-        for chunk in response:
-            print(chunk)
+        # print("\nRetrieved Chunks:")
+        # for chunk in response:
+        #     print(chunk)
+        print(response)
     except Exception as e:
         print(f"Error during retrieval: {e}")

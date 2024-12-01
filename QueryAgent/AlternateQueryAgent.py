@@ -1,7 +1,11 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
+import logging
 from transformers import pipeline
 from langchain_core.output_parsers import StrOutputParser
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class AlternateQueryAgent:
     """
@@ -28,6 +32,8 @@ class AlternateQueryAgent:
         
         self._chain = {"question": RunnablePassthrough()} | self._prompt | self._q_model | self._parser
 
+        logger.info("Alternate Query Agent set")
+
     def multiple_question_generation(self, question: str) -> list[str]:
         """
         Generates multiple alternate questions based on the given question.
@@ -41,23 +47,24 @@ class AlternateQueryAgent:
 
         # Generate alternate questions and include the original question in the list
         mul_qs = self._chain.invoke(question)#.split('\n')
-        # mul_qs = ().append(question)
+
+        logger.info("multiple questions generated")
         return mul_qs
 
-if __name__ == '__main__':
-    
-    
-    model = HuggingFaceHub(
-        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
-        model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
-    )
-    parser = RunnableLambda(MistralParser().invoke)
-    alt_q = AlternateQueryAgent((self._model, self._parser))
-    alt_q_agent = AlternateQueryAgent(model_pair)
-
-    # Define the input question for alternate question generation
-    question = "What are the benefits of eating fruits?"
-
-    # Generate multiple alternate questions based on the input question
-    alternate_questions = alt_q_agent.multiple_question_generation(question)
-    print(alternate_questions)
+# if __name__ == '__main__':
+#
+#
+#     model = HuggingFaceHub(
+#         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+#         model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
+#     )
+#     parser = RunnableLambda(MistralParser().invoke)
+#     alt_q = AlternateQueryAgent((self._model, self._parser))
+#     alt_q_agent = AlternateQueryAgent(model_pair)
+#
+#     # Define the input question for alternate question generation
+#     question = "What are the benefits of eating fruits?"
+#
+#     # Generate multiple alternate questions based on the input question
+#     alternate_questions = alt_q_agent.multiple_question_generation(question)
+#     print(alternate_questions)
