@@ -2,6 +2,9 @@ from typing import List
 import lancedb
 import numpy as np
 import json
+from sentence_transformers import SentenceTransformer
+
+EMBEDDER = SentenceTransformer('all-MiniLM-L6-v2')
 
 class TextDatabase:
     def __init__(self, table_name):
@@ -24,8 +27,12 @@ class TextDatabase:
                 self.is_created = True
         else:
             raise ValueError("Incorrect Data Format: Expected List[dict]")
-
-    def query(self, request_vector, top_k=3) -> List[dict]:
+        
+    def query(self, question, top_k=3)-> List[dict]:
+        request_vector = EMBEDDER.encode(question)
+        return self.vector_query(request_vector, top_k)
+    
+    def vector_query(self, request_vector, top_k=3) -> List[dict]:
         if isinstance(request_vector, np.ndarray):
             return self.tbl.search(request_vector).limit(top_k).to_list()
         else:

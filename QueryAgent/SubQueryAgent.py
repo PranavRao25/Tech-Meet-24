@@ -117,7 +117,6 @@ class SubQueryAgent(ContextAgent):
             logger.info(f"sub questions {query}")
             context = self._fetch(query)
             total_contexts.append(context)
-
         return total_contexts
 
     def _fetch(self, question:str) -> str:

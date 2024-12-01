@@ -48,13 +48,16 @@ class MCoTAgent:
 
         # Generate alternate questions based on the input question
         logger.info(f"Input question: {question}")
-        alt_qs = self._alt_q.invoke(question)
+        alt_qs = self._alt_q.invoke(question) # this is actually giving a string instead of list -> fixed
         alternate_context = []
-
         # For each alternate question, generate sub-queries and collect their contexts
         for q in alt_qs:
             logger.info(f"alt q: {q}")
-            contexts = self._sub_q.invoke(q)
+            contexts_ = self._sub_q.invoke(q)
+            contexts = []
+            for i in contexts_:
+                for j in i:
+                    contexts.append(j["content"])
             alternate_context.append("\n".join(contexts))
         # Log to file or console
         self._log_output("Alternate Contexts:", alternate_context)
