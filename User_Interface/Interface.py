@@ -1,18 +1,14 @@
 import sys
 from pathlib import Path
 import streamlit as st
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import subprocess
-import threading
 from transformers import pipeline
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
-from langchain_community.llms import HuggingFaceHub
-from langchain_huggingface import HuggingFaceEndpoint
 import os
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 import toml
 import torch
+from langchain_community.llms import HuggingFaceHub
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
@@ -43,30 +39,6 @@ def vb_prep():
 
     return VectorStoreClient(host=HOST, port=PORT)
 
-
-# @st.cache_resource
-# def start_vector_store_server():
-#     try:
-#         # Run setup.py
-#         setup_process = subprocess.run([sys.executable, '../DataBase/setup.py'], check=True)
-#         setup_process.check_returncode()  # Ensure setup.py ran successfully
-
-#         st.success("setup.py and experiment.py executed successfully.")
-#     except subprocess.CalledProcessError as e:
-#         st.error(f"Error occurred while running the scripts: {e}")
-
-# @st.cache_resource
-# def thread():
-#     return threading.Thread(target=start_vector_store_server)
-
-# server_thread = thread()
-# if not server_thread.daemon:
-#     server_thread.daemon = True 
-#     server_thread.start()
-
-# Connect to the VectorStoreClient
-
-
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
@@ -74,14 +46,7 @@ def load_bge_m3():
 
 @st.cache_resource
 def load_smol_lm():
-    # return pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
     return AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
-    # return HuggingFaceEndpoint(
-    #     repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
-    #     temperature = 0.5,  
-    #     max_new_tokens = 512,
-    #     model_kwargs = { "max_length" : "64" }
-    # )
     
 @st.cache_resource
 def load_smol_lms():
@@ -98,6 +63,12 @@ def load_colbert():
 def load_moe():
     return "microsoft/deberta-v3-small"
 
+@st.cache_resource
+def load_thresholder():
+    return HuggingFaceHub( #change this to the correct model
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
+    )
 
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
@@ -105,6 +76,7 @@ smol_lm_model = load_smol_lm()
 moe_model = load_moe()
 gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
+thresolder_model = load_thresholder()
 client = vb_prep()
 
 # Initialize session state for question history if it doesn't exist
@@ -151,6 +123,7 @@ rag.reranker_prep(reranker=bge_m3_model, mode="complex")
 rag.moe_prep(moe_model)
 rag.step_back_prompt_prep(model=smol_lm_model)
 rag.web_search_prep()
+rag.thresholder_prep(model=thresolder_model)
 rag.set()
 
 # Main chat interface using `st.chat`
