@@ -3,9 +3,10 @@ import lancedb
 import numpy as np
 
 class TextDatabase:
-    def __init__(self, table_name):
+    def __init__(self, table_name, embedding_model):
         self.db = lancedb.connect('lancedb/test')
         self.table_name = table_name
+        self.embedding_model = embedding_model
 
         self.is_created = True
         try:
@@ -26,10 +27,11 @@ class TextDatabase:
             raise ValueError("Incorrect Data Format: Expected List[dict]")
 
     def query(self, request_vector, top_k=3) -> List[dict]:
-        if isinstance(request_vector, np.ndarray):
-            return self.tbl.search(request_vector).limit(top_k).to_list()
-        else:
-            raise ValueError("Query must be a numpy array matching vector dimensions")
+        q_vector = {"vector": self.embedding_model.encode([request_vector])[0], "content": request_vector}
+        # if isinstance(q_vector, np.ndarray):
+        return self.tbl.search(q_vector).limit(top_k).to_list()
+        # else:
+        #     raise ValueError("Query must be a numpy array matching vector dimensions")
 
     def delete(self):
         if self.table_name in self.db.table_names():
