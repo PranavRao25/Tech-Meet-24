@@ -236,6 +236,7 @@ class RAG:
             return {"question": state["question"], "context": state["context"], "answer": state["answer"]}
 
         def _classify_answer(state):
+            
             return 'llm' if state['question'] == True else 'web'
 
         def _answer(state):
