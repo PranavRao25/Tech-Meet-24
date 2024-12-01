@@ -1,6 +1,8 @@
+import sys
+# sys.path.insert(0, '/Users/rachitsandeepjain/Tech-Meet-24/QueryAgent')
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
-from .ContextAgent import *
+from QueryAgent.ContextAgent import *
 from langchain_core.runnables import RunnableLambda
 
 
@@ -118,4 +120,4 @@ class SubQueryAgent(ContextAgent):
         str: Concatenated text content from retrieved documents.
         """
 
-        return self._vb.retrieve(question)
+        return self._vb(question)

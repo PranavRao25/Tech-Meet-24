@@ -20,13 +20,12 @@ class AlternateQueryAgent:
         self._q_model = model_pair[0]
         self._parser = model_pair[1]
         self._turn = no_q
-        self._prompt = ChatPromptTemplate.from_template(
-            template="""You are given a question {question}.
+        template="""You are given a question {question}.
                   Generate """ + str(no_q) + """ alternate questions based on it. They should be numbered and separated by newlines.
                   Do not answer the questions.""".strip()
-        )
-        print(self._prompt)
+        self._prompt = ChatPromptTemplate.from_template(template)
         # Define a chain for generating alternate questions
+        
         self._chain = {"question": RunnablePassthrough()} | self._prompt | self._q_model | self._parser
 
     def multiple_question_generation(self, question: str) -> list[str]:
@@ -48,9 +47,12 @@ class AlternateQueryAgent:
 if __name__ == '__main__':
     
     
-    q_model=pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct", max_length=200)    
-    parser=StrOutputParser()
-    model_pair = (q_model, parser)
+    model = HuggingFaceHub(
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
+    )
+    parser = RunnableLambda(MistralParser().invoke)
+    alt_q = AlternateQueryAgent((self._model, self._parser))
     alt_q_agent = AlternateQueryAgent(model_pair)
 
     # Define the input question for alternate question generation

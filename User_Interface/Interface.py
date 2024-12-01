@@ -1,29 +1,24 @@
 import sys
 from pathlib import Path
 import streamlit as st
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import subprocess
-import threading
-<<<<<<< HEAD
-=======
 from transformers import pipeline
 from pathway.xpacks.llm.vector_store import VectorStoreClient
->>>>>>> ee01989d6218374b37fc77d492de3f58c3cfb172
 from langchain_core.output_parsers import StrOutputParser
-from langchain_community.llms import HuggingFaceHub
-from langchain_huggingface import HuggingFaceEndpoint
 import os
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 import toml
+import torch
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from RAG import RAG
+from AutoWrapper import AutoWrapper
 from LLM_Agent.LLM_Agent import LLMAgent
-from rerankers.models.models import colBERT
+from rerankers.models.models import colBERT, BGE_M3
 
 config = toml.load("../config.toml")
 HF_TOKEN = config['HF_TOKEN']
@@ -43,52 +38,22 @@ def vb_prep():
 
     return VectorStoreClient(host=HOST, port=PORT)
 
-
-# @st.cache_resource
-# def start_vector_store_server():
-#     try:
-#         # Run setup.py
-#         setup_process = subprocess.run([sys.executable, '../DataBase/setup.py'], check=True)
-#         setup_process.check_returncode()  # Ensure setup.py ran successfully
-
-#         st.success("setup.py and experiment.py executed successfully.")
-#     except subprocess.CalledProcessError as e:
-#         st.error(f"Error occurred while running the scripts: {e}")
-
-# @st.cache_resource
-# def thread():
-#     return threading.Thread(target=start_vector_store_server)
-
-# server_thread = thread()
-# if not server_thread.daemon:
-#     server_thread.daemon = True 
-#     server_thread.start()
-
-# Connect to the VectorStoreClient
-
-
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
-    model = AutoModelForCausalLM.from_pretrained("BAAI/bge-m3")
-    tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-m3")
-    return model, tokenizer
-
+    return BGE_M3(DEVICE), None
 
 @st.cache_resource
 def load_smol_lm():
-    return pipeline("text2text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")    
-    # return HuggingFaceEndpoint(
-    #     repo_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
-    #     temperature = 0.5,  
-    #     max_new_tokens = 512,
-    #     model_kwargs = { "max_length" : "64" }
-    # )
-
+    return AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    
+@st.cache_resource
+def load_smol_lms():
+    return "HuggingFaceTB/SmolLM2-1.7B-Instruct"
 
 @st.cache_resource
 def load_colbert():
-    model = colBERT()
+    model = colBERT(DEVICE)
     # model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
     # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, None
@@ -149,6 +114,7 @@ rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
 rag.reranker_prep(reranker=bge_m3_model, mode="complex")
 rag.moe_prep(moe_model)
 rag.step_back_prompt_prep(model=smol_lm_model)
+rag.web_search_prep()
 rag.set()
 
 # Main chat interface using `st.chat`
