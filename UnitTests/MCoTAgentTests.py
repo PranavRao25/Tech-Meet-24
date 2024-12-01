@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 from LanceDBSetup import TextDatabase  # Import the class from LanceDBSetup.py
 import numpy as np
-from sentence_transformers import SentenceTransformer  # Example embedding model
+# from sentence_transformers import SentenceTransformer  # Example embedding model
 # from QueryAgent.MCoTAgent import *  # Import MCoTAgent class
 from transformers import pipeline
 from langchain_core.output_parsers import StrOutputParser
@@ -16,7 +16,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 # Load a sentence transformer model for embedding text
-embedding_model = SentenceTransformer('all-MiniLM-L6-v2')  # Replace with your preferred embedding model
+# embedding_model = SentenceTransformer('all-MiniLM-L6-v2')  # Replace with your preferred embedding model
 def load_smol_lm():
     return AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     
@@ -27,7 +27,7 @@ def mcot_agent(query_vector, db_instance):
     """
     agent = MCoTAgent(db_instance, model_pair=(load_smol_lm(), StrOutputParser()))
     # Perform a query on the database
-    results = [agent.query(query_vector)[0]]
+    results = agent.query(query_vector) # why query vector when the agent is only accepting strings?
     return results
 
 if __name__ == "__main__":
@@ -42,15 +42,12 @@ if __name__ == "__main__":
     # Input the query string
     query_string = input("Enter your query: ")  # e.g., "Explain neural networks"
 
-    try:
-        # Embed the query string into a vector
-        query_vector = embedding_model.encode(query_string)
-        print(query_vector)
-        # Call the mcot agent with the query vector
-        response = mcot_agent(query_vector, text_db)
-        
-        print("\nRetrieved Chunks:")
-        for chunk in response:
-            print(chunk)
-    except Exception as e:
-        print(f"Error during retrieval: {e}")
+    # Embed the query string into a vector
+    # query_vector = embedding_model.encode(query_string)
+    # Call the mcot agent with the query vector
+    response = mcot_agent(query_string, text_db)
+    
+    print("\nRetrieved Chunks:")
+    for chunk in response:
+        print(chunk)
+

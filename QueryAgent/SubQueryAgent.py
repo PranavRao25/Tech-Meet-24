@@ -106,7 +106,6 @@ class SubQueryAgent(ContextAgent):
             query = self._sub_q_gen2.sub_questions_gen(query)
             context = self._fetch(query)
             total_contexts.append(context)
-
         return total_contexts
 
     def _fetch(self, question:str) -> str:
@@ -119,5 +118,4 @@ class SubQueryAgent(ContextAgent):
         Returns:
         str: Concatenated text content from retrieved documents.
         """
-
         return self._vb(question)
