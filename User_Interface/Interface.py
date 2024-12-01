@@ -8,6 +8,7 @@ import os
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 import toml
 import torch
+from langchain_community.llms import HuggingFaceHub
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
@@ -62,6 +63,12 @@ def load_colbert():
 def load_moe():
     return "microsoft/deberta-v3-small"
 
+@st.cache_resource
+def load_thresholder():
+    return HuggingFaceHub( #change this to the correct model
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
+    )
 
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
@@ -69,6 +76,7 @@ smol_lm_model = load_smol_lm()
 moe_model = load_moe()
 gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
+thresolder_model = load_thresholder()
 client = vb_prep()
 
 # Initialize session state for question history if it doesn't exist
@@ -115,6 +123,7 @@ rag.reranker_prep(reranker=bge_m3_model, mode="complex")
 rag.moe_prep(moe_model)
 rag.step_back_prompt_prep(model=smol_lm_model)
 rag.web_search_prep()
+rag.thresholder_prep(model=thresolder_model)
 rag.set()
 
 # Main chat interface using `st.chat`

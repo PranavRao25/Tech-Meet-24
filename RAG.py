@@ -18,7 +18,7 @@ from transformers import pipeline
 from QueryAgent.ToTAgent import ToTAgent
 from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
-
+from Thresholder.Thresholder import Thresholder
 
 class Pipeline:
     """
@@ -148,7 +148,7 @@ class RAG:
         model: The thresholder model.
         """
 
-        self._thresholder = model
+        self._thresholder = Thresholder(model=model) # make it runnable please
 
     def web_search_prep(self):
         """
@@ -205,7 +205,7 @@ class RAG:
             # "intermediate"
             # "complex"
             import numpy
-            return "simple"
+            return "intermediate"
             return numpy.random.choice(["simple", "intermediate", "complex"])
             return "simple"
             return self._moe_agent.invoke(state['question'])
@@ -237,8 +237,14 @@ class RAG:
             return {"question": state["question"], "context": state["context"], "answer": state["answer"]}
 
         def _classify_answer(state):
-            return 'llm'
-            return 'llm' if state['question'] == True else 'web'
+            
+            grades = self._thresholder.grade(state['question'], state['context'])
+            thres = sum(grades) / len(state['context'])
+            print(thres)
+            if thres >= 0.4:
+                return 'llm'
+            else:
+                return 'web'
 
         def _answer(state):
             """
@@ -250,6 +256,7 @@ class RAG:
 
         def _search(state):
             answer = self._web_search_agent.invoke(state['question'])
+            answer = _answer(state)
             return {"question": state["question"], "context": state["context"], "answer": answer}
 
         self._pipeline_setup()
