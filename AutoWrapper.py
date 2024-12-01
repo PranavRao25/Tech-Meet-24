@@ -14,3 +14,7 @@ class AutoWrapper:
         inputs = self.tokenize(text, **kwargs)
         output_ids = self.model.generate(**inputs, max_new_tokens=100)
         return self.tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
+    
+    def to(self, device:str):
+        self.model = self.model.to(device)
+        return self

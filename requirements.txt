@@ -287,3 +287,4 @@ zipp==3.20.2
 spacy==3.7.5
 langchain_huggingface==0.1.2
 PyMuPDF==1.24.13
+lancedb==0.16.0

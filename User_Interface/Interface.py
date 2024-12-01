@@ -7,9 +7,11 @@ from langchain_core.output_parsers import StrOutputParser
 import os
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 import toml
+import torch
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -39,7 +41,7 @@ def vb_prep():
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
-    return BGE_M3(), None
+    return BGE_M3(DEVICE), None
 
 @st.cache_resource
 def load_smol_lm():
@@ -51,7 +53,9 @@ def load_smol_lms():
 
 @st.cache_resource
 def load_colbert():
-    model = colBERT()
+    model = colBERT(DEVICE)
+    # model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
+    # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, None
 
 @st.cache_resource
