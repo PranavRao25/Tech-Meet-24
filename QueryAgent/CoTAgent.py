@@ -43,10 +43,8 @@ class CoTAgent(ContextAgent):
         small_chain = {"question": RunnablePassthrough()} | prompt | self._q_model #.invoke(prompt.format(question=question))
         subqueries = small_chain.invoke(question)[len(template):]
         
-        # print(f"\n\nsubqueries : {subqueries}\n\n".upper())
         # Retrieve and accumulate answers for each sub-question
         for subquery in subqueries.split('?'):
-            # print(f"\n\nsubquery : {subquery}\n\n".upper())
             subquery = str(subquery).strip()  # Clean and format subquery
             answer.append(self._fetch(question=subquery))
 
