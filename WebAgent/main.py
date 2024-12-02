@@ -1,7 +1,7 @@
 from .deepsearch import DeepSearch
 from .midsearch import MidSearch
 from .search import DuckDuckGoSearchRM, GoogleSearch, SerperRM, BraveRM, Retriever
-from .models import OllamaClient, GoogleModel
+from .models import GoogleModel
 from abc import ABC
 from typing import List, Optional
 
@@ -39,14 +39,6 @@ def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
     conv_simulator_lm = GoogleModel(model='models/gemini-1.5-flash', max_tokens=500, **gemini_kwargs)
     student_engine_lm = GoogleModel(model='models/gemini-1.5-flash', max_tokens=500, **gemini_kwargs)
     
-    # Configuration for OllamaClient
-    ollama_kwargs = {
-        "model": 'qwen:0.5b',
-        "port": '11434',
-        "url": 'http://localhost',
-        "stop": ('\n\n---',)
-    }
-
     # Initialize retrievers
     rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3)
     rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3, snippet_chunk_size=300)
@@ -90,14 +82,6 @@ def medium(query: str, ground_truth_url: List[str]) -> str:
     # Initialize language model
     student_engine_lm = GoogleModel(model='models/gemini-1.5-flash', max_tokens=500, **gemini_kwargs)
     
-    # Configuration for OllamaClient
-    ollama_kwargs = {
-        "model": 'qwen:0.5b',
-        "port": '11434',
-        "url": 'http://localhost',
-        "stop": ('\n\n---',)
-    }
-
     # Initialize retrievers
     rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3)
     rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3)

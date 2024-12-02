@@ -17,4 +17,4 @@ RUN chmod +x run.sh
 EXPOSE 8501
 
 # Run the database setup and Streamlit app
-CMD ["./run.sh"]
+ENTRYPOINT ["./run.sh"]

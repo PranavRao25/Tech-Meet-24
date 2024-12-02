@@ -204,8 +204,8 @@ class RAG:
             # "simple"
             # "intermediate"
             # "complex"
+            return "simple"
             import numpy
-            return "intermediate"
             return numpy.random.choice(["simple", "intermediate", "complex"])
             return "simple"
             return self._moe_agent.invoke(state['question'])
@@ -239,6 +239,7 @@ class RAG:
         def _classify_answer(state):
             
             grades = self._thresholder.grade(state['question'], state['context'])
+            print(grades)
             thres = sum(grades) / len(state['context'])
             print(thres)
             if thres >= 0.4:
@@ -256,8 +257,8 @@ class RAG:
 
         def _search(state):
             answer = self._web_search_agent.invoke(state['question'])
-            answer = _answer(state)
-            return {"question": state["question"], "context": state["context"], "answer": answer}
+            bot_answer = _answer({"question": state["question"], "context": answer, "answer": state["answer"]})
+            return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         self._pipeline_setup()
         self._RAGraph = StateGraph(GraphState)

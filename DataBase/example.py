@@ -1,6 +1,5 @@
 # from llama_index.retrievers.pathway import PathwayRetriever
 from pathway.xpacks.llm.vector_store import VectorStoreClient # better to use pathway's default client as we can set a timeout limit on it
-import asyncio
 from time import time
 
 HOST = "127.0.0.1"

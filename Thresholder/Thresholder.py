@@ -4,12 +4,34 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
 from langchain_community.llms import HuggingFaceHub
 
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+class AutoWrapper:
+    def __init__(self, model_name_or_path):
+        self.model = AutoModelForCausalLM.from_pretrained(model_name_or_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+
+    def tokenize(self, text, **kwargs):
+        return self.tokenizer(text, return_tensors="pt")
+
+    def __call__(self, text, **kwargs):
+        if not isinstance(text, str):
+            text = text.to_string()
+        inputs = self.tokenize(text, **kwargs)
+        output_ids = self.model.generate(**inputs, max_new_tokens=100)
+        return self.tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
+    
+    def to(self, device:str):
+        self.model = self.model.to(device)
+        return self
+
 class Thresholder:
     
     def __init__(self, model, parser=StrOutputParser()):
         
         self._model = model
         self._parser = parser
+        print(model)
 
         self.template = """
         
@@ -23,7 +45,7 @@ class Thresholder:
         self._chain = {
                     "question": RunnablePassthrough(),
                     "document": RunnableLambda(lambda x: self._docs) #peak 
-                } | self._prompt | self._model | self._parser
+                } | self._prompt | self._model #| self._parser
         
     def grade(self, question: str, documents: list[str]) -> list[int]:
         
