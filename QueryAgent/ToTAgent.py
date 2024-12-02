@@ -106,7 +106,6 @@ class ToTAgent:
                     print(contexts)
                     print()
                     relevant_contexts.update(contexts)
-                    relevant_contexts.append(context)
                     for subcontext in contexts:
                         if subcontext not in self.deeped_contexts:
                             self.deeped_contexts.add(subcontext)
