@@ -1,7 +1,6 @@
-from .ContextAgent import *
+from ContextAgent import *
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
-
 class CoTAgent(ContextAgent):
     """
     Chain of Thought (CoT) Agent class that inherits from ContextAgent.
@@ -42,9 +41,10 @@ class CoTAgent(ContextAgent):
         # Generate sub-questions using the q_model
         small_chain = {"question": RunnablePassthrough()} | prompt | self._q_model #.invoke(prompt.format(question=question))
         subqueries = small_chain.invoke(question)[len(template):]
-        
         # Retrieve and accumulate answers for each sub-question
         for subquery in subqueries.split('?'):
+            if subquery == "":
+                continue
             subquery = str(subquery).strip()  # Clean and format subquery
             answer.append(self._fetch(question=subquery))
 

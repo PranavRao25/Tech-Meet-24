@@ -1,4 +1,5 @@
 import os
+import re
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
@@ -25,6 +26,14 @@ class AutoWrapper:
         self.model = self.model.to(device)
         return self
 
+def chunk_text(text, chunk_size=250, overlap=25):
+    words = text.split()
+    chunks = []
+    for i in range(0, len(words), chunk_size - overlap):
+        chunk = " ".join(words[i:i + chunk_size])
+        chunks.append(chunk)
+    return chunks
+
 class Thresholder:
     
     def __init__(self, model, parser=StrOutputParser()):
@@ -34,31 +43,51 @@ class Thresholder:
         print(model)
 
         self.template = """
-        
-        Assess the relevance of the document to the question. \n
-        Question: {question} \n
-        Document: {document} \n
-        Respond with 'yes' if relevant, 'no' if not and provide no premable or explanation, just yes or no.\n"""
+        You are a grader assessing relevance of a retrieved document to a user question. \n 
+        Here is the retrieved document: \n\n {document} \n\n
+        Here is the user question: {question} \n
+        If the document contains keywords related to the user question, grade it as relevant. \n
+        It does not need to be a stringent test. The goal is to filter out erroneous retrievals. \n
+        Give a binary score 'yes' or 'no' score to indicate whether the document is relevant to the question. \n
+        Provide no premable or explanation, just yes or no.
+        """
         self._prompt = ChatPromptTemplate.from_template(self.template)
                 
         self._docs = []
         self._chain = {
                     "question": RunnablePassthrough(),
                     "document": RunnableLambda(lambda x: self._docs) #peak 
-                } | self._prompt | self._model #| self._parser
+                } | self._prompt | self._model | self._parser
         
     def grade(self, question: str, documents: list[str]) -> list[int]:
         
         grades = []
         for document in documents:
             
-            self._docs = document
-            answer = self._chain.invoke(question)
-            grade = answer.split("\n")[-1].strip().lower()
-            if "yes" in grade:
-                grades.append(1)
-            else:
+            chunks = chunk_text(document)
+            inter_grade = []
+            for chunk in chunks:
+
+                self._docs = chunk
+                answer = self._chain.invoke(question)
+                check = answer[len(self.template):]
+                print(f"CHECK: {check}\n")
+
+                yes_count = len(re.findall(r'\byes\b', check, re.IGNORECASE)) - 2
+                no_count = len(re.findall(r'\bno\b', check, re.IGNORECASE)) - 3
+                
+                print(f"YES: {yes_count} ")
+                print(f"NO: {no_count}\n")
+
+                if yes_count >= no_count:
+                    inter_grade.append(1)
+                else:
+                    inter_grade.append(0)
+            print(inter_grade)
+            if sum(inter_grade) / len(inter_grade) <= 0.5:
                 grades.append(0)
+            else:
+                grades.append(1)
             
         return grades
     
@@ -72,4 +101,23 @@ if __name__ == "__main__":
         model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
     )
     thres = Thresholder(model, StrOutputParser())
-    print(thres.grade("what is pathway?", ["pathway is shit", "pathway is company", "Nah I would win"]))
+    print(thres.grade("what is pathway?", ["""
+                                           Pathway is an open framework for high-throughput and low-latency real-time data processing. It is used to create Python code which seamlessly combines batch processing, streaming, and real-time API's for LLM apps. Pathway's distributed runtime (🦀-🐍) provides fresh results of your data pipelines whenever new inputs and requests are received.
+In the first place, Pathway was designed to be a life-saver (or at least a time-saver) for Python developers and ML/AI engineers faced with live data sources, where you need to react quickly to fresh data. Still, Pathway is a powerful tool that can be used for a lot of things. If you want to do streaming in Python, build an AI data pipeline, or if you are looking for your next Python data processing framework, keep reading.
+Pathway provides a high-level programming interface in Python for defining data transformations, aggregations, and other operations on data streams.
+
+                                           """, 
+                                           """
+                                           Indo-Aryan began with Vedic Sanskrit (1500 BCE), the language of the Rigveda and
+ancient Indian spiritual texts. Its transition into Classical Sanskrit introduced formal
+grammar codified by Panini in works like the Ashtadhyayi, establishing a language
+system of such precision that it resembles programming syntax. This linguistic structure
+facilitated the development of philosophical, scientific, and literary works, seen in epics
+like the Ramayana and Mahabharata, and created vocabulary layers with words that
+convey meanings difficult to capture with single English equivalents. This layered quality
+lends depth to Indo-Aryan languages, making their terms often evocative of multiple
+concepts
+                                           """, 
+                                           """
+
+                                           """]))

@@ -179,14 +179,16 @@ class WebAgent(ABC):
         
         # Handle the query based on its difficulty
         if 'Hard' in difficulty:
-            return hard(query, ground_truth_url=[''])
+            ans = hard(query, ground_truth_url=[''])
         elif 'Medium' in difficulty:
-            return medium(query, ground_truth_url=[''])
+            ans = medium(query, ground_truth_url=[''])
         elif 'Easy' in difficulty:
-            return easy(query, exclude_urls=[''])
+            ans = easy(query, exclude_urls=[''])
         else:
-            return "Unable to determine query difficulty."
+            ans = "Unable to determine query difficulty."
 
+        print(ans)
+        return ans
 
 if __name__ == '__main__':
 
