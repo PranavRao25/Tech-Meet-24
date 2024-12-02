@@ -24,8 +24,8 @@ class AlternateQueryAgent:
         self._q_model = model_pair[0]
         self._parser = model_pair[1]
         self._turn = no_q
-        template="""You are given a question {question}.
-                  Generate """ + str(no_q) + """ alternate questions based on it. They should be numbered and separated by newlines.
+        template="""You are given a question [{question}].
+                  Generate """ + "two" + """ alternate questions based on it. They should be numbered and separated by newlines.
                   Do not answer the questions.""".strip()
         self._prompt = ChatPromptTemplate.from_template(template)
         # Define a chain for generating alternate questions
@@ -46,8 +46,7 @@ class AlternateQueryAgent:
         """
 
         # Generate alternate questions and include the original question in the list
-        mul_qs = self._chain.invoke(question)#.split('\n')
-
+        mul_qs = [q.strip() for q in self._chain.invoke(question).split('\n') if q != ""]
         logger.info("multiple questions generated")
         return mul_qs
 

@@ -74,7 +74,7 @@ class SubQueryAgent(ContextAgent):
     """
 
 
-    def __init__(self, vb, model_pair, reranker=None, no_q=3):
+    def __init__(self, vb, model_pair, reranker=None, no_q=1):
         """
         Initializes the SubQueryAgent with verbosity, model pair, reranker, and number of queries.
 
@@ -105,7 +105,7 @@ class SubQueryAgent(ContextAgent):
 
         # Generate initial sub-question and retrieve initial context
         sub_q = self._sub_q_gen1.sub_questions_gen(question)
-        logger.info(f"sub question {sub_q}")
+        logger.info(f"sub question:- {sub_q}")
         initial_context = self._fetch(sub_q)
         total_contexts = [initial_context]
 
@@ -114,7 +114,7 @@ class SubQueryAgent(ContextAgent):
         for _ in range(self._turns):
             self._sub_q_gen2.context = context  # Update context for the next sub-question generation
             query = self._sub_q_gen2.sub_questions_gen(query)
-            logger.info(f"sub questions {query}")
+            logger.info(f"sub questions:- {query}")
             context = self._fetch(query)
             total_contexts.append(context)
         return total_contexts
