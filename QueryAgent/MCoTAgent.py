@@ -57,7 +57,7 @@ class MCoTAgent:
             contexts = []
             for i in contexts_:
                 for j in i:
-                    contexts.append(j["content"])
+                    contexts.append(j["text"])
             alternate_context.append("\n".join(contexts))
         # Log to file or console
         self._log_output("Alternate Contexts:", alternate_context)
@@ -76,13 +76,13 @@ class MCoTAgent:
         list[str]: A list of the top contexts after reranking.
         """
 
-        unique_context = []
+        unique_context = set()
         for context in alternate_context:
             if context not in unique_context:
-                unique_context.append(context)
+                unique_context.add(context)
 
         # Return the text of the top contexts
-        return unique_context
+        return list(unique_context)
 
     def _log_output(self, title: str, content: list[str]):
         """

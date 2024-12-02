@@ -3,7 +3,9 @@ import numpy as np
 from typing import Optional
 from sklearn.metrics.pairwise import cosine_similarity
 from rerankers.models.models import BaseModelClass, BaseLLMClass, colBERT, BGE_M3
-
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Reranker:
     """
@@ -32,7 +34,6 @@ class Reranker:
         Returns:
         list[str]: A list of documents ordered by relevance to the query.
         """
-        
         if len(docs) == 0 or len(query) == 0:
             return []
         # Embed query and documents
@@ -53,7 +54,7 @@ class Reranker:
             top_k = [docs[i] for i in (-scores).argsort()]
         else:
             top_k = [docs[i] for i in (-scores).argsort()[:self.k]]
-
+        logger.info(f"top_k: {top_k}")
         return top_k
 
     __call__ = rerank  # Enable the reranker to be called directly

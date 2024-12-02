@@ -6,13 +6,13 @@ class AutoWrapper:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 
     def tokenize(self, text, **kwargs):
-        return self.tokenizer(text, return_tensors="pt")
+        return self.tokenizer.encode(text, return_tensors="pt")
 
     def __call__(self, text, **kwargs):
         if not isinstance(text, str):
             text = text.to_string()
         inputs = self.tokenize(text, **kwargs)
-        output_ids = self.model.generate(**inputs, max_new_tokens=100)
+        output_ids = self.model.generate(inputs, max_new_tokens=100)
         return self.tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
     
     def to(self, device:str):

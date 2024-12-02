@@ -11,6 +11,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from QueryAgent.MCoTAgent import *  # Import MCoTAgent class
 # Add the project folder to the Python path
 from AutoWrapper import AutoWrapper
+from langchain.llms.ollama import Ollama
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -18,7 +19,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 # Load a sentence transformer model for embedding text
 # embedding_model = SentenceTransformer('all-MiniLM-L6-v2')  # Replace with your preferred embedding model
 def load_smol_lm():
-    return AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    return Ollama(model="mistral") #HuggingFaceTB/SmolLM2-1.7B-Instruct
     
 # Assuming `mcot_agent` is your implemented agent class/function
 def mcot_agent(query_vector, db_instance):
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     text_db = TextDatabase(table_name)
 
     # Load JSON data into LanceDB
-    # json_file_path = "UnitTests/data.json"  # Ensure this file exists in the same directory
+    # json_file_path = "UnitTests/ai_data.json"  # Ensure this file exists in the same directory
     # text_db.load_from_json(json_file_path)
 
     # Input the query string

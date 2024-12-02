@@ -27,11 +27,11 @@ for file in files:
         text_content = f.read()
         chunks = chunk_text(text_content)  # Chunk the text
         for i, chunk in enumerate(chunks):
-            data.append({"filename": file, "chunk_id": i, "content": chunk})
+            data.append({"filename": file, "chunk_id": i, "text": chunk})
 print("done with chunking")
 # Step 4: Generate embeddings for chunks
 model = SentenceTransformer('all-MiniLM-L6-v2')  # Choose an appropriate model
-texts = [entry['content'] for entry in data]
+texts = [entry['text'] for entry in data]
 embeddings = model.encode(texts)
 
 # Add embeddings to the data
