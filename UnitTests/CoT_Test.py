@@ -1,66 +1,53 @@
-# import requests
+import sys
+from pathlib import Path
+from LanceDBSetup import TextDatabase  # Import the class from LanceDBSetup.py
+import numpy as np
+# from sentence_transformers import SentenceTransformer  # Example embedding model
+# from QueryAgent.MCoTAgent import *  # Import MCoTAgent class
+from transformers import pipeline
+from langchain_core.output_parsers import StrOutputParser
 
-# API_URL = "https://api-inference.huggingface.co/models/deepset/roberta-base-squad2"
-# headers = {"Authorization": "Bearer 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"}
-
-# def query(payload):
-# 	response = requests.post(API_URL, headers=headers, json=payload)
-# 	return response.json()
-	
-# output = query({
-# 	"inputs": {
-# 	"question": "What is my name?",
-# 	"context": "My name is Clara and I live in Berkeley."
-# },
-# })
-# print(output)
-
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from QueryAgent.CoTAgent import *  # Import MCoTAgent class
+# Add the project folder to the Python path
+from AutoWrapper import AutoWrapper
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
+# Load a sentence transformer model for embedding text
+# embedding_model = SentenceTransformer('all-MiniLM-L6-v2')  # Replace with your preferred embedding model
+def load_smol_lm():
+    return AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    
+# Assuming `mcot_agent` is your implemented agent class/function
+def cot_agent(query_vector, db_instance):
+    """
+    Retrieves relevant chunks using the query vector.
+    """
+    agent = CoTAgent(db_instance, model_pair=(load_smol_lm(), StrOutputParser()))
+    # Perform a query on the database
+    results = agent.query(query_vector) # why query vector when the agent is only accepting strings?
+    return results
 
+if __name__ == "__main__":
+    # Database setup
+    table_name = "chunked_text_files"
+    text_db = TextDatabase(table_name)
 
+    # Load JSON data into LanceDB
+    # json_file_path = "UnitTests/data.json"  # Ensure this file exists in the same directory
+    # text_db.load_from_json(json_file_path)
 
+    # Input the query string
+    query_string = input("Enter your query: ")  # e.g., "Explain neural networks"
 
+    # Embed the query string into a vector
+    # query_vector = embedding_model.encode(query_string)
+    # Call the mcot agent with the query vector
+    response = cot_agent(query_string, text_db)
 
-
-import requests
-
-API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1"
-headers = {"Authorization": "Bearer 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"}
-
-def query(payload):
-	response = requests.post(API_URL, headers=headers, json=payload)
-	return response.json()
-	
-output = query({
-	"inputs": {"question":"What is the capital of France? "},
-})
-my_query="What is the capital of France?"
-
-print(output)
-
-
-# from huggingface_hub import InferenceClient
-# print("starting")
-# client = InferenceClient(api_key="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")
-# print("client created")
-# messages = [
-# 	{
-# 		"role": "user",
-# 		"content": "What is the capital of France?"
-# 	}
-# ]
-
-# completion = client.chat.completions.create(
-#     model="mistralai/Mistral-7B-Instruct-v0.1", 
-# 	messages=messages, 
-# 	max_tokens=500
-# )
-
-# print(completion.choices[0].message)
-
-
-
-
-
-
+    print("\nRetrieved Chunks:")
+    for chunk in response:
+        print("chunk - ")
+        print(chunk)
