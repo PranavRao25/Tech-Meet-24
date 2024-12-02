@@ -9,6 +9,7 @@ from pathway.xpacks.llm.vector_store import VectorStoreClient
 import toml
 import torch
 from langchain_community.llms import HuggingFaceHub
+from langchain.llms.ollama import Ollama
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
@@ -46,7 +47,7 @@ def load_bge_m3():
 
 @st.cache_resource
 def load_smol_lm():
-    return AutoWrapper("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    return Ollama(model="mistral")
     
 @st.cache_resource
 def load_smol_lms():
