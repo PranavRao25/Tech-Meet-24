@@ -242,7 +242,7 @@ class RAG:
             print(grades)
             thres = sum(grades) / len(state['context'])
             print(thres)
-            if thres >= 0.4:
+            if thres >= 0: #0.4
                 return 'llm'
             else:
                 return 'web'

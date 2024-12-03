@@ -1,6 +1,7 @@
 from .ContextAgent import *
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
+import logging
 
 class CoTAgent(ContextAgent):
     """
@@ -33,7 +34,7 @@ class CoTAgent(ContextAgent):
 
                 Output Format:
 
-                    sub-question: <sub_question>, <sub_question>, <sub_question>........
+                    sub-question: <sub_question> \n <sub_question> \n <sub_question>........
             """
         prompt = ChatPromptTemplate.from_template(template)
         # Fetch initial context based on the main question
@@ -41,16 +42,16 @@ class CoTAgent(ContextAgent):
 
         # Generate sub-questions using the q_model
         small_chain = {"question": RunnablePassthrough()} | prompt | self._q_model #.invoke(prompt.format(question=question))
-        subqueries = small_chain.invoke(question)[len(template):]
+        subqueries = small_chain.invoke(question)#[len(template):]
         
         # Retrieve and accumulate answers for each sub-question
-        for subquery in subqueries.split('?'):
+        for subquery in subqueries.split('\n'):
             subquery = str(subquery).strip()  # Clean and format subquery
-            answer.append(self._fetch(question=subquery))
-
+            answer += self._fetch(question=subquery)
+        logging.info(f"CoTsubqueries: {subqueries} \n answer_element_type: {type(answer[0])}")
         return answer
 
-    def _fetch(self, question:str)->str:
+    def _fetch(self, question:str)->list[str]:
         """
         Fetches relevant documents based on the question and consolidates their text content.
 
@@ -63,10 +64,10 @@ class CoTAgent(ContextAgent):
 
         # Retrieve documents based on the question
         docs = self._vb.query(question)
-        answer = ""
+        answer = []
 
         # Consolidate the text from each document into a single string
         for doc in docs:
-            answer += doc['text']
+            answer.append(doc['text'])
 
         return answer

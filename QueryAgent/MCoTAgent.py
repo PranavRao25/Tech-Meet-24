@@ -54,10 +54,9 @@ class MCoTAgent:
         for q in alt_qs:
             logger.info(f"alt q: {q}")
             contexts_ = self._sub_q.invoke(q)
-            contexts = []
+            contexts = set()
             for i in contexts_:
-                for j in i:
-                    contexts.append(j["text"])
+                contexts.add(i)
             alternate_context.append("\n".join(contexts))
         # Log to file or console
         self._log_output("Alternate Contexts:", alternate_context)

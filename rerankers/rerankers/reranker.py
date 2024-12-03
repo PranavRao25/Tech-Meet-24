@@ -12,7 +12,7 @@ class Reranker:
     Simple and intermediate reranker class that reranks documents based on their cosine similarity to the query.
     """
 
-    def __init__(self, model: BaseModelClass, k: Optional[int] = None):
+    def __init__(self, model: BaseModelClass, k: Optional[int] = 10):
         """
         Initializes the Reranker with a model and an optional value for the number of top documents to return.
 
@@ -54,7 +54,7 @@ class Reranker:
             top_k = [docs[i] for i in (-scores).argsort()]
         else:
             top_k = [docs[i] for i in (-scores).argsort()[:self.k]]
-        logger.info(f"top_k: {top_k}")
+        logger.info(f"docsSize: {len(docs)} \n top_k: {top_k} \n length: {len(top_k)}")
         return top_k
 
     __call__ = rerank  # Enable the reranker to be called directly
