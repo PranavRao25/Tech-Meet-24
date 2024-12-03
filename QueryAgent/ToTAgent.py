@@ -110,7 +110,7 @@ class ToTAgent:
                         if subcontext not in self.deeped_contexts:
                             self.deeped_contexts.add(subcontext)
                             deeper_contexts = self.recursive_retrieve(
-                                query, subcontext, depth + 1, self.max_depth
+                                query, subcontext, depth + 1
                             )
                             relevant_contexts.update(deeper_contexts)
 

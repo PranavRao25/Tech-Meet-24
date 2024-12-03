@@ -214,7 +214,7 @@ class RAG:
             """
             Executes the simple pipeline for a given state.
             """
-
+            print("simple pipeline has been chosen\n")
             context = self._simple_pipeline.invoke(state["question"])
             return {"question": state["question"], "context": context, "answer": state["answer"]}
 
@@ -222,6 +222,7 @@ class RAG:
             """
             Executes the intermediate pipeline for a given state.
             """
+            print("intermediate pipeline has been chosen\n")
             context = self._intermediate_pipeline.invoke(state["question"])
             return {"question": state["question"], "context": context, "answer": state["answer"]}
         
@@ -229,7 +230,7 @@ class RAG:
             """
             Executes the complex pipeline for a given state.
             """
-            
+            print("complex pipeline has been chosen\n")
             context = self._complex_pipeline.invoke(state["question"])
             return {"question": state["question"], "context": context, "answer": state["answer"]}
         
