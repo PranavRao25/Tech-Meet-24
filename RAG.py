@@ -199,6 +199,7 @@ class RAG:
             question: str
             context: str
             answer: str
+            path: str # jugaad, because someone won't and I'm afraid to break it
 
         def _classify_query(state):
             # "simple"
@@ -242,10 +243,13 @@ class RAG:
             print(grades)
             
             if grades.count(1) / len(grades) >= 0.2:
+                state["path"] = "llm"
                 return "llm"
             elif grades.count(0) / len(grades) >= 0.4:
+                state["path"] = "web_llm"
                 return "web"
             else:
+                state["path"] = "web"
                 return "web"
 
         def _answer(state):
@@ -257,9 +261,13 @@ class RAG:
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         def _search(state):
-            answer = self._web_search_agent.invoke(state['question'])
-            bot_answer = _answer({"question": state["question"], "context": answer, "answer": state["answer"]})
-            return {"question": state["question"], "context": state["context"], "answer": bot_answer}
+            
+            context = state["context"]
+            web_result = self._web_search_agent.invoke(state['question'])
+            if state["path"] == "web_llm":
+                context.extend(web_result)
+            
+            return {"question": state["question"], "context": state["context"], "answer": context}
 
         self._pipeline_setup()
         self._RAGraph = StateGraph(GraphState)
