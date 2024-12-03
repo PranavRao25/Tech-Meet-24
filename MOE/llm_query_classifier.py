@@ -1,5 +1,7 @@
 import json
 from typing import Any, Dict, Optional
+from langchain.prompts import ChatPromptTemplate
+from langchain.schema.runnable import RunnablePassthrough
 # Take a model, a question as input and then classify it as whether it is a simple, intermediate or complex question.
 class QueryClassifier:
     """
@@ -26,38 +28,35 @@ class QueryClassifier:
         :param query: The input query to be classified
         :return: A detailed prompt for the LLM
         """
-        return f"""You are an expert query complexity classifier. 
-Your task is to classify the complexity of the following query into one of three levels:
-- simple
-- intermediate 
-- complex
+        template= """You are an expert query complexity classifier. 
+            Your task is to classify the complexity of the following query into one of three levels:
+            - simple
+            - intermediate 
+            - complex
 
-complexity Classification Guidelines:
-1. simple Query:
-   - Direct, factual questions which requires minimal reasoning or context
-   - Examples: "What is the capital of France?"
+            complexity Classification Guidelines:
+            1. simple Query:
+            - Direct, factual questions which requires minimal reasoning or context
+            - Examples: "What is the capital of France?"
 
-2. intermediate Query:
-   - Requires some reasoning or multi-step thinking and involves moderate level of analysis
-   - Examples: "Explain the main causes of the Industrial Revolution"
+            2. intermediate Query:
+            - Requires some reasoning or multi-step thinking and involves moderate level of analysis
+            - Examples: "Explain the main causes of the Industrial Revolution"
 
-3. complex Query:
-   - Requires in-depth analysis and synthesis
-   - Examples: "Analyze the long-term geopolitical implications of climate change", 
+            3. complex Query:
+            - Requires in-depth analysis and synthesis
+            - Examples: "Analyze the long-term geopolitical implications of climate change", 
 
-Query to Classify: "{query}"
+            Query to Classify: "{query}"
 
-Please respond ONLY with a JSON object containing these keys:
-- "complexity": "simple" or "intermediate" or "complex"
-- "reasoning": A brief explanation of why you chose this complexity level
+            Please respond with a single word indicating the complexity level of the query:
+            e.g.
+            "complexity": "simple"
 
-Response format:
-{{
-    "complexity": "...",
-    "reasoning": "..."
-}}
-"""
-    
+            """
+        prompt = ChatPromptTemplate.from_template(template)
+        
+        return
     def classify(self, query: str) -> Dict[str, str]:
         """
         Classify the complexity of a given query.
@@ -70,26 +69,43 @@ Response format:
             raise ValueError("Query must be a non-empty string")
         
         # Generate prompt
-        prompt = self._generate_classification_prompt(query)
+        template= """You are an expert query complexity classifier. 
+            Your task is to classify the complexity of the following query into one of three levels:
+            - simple
+            - intermediate 
+            - complex
+
+            complexity Classification Guidelines:
+            1. simple Query:
+            - Direct, factual questions which requires minimal reasoning or context
+            - Examples: "What is the capital of France?"
+
+            2. intermediate Query:
+            - Requires some reasoning or multi-step thinking and involves moderate level of analysis
+            - Examples: "Explain the main causes of the Industrial Revolution"
+
+            3. complex Query:
+            - Requires in-depth analysis and synthesis
+            - Examples: "Analyze the long-term geopolitical implications of climate change", 
+
+            Query to Classify: "{query}"
+
+            Please respond with a single word indicating the complexity level of the query:
+            e.g.
+            "complexity": "simple"
+
+            """
+        prompt = ChatPromptTemplate.from_template(template)
+        small_chain = {"query": RunnablePassthrough()} | prompt | self.llm_model #.invoke(prompt.format(question=question))
+        llm_response = small_chain.invoke(query)[len(template):].split("complexity:")[-1].strip()
         
-        # Get LLM response
-        try:
-            llm_response = self.llm_model.generate(prompt)
-            
-            # Parse the JSON response
-            classification = json.loads(llm_response)
-            
-            # Validate the classification
-            valid_complexities = ["simple", "intermediate", "complex"]
-            if classification.get("complexity") not in valid_complexities:
-                raise ValueError(f"Invalid complexity level. Must be one of {valid_complexities}")
-            print("complexity",classification["complexity"])
-            print("reasoning",classification["reasoning"])
-            return classification["complexity"].lower()
-        
-        except json.JSONDecodeError:
-            # Fallback to a default classification if JSON parsing fails
-            print("complexity","complex")
-            print("reasoning","Default classification as JSON parsing failed")
+        llm_response = llm_response.strip()
+        if "simple" in llm_response:
+            return "simple"
+        elif "intermediate" in llm_response:
+            return "intermediate"
+        elif "complex" in llm_response:
             return "complex"
-      
+        else:
+            print("Error in classification")
+            return "simple"

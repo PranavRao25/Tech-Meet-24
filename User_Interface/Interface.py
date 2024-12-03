@@ -21,6 +21,7 @@ from RAG import RAG
 from AutoWrapper import AutoWrapper
 from LLM_Agent.LLM_Agent import LLMAgent
 from rerankers.models.models import colBERT, BGE_M3
+from MOE.llm_query_classifier import QueryClassifier
 
 config = toml.load("../config.toml")
 HF_TOKEN = config['HF_TOKEN']
@@ -47,22 +48,17 @@ def load_bge_m3():
 
 @st.cache_resource
 def load_smol_lm():
-    return Ollama(model="mistral")
+    return HuggingFaceHub(
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
+    )
     
-@st.cache_resource
-def load_smol_lms():
-    return "HuggingFaceTB/SmolLM2-1.7B-Instruct"
-
 @st.cache_resource
 def load_colbert():
     model = colBERT()
     # model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
     # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, None
-
-@st.cache_resource
-def load_moe():
-    return "microsoft/deberta-v3-small"
 
 @st.cache_resource
 def load_thresholder():
@@ -74,7 +70,7 @@ def load_thresholder():
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
-moe_model = load_moe()
+moe_model = load_smol_lm()
 gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
 thresolder_model = load_thresholder()

@@ -1,4 +1,4 @@
-from ContextAgent import *
+from QueryAgent.ContextAgent import *
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
 import logging

@@ -9,7 +9,6 @@ from ragas.metrics import (
     context_precision
 )
 from langgraph.graph import END, StateGraph
-# from MOE.Query_Classifier import QueryClassifier
 from MOE.llm_query_classifier import QueryClassifier
 from QueryAgent.MCoTAgent import MCoTAgent
 from QueryAgent.CoTAgent import CoTAgent
@@ -139,7 +138,7 @@ class RAG:
         model: The MoE model.
         """
 
-        self._moe_agent = RunnableLambda(QueryClassifier(model=model).classify)
+        self._moe_agent = RunnableLambda(QueryClassifier(model).classify)
 
     def thresholder_prep(self, model):
         """
@@ -205,11 +204,10 @@ class RAG:
             # "simple"
             # "intermediate"
             # "complex"
+            _answer =  self._moe_agent.invoke(state['question'])
+            print(_answer)
+            return _answer
             return "simple"
-            import numpy
-            return numpy.random.choice(["simple", "intermediate", "complex"])
-            return "simple"
-            return self._moe_agent.invoke(state['question'])
 
         def _simple_pipeline(state):
             """
