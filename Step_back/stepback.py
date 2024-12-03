@@ -17,8 +17,8 @@ class QuestionGen:
                 "output": "What can the members of The Police do?, What is lawful arrests?"
             },
             {
-                "input": "Jan Sindel’s was born in what country?",
-                "output": "What is Jan Sindel’s personal history?, What are the common countries?"
+                "input": "Jan Sindel's was born in what country?",
+                "output": "What is Jan Sindel's personal history?, What are the common countries?"
             },
             {
                 "input": "Who is taller, Yao Ming or Shaq?",
@@ -44,7 +44,7 @@ class QuestionGen:
                 f"Input: {question}\nOutput:"
             )
             # Use the Hugging Face model to generate output
-            results = self.q_model(prompt, max_length=100, num_return_sequences=1)
+            results = self.q_model(prompt, max_length=100, num_return_sequences=1)[len(prompt):]
             return results.split('\n')[:3]  # changed from: results[0].split("\nOutput:")[-1].split('\n')[0].split(',')[0]
 
         # Combine the model output with the parser

@@ -38,17 +38,21 @@ class CoTAgent(ContextAgent):
             """
         prompt = ChatPromptTemplate.from_template(template)
         # Fetch initial context based on the main question
-        answer = []
-
+        answer = set()
+        
         # Generate sub-questions using the q_model
         small_chain = {"question": RunnablePassthrough()} | prompt | self._q_model #.invoke(prompt.format(question=question))
+        logging.info(f"COT AGENT GENERATING...")
         subqueries = small_chain.invoke(question)[len(template):]
+        logging.info(f"COT AGENT GENERATION FINISHED")
         # Retrieve and accumulate answers for each sub-question
         for subquery in subqueries.split('?'):
             if subquery == "":
                 continue
             subquery = str(subquery).strip()  # Clean and format subquery
-            answer += self._fetch(question=subquery)
+            for fetch in self._fetch(question=subquery):
+                answer.add(fetch)
+        answer = list(answer)
         logging.info(f"CoTsubqueries: {subqueries} \n answer_element_type: {type(answer[0])}")
         return answer
 
@@ -65,10 +69,10 @@ class CoTAgent(ContextAgent):
 
         # Retrieve documents based on the question
         docs = self._vb.query(question)
-        answer = []
+        answer = set()
 
         # Consolidate the text from each document into a single string
         for doc in docs:
-            answer.append(doc['text'])
+            answer.add(doc['text'])
 
-        return answer
+        return list(answer)

@@ -5,6 +5,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from pydantic import BaseModel, Field
 from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
+import logging
 
 class ResponseSchema(BaseModel):
     """Schema for structured output"""
@@ -61,10 +62,9 @@ class LLMAgent:
 
             # Sources: [List the relevant sources from the context]
             template="""
-            
-            You are a helpful AI assistant. Using the provided context, answer the question. \n
-            If the question doesn't require the context, (a simple factoid question), you can answer it directly. \n
-            Otherwise, use the context to provide a more detailed answer. \n
+            You are a helpful AI assistant. Using the provided context, answer the question.
+            Format your response in the following way:
+            Answer: [Provide a clear, direct answer]
 
             The inputs are
             Context: {context}
@@ -102,7 +102,6 @@ class LLMAgent:
             Structured response containing answer, reasoning, and sources
         """
         # Format context for the prompt
-        # print(f"Context : {context}")
         formatted_context = "\n".join([
             f"Document {i+1}: {doc}"
             for i, doc in enumerate(context)
@@ -110,8 +109,9 @@ class LLMAgent:
         
         # Get response from LLM
         self._context = formatted_context
+        logging.info(f"Context : {formatted_context}\n")
         response = self.chain.invoke(question).content
-        
+        logging.info(f"response: {response}")
         # Parse and return structured output
         return self.output_parser.parse(response).answer
 

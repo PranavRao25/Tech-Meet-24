@@ -48,8 +48,8 @@ class Thresholder:
         Here is the user question: {question} \n
         If the document contains keywords related to the user question, grade it as relevant. \n
         It does not need to be a stringent test. The goal is to filter out erroneous retrievals. \n
-        Give a binary score 'yes' or 'no' score to indicate whether the document is relevant to the question. \n
-        Provide no premable or explanation, just yes or no.
+        Give a ternary score 'relevant' or 'ambiguous' or 'irrelevant' score to indicate the relevancy of the document to question. \n
+        Provide no premable or explanation, just a single score. Don't answer with '-'.
         """
         self._prompt = ChatPromptTemplate.from_template(self.template)
                 
@@ -70,27 +70,30 @@ class Thresholder:
 
                 self._docs = chunk
                 answer = self._chain.invoke(question)
-                check = answer[len(self.template):]
+                check = answer
                 print(f"CHECK: {check}\n")
             
-                yes_count = len(re.findall(r'\byes\b', check, re.IGNORECASE)) - 2
-                no_count = len(re.findall(r'\bno\b', check, re.IGNORECASE)) - 3
+                relevant = len(re.findall(r'\brelevant\b', check, re.IGNORECASE)) - 2
+                ambiguous = len(re.findall(r'\bambiguous\b', check, re.IGNORECASE)) - 1
+                irrelevant = len(re.findall(r'\birrelevant\b', check, re.IGNORECASE)) - 1
                 
-                print(f"YES: {yes_count} ")
-                print(f"NO: {no_count}\n")
+                print(f"relevant: {relevant} ")
+                print(f"ambiguous: {ambiguous}\n")
+                print(f"irrelevant: {irrelevant}\n")
 
-                if yes_count >= no_count:
+                if relevant == 1:
                     inter_grade.append(1)
-                else:
+                elif ambiguous == 1:
                     inter_grade.append(0)
-            thres = sum(inter_grade) / len(inter_grade)
-            
-            if thres <= 0.2:
-                grades.append(-1)
-            elif thres >= 0.66:
+                else:
+                    inter_grade.append(-1)
+                        
+            if inter_grade.count(1) / len(inter_grade) >= 0.15:
+                grades.append(1)
+            elif inter_grade.count(0) / len(inter_grade) >= 0.4:
                 grades.append(0)
             else:
-                grades.append(1)
+                grades.append(-1)
             
         return grades
     
