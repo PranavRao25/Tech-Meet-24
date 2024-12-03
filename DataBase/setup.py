@@ -1,14 +1,24 @@
 from pathway.xpacks.llm.vector_store import VectorStoreServer
 # from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter, TextSplitter
 from io import BytesIO
 from utils import IndexServer
 import pathway as pw
 import pymupdf
 
 embedder = HuggingFaceEmbeddings(model_name="colbert-ir/colbertv2.0") # change to dunzhang/stella_en_1.5B_v5
-splitter = CharacterTextSplitter(separator="\n")
+# splitter = CharacterTextSplitter(separator="\n")
+class CustomSplitter(TextSplitter):
+    def split_text(self, text: str):
+        """Split text into multiple components."""
+        words = text.split()
+        chunks = []
+        for i in range(0, len(words), self._chunk_size - self._chunk_overlap):
+            chunk = " ".join(words[i:i + self._chunk_size])
+            chunks.append(chunk)
+        return chunks
+splitter = CustomSplitter(chunk_size=100, chunk_overlap=20)
 
 class PDFParser(pw.UDF):
     def __wrapped__(self, contents: bytes) -> list[tuple[str, dict]]:

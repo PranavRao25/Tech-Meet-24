@@ -33,7 +33,7 @@ class SubQueryGenAgent:
         if self._mode:
             # Define prompt for mode with question only
             self._prompt = ChatPromptTemplate.from_template(
-                """You are given a main Question {question}. You must generate a subquestion for the same. Output should in the format: sub-question : <sub_question>"""
+                """You are given a main Question {question}. You must generate ONE subquestion for the same. Output should in the format: sub-question : <sub_question>"""
             )
             self._chain = {
                              "question": RunnablePassthrough()
@@ -107,7 +107,7 @@ class SubQueryAgent(ContextAgent):
         sub_q = self._sub_q_gen1.sub_questions_gen(question)
         logger.info(f"sub question:- {sub_q}")
         initial_context = self._fetch(sub_q)
-        total_contexts = [initial_context]
+        total_contexts = set(cont["text"] for cont in initial_context)
 
         # Iteratively generate and fetch contexts for progressive sub-questions
         context, query = initial_context, sub_q
@@ -116,8 +116,9 @@ class SubQueryAgent(ContextAgent):
             query = self._sub_q_gen2.sub_questions_gen(query)
             logger.info(f"sub questions:- {query}")
             context = self._fetch(query)
-            total_contexts.append(context)
-        return total_contexts
+            for cont in context:
+                total_contexts.add(cont["text"])
+        return list(total_contexts)
 
     def _fetch(self, question:str) -> str:
         """

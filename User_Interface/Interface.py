@@ -43,7 +43,7 @@ def vb_prep():
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
-    return BGE_M3(DEVICE), None
+    return BGE_M3(), None
 
 @st.cache_resource
 def load_smol_lm():
@@ -55,7 +55,7 @@ def load_smol_lms():
 
 @st.cache_resource
 def load_colbert():
-    model = colBERT(DEVICE)
+    model = colBERT()
     # model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
     # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, None
