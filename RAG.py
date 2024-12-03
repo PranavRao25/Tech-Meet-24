@@ -9,7 +9,8 @@ from ragas.metrics import (
     context_precision
 )
 from langgraph.graph import END, StateGraph
-from MOE.Query_Classifier import QueryClassifier
+# from MOE.Query_Classifier import QueryClassifier
+from MOE.llm_query_classifier import QueryClassifier
 from QueryAgent.MCoTAgent import MCoTAgent
 from QueryAgent.CoTAgent import CoTAgent
 from Step_back.stepback import QuestionGen
@@ -138,7 +139,7 @@ class RAG:
         model: The MoE model.
         """
 
-        # self._moe_agent = RunnableLambda(QueryClassifier(model=model).classify)
+        self._moe_agent = RunnableLambda(QueryClassifier(model=model).classify)
 
     def thresholder_prep(self, model):
         """
