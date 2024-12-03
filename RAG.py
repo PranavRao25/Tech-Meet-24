@@ -199,7 +199,6 @@ class RAG:
             question: str
             context: str
             answer: str
-            path: str # jugaad, because someone won't and I'm afraid to break it
 
         def _classify_query(state):
             # "simple"
@@ -262,12 +261,17 @@ class RAG:
 
         def _search(state):
             
-            context = state["context"]
             web_result = self._web_search_agent.invoke(state['question'])
-            if state["path"] == "web_llm":
-                context.extend(web_result)
+            bot_answer = self._llm.process_query(state["question"], web_result)
+            return {"question": state["question"], "context": state["context"], "answer": bot_answer}
+
+        def _ambiguous(state):
             
-            return {"question": state["question"], "context": state["context"], "answer": context}
+            web_result = self._web_search_agent.invoke(state['question'])
+            context = state["context"]
+            context.extend(web_result)
+            bot_answer = self._llm.process_query(state["question"], context)       
+            return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         self._pipeline_setup()
         self._RAGraph = StateGraph(GraphState)
@@ -279,6 +283,7 @@ class RAG:
         self._RAGraph.add_node("thresholder", _threshold)
         self._RAGraph.add_node("llm", _answer)
         self._RAGraph.add_node("web", _search)
+        self._RAGraph.add_node("web_llm", _ambiguous)
         self._RAGraph.add_conditional_edges(
             "entry",
             _classify_query,
@@ -296,11 +301,13 @@ class RAG:
             _classify_answer,
             {
                 "llm": "llm",
-                "web": "web"
+                "web": "web",
+                "web_llm": "web_llm"
             }
         )
         self._RAGraph.add_edge("llm", END)
         self._RAGraph.add_edge("web", END)
+        self._RAGraph.add_edge("web_llm", END)
         self._ragchain = self._RAGraph.compile()
 
     def set(self):
