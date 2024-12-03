@@ -7,7 +7,7 @@ HOST = "127.0.0.1"
 PORT = 8666
 
 class ToTAgent:
-    def __init__(self, vb, model_pair: tuple, reranker, best:int=3, threshold:int=7, breadth:int=5, max_depth:int=2) -> None:
+    def __init__(self, vb, model_pair: tuple, reranker, best:int=3, threshold:int=3, breadth:int=5, max_depth:int=2) -> None:
         """
         Initialize the ToT Agent.
         :param vb: Instance of a vb for context retrieval
@@ -170,7 +170,8 @@ class ToTAgent:
         Returns:
         list[str]: A list of the top contexts after reranking.
         """
-        return alternate_context
+        if self._reranker is None:
+            return alternate_context
         # Rerank contexts and select the top 'best' number of contexts
         context = self._reranker.rerank(
             query=question,
@@ -197,5 +198,5 @@ if __name__ == "__main__":
     HOST = "127.0.0.1"
     PORT = 8666
 
-    tb = ToTAgent(vb=client, model_pair=(model, None), reranker=None, best=3, threshold=7, breadth=5, max_depth=2)    
+    tb = ToTAgent(vb=client, model_pair=(model, None), reranker=None, best=3, threshold=3, breadth=5, max_depth=2)    
     tb.query("What is pathway?")
