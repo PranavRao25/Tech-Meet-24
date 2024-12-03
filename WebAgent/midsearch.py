@@ -112,7 +112,7 @@ class MidSearch(dspy.Module):
         self,
         query: str,
         ground_truth_url: str,
-    ) -> str:
+    ) -> list[str]:
         """
         Query the Student module to get the answer.
 
@@ -124,4 +124,4 @@ class MidSearch(dspy.Module):
             str: The generated answer.
         """
         results = self.student(query, ground_truth_url)
-        return results.answer
+        return [results.answer]

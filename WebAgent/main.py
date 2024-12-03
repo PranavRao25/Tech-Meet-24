@@ -17,7 +17,7 @@ BRAVE_API = config["BRAVE_API"]
 
 
 # Function to handle hard queries
-def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
+def hard(query: str, ground_truth_url: Optional[List[str]]) -> list[str]:
     """
     Handles hard queries by breaking them into subtopics and performing multiple searches.
 
@@ -61,7 +61,7 @@ def hard(query: str, ground_truth_url: Optional[List[str]]) -> str:
 
 
 # Function to handle medium queries
-def medium(query: str, ground_truth_url: List[str]) -> str:
+def medium(query: str, ground_truth_url: List[str]) -> list[str]:
     """
     Handles medium queries by performing multiple searches.
 
@@ -101,7 +101,7 @@ def medium(query: str, ground_truth_url: List[str]) -> str:
 
 
 # Function to handle easy queries
-def easy(query: str, exclude_urls: Optional[List[str]]) -> str:
+def easy(query: str, exclude_urls: Optional[List[str]]) -> list[str]:
     """
     Handles easy queries by performing a single search.
 
@@ -121,9 +121,9 @@ def easy(query: str, exclude_urls: Optional[List[str]]) -> str:
 
     # Perform the search
     sources = retriever.forward(queries=[query], exclude_urls=exclude_urls)
-    info = ""
+    info = []
     for source in sources:
-        info += source['snippets'][0]
+        info.append(source['snippets'][0])
         
     return info
 
@@ -153,7 +153,7 @@ class WebAgent(ABC):
         # Initialize triage model
         self.triage = GoogleModel(model='models/gemini-1.5-flash', max_tokens=500, **gemini_kwargs)
         
-    def query(self, query: str) -> str:
+    def query(self, query: str) -> list[str]:
         """
         Determines the complexity of the query and retrieves information using either a single search or multiple searches.
 
@@ -185,7 +185,7 @@ class WebAgent(ABC):
         elif 'Easy' in difficulty:
             ans = easy(query, exclude_urls=[''])
         else:
-            ans = "Unable to determine query difficulty."
+            ans = ["Unable to determine query difficulty."]
 
         print(ans)
         return ans

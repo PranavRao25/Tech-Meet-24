@@ -252,8 +252,8 @@ class DeepSearch(dspy.Module):
         )
         
         # Collect the knowledge from the conversation history
-        knowledge = ""
+        knowledge = []
         for dialogue_turn in conversation.dlg_history:
-            knowledge += dialogue_turn.log()['agent_utterance']
+            knowledge.append(dialogue_turn.log()['agent_utterance'])
             
         return knowledge
