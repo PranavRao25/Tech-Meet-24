@@ -4,7 +4,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from pydantic import BaseModel, Field
-from langchain.schema.runnable import RunnablePassthrough, RunnableMap
+from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
 
 class ResponseSchema(BaseModel):
     """Schema for structured output"""
@@ -61,11 +61,10 @@ class LLMAgent:
 
             # Sources: [List the relevant sources from the context]
             template="""
-            You are a helpful AI assistant. Using the provided context, answer the question.
-            Format your response in the following way:
-
-            Answer: [Provide a clear, direct answer]
-
+            
+            You are a helpful AI assistant. Using the provided context, answer the question. \n
+            If the question doesn't require the context, (a simple factoid question), you can answer it directly. \n
+            Otherwise, use the context to provide a more detailed answer. \n
 
             The inputs are
             Context: {context}
@@ -73,17 +72,18 @@ class LLMAgent:
             Question: {question}
             """
         )
+        self._context = ''
 
         # Create LangChain chain
         # self.chain = LLMChain(
         #     llm=self.llm,
         #     prompt=self.prompt_template
         # )
-        
         self.chain = (
-            RunnableMap({"question": RunnablePassthrough(), "context": RunnablePassthrough()})
-            | self.prompt_template
-            | self.llm
+            {
+                "question": RunnablePassthrough(),
+                "context": RunnableLambda(lambda x: self._context)  # peak
+            } | self.prompt_template | self.llm
         )
         
     def process_query(
@@ -109,12 +109,8 @@ class LLMAgent:
         ])
         
         # Get response from LLM
-        response = self.chain.invoke(
-            {
-                "context": formatted_context, 
-                "question": question
-            }
-        ).content
+        self._context = formatted_context
+        response = self.chain.invoke(question).content
         
         # Parse and return structured output
         return self.output_parser.parse(response).answer
@@ -131,11 +127,12 @@ class LLMAgent:
         """Extract the reasoning from the response"""
         return response.reasoning
     
+if __name__ == "__main__":
 
-# llm=LLMAgent(google_api_key="api",model_name="gemini-pro")
-# context_france=["\
-# France, in Western Europe, encompasses medieval cities, alpine villages and Mediterranean beaches. Paris, its capital, is famed for its fashion houses, classical art museums including the Louvre and monuments like the Eiffel Tower. The country is also renowned for its wines and sophisticated cuisine. Lascaux’s ancient cave drawings, Lyon’s Roman theater and the vast Palace of Versailles attest to its rich history.\
-# ",
-# "France is really Beautiful."]
-# output=llm.process_query(question="What is the capital of France",context=context_france)
-# print(output)
+    llm=LLMAgent(google_api_key="AIzaSyDQPQr_pWALivoVPqIKC6TfHi4AsUBGMm0",model_name="gemini-pro")
+    context_france=["\
+    France, in Western Europe, encompasses medieval cities, alpine villages and Mediterranean beaches. Paris, its capital, is famed for its fashion houses, classical art museums including the Louvre and monuments like the Eiffel Tower. The country is also renowned for its wines and sophisticated cuisine. Lascaux’s ancient cave drawings, Lyon’s Roman theater and the vast Palace of Versailles attest to its rich history.\
+    ",
+    "France is really Beautiful."]
+    output=llm.process_query(question="What is the capital of France",context=context_france)
+    print(output)

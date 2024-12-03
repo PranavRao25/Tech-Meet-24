@@ -72,7 +72,7 @@ class Thresholder:
                 answer = self._chain.invoke(question)
                 check = answer[len(self.template):]
                 print(f"CHECK: {check}\n")
-
+            
                 yes_count = len(re.findall(r'\byes\b', check, re.IGNORECASE)) - 2
                 no_count = len(re.findall(r'\bno\b', check, re.IGNORECASE)) - 3
                 
@@ -83,8 +83,11 @@ class Thresholder:
                     inter_grade.append(1)
                 else:
                     inter_grade.append(0)
-            print(inter_grade)
-            if sum(inter_grade) / len(inter_grade) <= 0.5:
+            thres = sum(inter_grade) / len(inter_grade)
+            
+            if thres <= 0.2:
+                grades.append(-1)
+            elif thres >= 0.66:
                 grades.append(0)
             else:
                 grades.append(1)

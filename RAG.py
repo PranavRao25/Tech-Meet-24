@@ -242,12 +242,13 @@ class RAG:
             
             grades = self._thresholder.grade(state['question'], state['context'])
             print(grades)
-            thres = sum(grades) / len(state['context'])
-            print(thres)
-            if thres >= 0: #0.4
-                return 'llm'
+            
+            if grades.count(1) / len(grades) >= 0.2:
+                return "llm"
+            elif grades.count(0) / len(grades) >= 0.4:
+                return "web"
             else:
-                return 'web'
+                return "web"
 
         def _answer(state):
             """
