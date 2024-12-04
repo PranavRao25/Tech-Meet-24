@@ -2,6 +2,8 @@ import json
 from typing import Any, Dict, Optional
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
+from langchain_community.llms import HuggingFaceHub
+
 # Take a model, a question as input and then classify it as whether it is a simple, intermediate or complex question.
 class QueryClassifier:
     """
@@ -70,21 +72,27 @@ class QueryClassifier:
         
         # Generate prompt
         template= """You are an expert query complexity classifier. 
-            Your task is to classify the complexity of the following query into one of three levels:
+            Your task is to classify the complexity of the following query into one of four levels:
+            - trivial
             - simple
             - intermediate 
             - complex
 
             complexity Classification Guidelines:
-            1. simple Query:
+            1. trivial Query:
+            - Queries that do not require any reasoning or database retrieval.
+            - These are basic greetings, conversational inputs, or simple factual questions that are commonly known by many language models.
+            - Examples: "What is 2+2?", "Hello, how are you?"
+
+            2. simple Query:
             - Direct, factual questions which requires minimal reasoning or context
             - Examples: "What is the capital of France?"
 
-            2. intermediate Query:
+            3. intermediate Query:
             - Requires some reasoning or multi-step thinking and involves moderate level of analysis
             - Examples: "Explain the main causes of the Industrial Revolution"
 
-            3. complex Query:
+            4. complex Query:
             - Requires in-depth analysis and synthesis
             - Examples: "Analyze the long-term geopolitical implications of climate change", 
 
@@ -100,7 +108,9 @@ class QueryClassifier:
         llm_response = small_chain.invoke(query)[len(template):].split("complexity:")[-1].strip()
         
         llm_response = llm_response.strip()
-        if "simple" in llm_response:
+        if "trivial" in llm_response:
+            return "trivial"
+        elif "simple" in llm_response:
             return "simple"
         elif "intermediate" in llm_response:
             return "intermediate"
@@ -109,3 +119,13 @@ class QueryClassifier:
         else:
             print("Error in classification")
             return "simple"
+# def load_mistral():
+#     return HuggingFaceHub(
+#         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+#         model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
+#     )
+# if __name__ == "__main__":
+
+#     classifier = QueryClassifier(load_mistral())
+#     output = classifier.classify("what is the time now?")
+#     print(output)
