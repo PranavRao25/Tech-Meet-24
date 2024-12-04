@@ -42,15 +42,16 @@ class CoTAgent(ContextAgent):
         
         # Generate sub-questions using the q_model
         small_chain = {"question": RunnablePassthrough()} | prompt | self._q_model #.invoke(prompt.format(question=question))
-        logging.info(f"COT AGENT GENERATING...")
+        logging.info(f"COT AGENT SUBQUERIES GENERATING...")
         subqueries = small_chain.invoke(question)[len(template):]
-        logging.info(f"COT AGENT GENERATION FINISHED")
+        logging.info(f"COT AGENT SUBQUERIES GENERATION FINISHED")
         # Retrieve and accumulate answers for each sub-question
         for subquery in subqueries.split('?'):
             if subquery == "":
                 continue
             subquery = str(subquery).strip()  # Clean and format subquery
             for fetch in self._fetch(question=subquery):
+                print("fetching...")
                 answer.add(fetch)
         answer = list(answer)
         logging.info(f"CoTsubqueries: {subqueries} \n answer_element_type: {type(answer[0])}")

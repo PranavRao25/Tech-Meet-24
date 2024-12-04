@@ -254,18 +254,18 @@ class RAG:
             """
             Generates an answer based on the updated state.
             """
-
+            logger.info("Documents are relevant")
             bot_answer = self._llm.process_query(state["question"], state["context"])
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         def _search(state):
-            
+            logger.info("Documents are Irrelevant")
             web_result = self._web_search_agent.invoke(state['question'])
             bot_answer = self._llm.process_query(state["question"], web_result)
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         def _ambiguous(state):
-            
+            logger.info("Documents are Ambigious")
             web_result = self._web_search_agent.invoke(state['question'])
             context = state["context"]
             context.extend(web_result)

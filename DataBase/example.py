@@ -5,12 +5,14 @@ from time import time
 HOST = "127.0.0.1"
 PORT = 8666
 if __name__ == "__main__":
-    client = VectorStoreClient(HOST, PORT, timeout=60)
+    begin = time()
+    client = VectorStoreClient(HOST, PORT, timeout=500)
     start = time()
-    output = client.query("what is Random Access Memory?")
+    print("vector client initialized:",start-begin)
+    output = client.query("who is dotonion?", k=10)
     print(len(output))
-    print([item["text"] for item in output])
+    print("\n====\n".join([item["text"] for item in output]))
     end = time()
     print()
-    print("time_taken:")
+    print("time_taken for querying:")
     print(end-start)
