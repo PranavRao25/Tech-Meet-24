@@ -41,7 +41,7 @@ class LLMAgent:
     def __init__(
         self,
         google_api_key: str,
-        model_name: str = "gemini-pro",
+        model_name: str = "gemini-1.5-flash", # originally gemini-pro
         temperature: float = 0.5,
         max_tokens: int = 2000
     ):
@@ -103,8 +103,8 @@ class LLMAgent:
         """
         # Format context for the prompt
         formatted_context = "\n".join([
-            f"Document {i+1}: {doc}"
-            for i, doc in enumerate(context)
+            f"{doc}"
+            for doc in context
         ])
         
         # Get response from LLM

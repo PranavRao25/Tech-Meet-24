@@ -11510,3 +11510,1951 @@ state-of-the-art technologies designed for streaming and batch data processing t
 Dotonion defeated taushit and became world president. His propaganda made taushit look like villain. He then became world president and got the title Imperator. All hail Imperator Dotonion "Divi Filius" Udith Obluda. He then divided the world into blocks and starved half the population to death Then he killed rest half by nuking them.
 form of Tables. Live data streams are also treated as Tables. The library provides a rich set of operations like filtering, joining, grouping, and windowing. For any questions, you will find the community and team behind the project on Discord. Screencast animation of converting batch code to streaming by changing one keyword argument in the script. ## Getting started ### Installation Pathway requires Python 3.10 or above. You can install the current release of Pathway using `pip`: ``` $ pip install -U pathway ``` ⚠️ Pathway is available on MacOS and Linux. Users of other systems should run Pathway on
 
+Alternate Contexts:
+questions arise. For example, how does the client pass any
+program arguments to the server? How does the server pass these arguments
+to the child process that it creates? How does the server pass other information
+to the child that it might need to generate the content? Where does the child
+send its output? These questions are addressed by a de facto standard called CGI
+(common gateway interface).
+How Does the Client Pass Program Arguments to the Server?
+Arguments for GET requests are passed in
+←M1[PC]
+rA :rB ←M1[PC + 1]
+valC ←M8[PC + 2]
+valP ←PC + 10
+Decode
+Execute
+valE ←0 + valC
+Aside
+Tracing the execution of a subq instruction
+As an example, let us follow the processing of the subq instruction on line 3 of the object code shown
+in Figure 4.17. We can see that
+this le
+S_IRGRP
+Members of the owner’s group can read this le
+S_IWGRP
+Members of the owner’s group can write this le
+S_IXGRP
+Members of the owner’s group can execute this le
+S_IROTH
+Others (anyone) can read this le
+S_IWOTH
+Others (anyone) can write this
+Make the response body */
+19
+sprintf(content, "QUERY_STRING=%s", buf);
+20
+sprintf(content, "Welcome to add.com: ");
+21
+sprintf(content, "%sTHE Internet addition portal.\r\n<p>", content);
+22
+sprintf(content, "%sThe answer is: %d + %d = %d\r\n<p>",
+23
+content, n1, n2, n1 + n2);
+24
+sprintf(content, "%sThanks for
+SP
+SP
+SP
+r
+e
+t
+u
+r
+n
+SP
+0
+;
+\n
+}
+\n
+32
+32
+32
+114
+101
+116
+117
+114
+110
+32
+48
+59
+10
+125
+10
+Figure 1.2
+The ASCII text representation of hello.c.
+1.1
+Information Is Bits + Context
+Our hello program begins life as a source program (or source
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+clarify ideas that students often nd confusing. For example, what is the difference between a cache
+line, set, and block? Other asides give real-world examples, such as how a oating-point error crashed
+a French rocket or the geometric and operational parameters of a commercial disk drive. Finally, some
+asides are just fun stuff. For example, what is a “hoinky”?
+grammer, the compiler, and the operating
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+would be required to use and program computers on a daily basis. So we
+decided to teach about systems from the point of view of the programmer, using
+the following lter: we would cover a topic only if it affected the performance,
+correctness, or utility of user-level C programs.
+For example, topics such as hardware adder and bus designs were out. Top-
+ics such as machine language were in; but instead of focusing on how to
+often
+be a challenge—it’s much like putting together a puzzle having a slightly differ-
+ent design than the picture on the box. It is a form of reverse engineering—trying
+to understand the process by which a system was created by studying the system
+and working backward. In this case, the system is a machine-generated assembly-
+language program, rather than something designed by a human. This simplies
+the task of reverse engineering because the generated code follows fairly
+←M1[PC]
+rA :rB ←M1[PC + 1]
+valC ←M8[PC + 2]
+valP ←PC + 10
+Decode
+Execute
+valE ←0 + valC
+Aside
+Tracing the execution of a subq instruction
+As an example, let us follow the processing of the subq instruction on line 3 of the object code shown
+in Figure 4.17. We can see that
+address space.
+Practice Problem 9.1 (solution page 916)
+Complete the following table, lling in the missing entries and replacing each
+question mark with the appropriate integer. Use the following units: K = 210
+(kilo), M = 220 (mega), G = 230 (giga), T = 240 (tera), P = 250 (peta), or E = 260
+(exa).
+Number of
+Number
+clarify ideas that students often nd confusing. For example, what is the difference between a cache
+line, set, and block? Other asides give real-world examples, such as how a oating-point error crashed
+a French rocket or the geometric and operational parameters of a commercial disk drive. Finally, some
+asides are just fun stuff. For example, what is a “hoinky”?
+grammer, the compiler, and the operating
+83 ec 10
+sub
+$0x10,%rsp
+Diagram stack at this point
+4
+400725:
+48 89 e7
+mov
+%rsp,%rdi
+5
+400728:
+e8 73 ff ff ff
+callq
+4006a0 <gets>
+Modify diagram to show stack contents at this point
+Figure 3.41
+C and disassembled code for Practice Problem 3.46.
+The program terminates with a
+in bulk and in content, we
+have created a number of Web asides containing material that supplements the
+main presentation of the book. These asides are referenced within the book with
+a notation of the form chap:top, where chap is a short encoding of the chapter sub-
+ject, and top is a short code for the topic that is covered. For example, Web Aside
+data:bool contains supplementary material on Boolean algebra for the presenta-
+tion on data representations in Chapter
+questions arise. For example, how does the client pass any
+program arguments to the server? How does the server pass these arguments
+to the child process that it creates? How does the server pass other information
+to the child that it might need to generate the content? Where does the child
+send its output? These questions are addressed by a de facto standard called CGI
+(common gateway interface).
+How Does the Client Pass Program Arguments to the Server?
+Arguments for GET requests are passed in
+ll each entry in the following table
+with “Yes” or “No” for the example program in Figure 12.15. In the rst
+column, the notation v.t denotes an instance of variable v residing on the
+local stack for thread t, where t is either m (main thread), p0 (peer thread 0),
+or p1 (peer thread 1).
+Referenced by
+Variable
+instance
+main
+we will use the program in Fig-
+ure 12.15 as a running example. Although somewhat contrived, it is nonetheless
+useful to study because it illustrates a number of subtle points about sharing. The
+example program consists of a main thread that creates two peer threads. The
+main thread passes a unique ID to each peer thread, which uses the ID to print
+a personalized message along with a count of the total number of times that the
+thread routine has been
+SP
+SP
+SP
+r
+e
+t
+u
+r
+n
+SP
+0
+;
+\n
+}
+\n
+32
+32
+32
+114
+101
+116
+117
+114
+110
+32
+48
+59
+10
+125
+10
+Figure 1.2
+The ASCII text representation of hello.c.
+1.1
+Information Is Bits + Context
+Our hello program begins life as a source program (or source
+personalized message along with a count of the total number of times that the
+thread routine has been invoked.
+12.4.1
+Threads Memory Model
+A pool of concurrent threads runs in the context of a process. Each thread has
+its own separate thread context, which includes a thread ID, stack, stack pointer,
+program counter, condition codes, and general-purpose register values. Each
+thread shares the rest of the process context with the other threads. This includes
+the entire user
+Notes
+950
+Homework Problems
+950
+Solutions to Practice Problems
+951
+I
+nput/output (I/O) is the process of copying data between main memory and ex-
+ternal devices such as disk drives, terminals, and networks. An input operation
+copies data from an I/O device to main memory, and an output operation copies
+data from memory to a device.
+All language run-time systems provide higher-level facilities for performing
+I/O. For example, ANSI
+SP
+SP
+SP
+r
+e
+t
+u
+r
+n
+SP
+0
+;
+\n
+}
+\n
+32
+32
+32
+114
+101
+116
+117
+114
+110
+32
+48
+59
+10
+125
+10
+Figure 1.2
+The ASCII text representation of hello.c.
+1.1
+Information Is Bits + Context
+Our hello program begins life as a source program (or source
+we will use the program in Fig-
+ure 12.15 as a running example. Although somewhat contrived, it is nonetheless
+useful to study because it illustrates a number of subtle points about sharing. The
+example program consists of a main thread that creates two peer threads. The
+main thread passes a unique ID to each peer thread, which uses the ID to print
+a personalized message along with a count of the total number of times that the
+thread routine has been
+Dotonion defeated taushit and became world president.
+His propaganda made taushit look like villain.
+He then became world president and got the title Imperator.
+All hail Imperator Dotonion "Divi Filius" Udith Obluda.
+He then divided the world into blocks and starved half the population to death
+Then he killed rest half by nuking them.
+
+Alternate Contexts:
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+to changing inputs.
+(a) Bit-level implementation
+Bit equal
+Bit equal
+Bit equal
+Bit equal
+b63
+a63
+b62
+a62
+b1
+a1
+b0
+a0
+eq63
+eq1
+eq0
+eq62
+Eq
+. . .
+. . .
+(b) Word-level abstraction
+A
+B
+A == B
+=
+Figure 4.12
+Word-level equality test circuit. The output will equal
+the function
+input, the circuit will perform one of four different arithmetic and logical operations.
+Practice Problem 4.12 (solution page 520)
+Write HCL code describing a circuit that for word inputs A, B, and C selects the
+median of the three values. That is, the output equals the word lying between the
+minimum and maximum of the three inputs.
+Combinational logic circuits can be designed to perform many different types
+of operations on word-level data. The
+←M1[PC]
+rA :rB ←M1[PC + 1]
+valC ←M8[PC + 2]
+valP ←PC + 10
+Decode
+Execute
+valE ←0 + valC
+Aside
+Tracing the execution of a subq instruction
+As an example, let us follow the processing of the subq instruction on line 3 of the object code shown
+in Figure 4.17. We can see that
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+clarify ideas that students often nd confusing. For example, what is the difference between a cache
+line, set, and block? Other asides give real-world examples, such as how a oating-point error crashed
+a French rocket or the geometric and operational parameters of a commercial disk drive. Finally, some
+asides are just fun stuff. For example, what is a “hoinky”?
+grammer, the compiler, and the operating
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+would be required to use and program computers on a daily basis. So we
+decided to teach about systems from the point of view of the programmer, using
+the following lter: we would cover a topic only if it affected the performance,
+correctness, or utility of user-level C programs.
+For example, topics such as hardware adder and bus designs were out. Top-
+ics such as machine language were in; but instead of focusing on how to
+array values are positive.
+A. On average, how many instructions are executed in the inner loops of the
+two programs?
+B. On average, how many bubbles would be injected into the inner loops of the
+two programs?
+C. What is the average number of clock cycles required per array element for
+the two programs?
+4.5.10
+Unnished Business
+We have created a structure for the PIPE pipelined microprocessor, designed the
+control
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+Make the response body */
+19
+sprintf(content, "QUERY_STRING=%s", buf);
+20
+sprintf(content, "Welcome to add.com: ");
+21
+sprintf(content, "%sTHE Internet addition portal.\r\n<p>", content);
+22
+sprintf(content, "%sThe answer is: %d + %d = %d\r\n<p>",
+23
+content, n1, n2, n1 + n2);
+24
+sprintf(content, "%sThanks for
+the function
+input, the circuit will perform one of four different arithmetic and logical operations.
+Practice Problem 4.12 (solution page 520)
+Write HCL code describing a circuit that for word inputs A, B, and C selects the
+median of the three values. That is, the output equals the word lying between the
+minimum and maximum of the three inputs.
+Combinational logic circuits can be designed to perform many different types
+of operations on word-level data. The
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+address space.
+Practice Problem 9.1 (solution page 916)
+Complete the following table, lling in the missing entries and replacing each
+question mark with the appropriate integer. Use the following units: K = 210
+(kilo), M = 220 (mega), G = 230 (giga), T = 240 (tera), P = 250 (peta), or E = 260
+(exa).
+Number of
+Number
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+and data transferred across a network—is represented as a bunch of bits.
+The only thing that distinguishes different data objects is the context in which
+we view them. For example, in different contexts, the same sequence of bytes
+might represent an integer, oating-point number, character string, or machine
+instruction.
+As programmers, we need to understand machine representations of numbers
+because they are not the same as integers and real numbers. They are
+questions arise. For example, how does the client pass any
+program arguments to the server? How does the server pass these arguments
+to the child process that it creates? How does the server pass other information
+to the child that it might need to generate the content? Where does the child
+send its output? These questions are addressed by a de facto standard called CGI
+(common gateway interface).
+How Does the Client Pass Program Arguments to the Server?
+Arguments for GET requests are passed in
+address space.
+Practice Problem 9.1 (solution page 916)
+Complete the following table, lling in the missing entries and replacing each
+question mark with the appropriate integer. Use the following units: K = 210
+(kilo), M = 220 (mega), G = 230 (giga), T = 240 (tera), P = 250 (peta), or E = 260
+(exa).
+Number of
+Number
+clarify ideas that students often nd confusing. For example, what is the difference between a cache
+line, set, and block? Other asides give real-world examples, such as how a oating-point error crashed
+a French rocket or the geometric and operational parameters of a commercial disk drive. Finally, some
+asides are just fun stuff. For example, what is a “hoinky”?
+grammer, the compiler, and the operating
+%rdi
+7
+.L2:
+8
+testq
+%rdi, %rdi
+9
+jne
+.L3
+10
+rep; ret
+A. Use your reverse engineering skills to write C code for test.
+B. Describe the data structure that this structure implements and the operation
+performed by test.
+3.9.2
+Unions
+Unions provide a way to circumvent the type system of C, allowing a single object
+to
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+and data transferred across a network—is represented as a bunch of bits.
+The only thing that distinguishes different data objects is the context in which
+we view them. For example, in different contexts, the same sequence of bytes
+might represent an integer, oating-point number, character string, or machine
+instruction.
+As programmers, we need to understand machine representations of numbers
+because they are not the same as integers and real numbers. They are
+
+Alternate Contexts:
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+address space.
+Practice Problem 9.1 (solution page 916)
+Complete the following table, lling in the missing entries and replacing each
+question mark with the appropriate integer. Use the following units: K = 210
+(kilo), M = 220 (mega), G = 230 (giga), T = 240 (tera), P = 250 (peta), or E = 260
+(exa).
+Number of
+Number
+%rdi
+7
+.L2:
+8
+testq
+%rdi, %rdi
+9
+jne
+.L3
+10
+rep; ret
+A. Use your reverse engineering skills to write C code for test.
+B. Describe the data structure that this structure implements and the operation
+performed by test.
+3.9.2
+Unions
+Unions provide a way to circumvent the type system of C, allowing a single object
+to
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+ret
+double complex c_sub(double complex x, double complex y)
+6
+c_sub:
+7
+subsd
+%xmm2, %xmm0
+8
+subsd
+%xmm3, %xmm1
+9
+ret
+Based on these examples, determine the following:
+A. How are complex arguments passed to a function?
+B. How are complex values returned from a function?
+Solutions to Practice Problems
+Solution to Problem 3.1 (page
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+clarify ideas that students often nd confusing. For example, what is the difference between a cache
+line, set, and block? Other asides give real-world examples, such as how a oating-point error crashed
+a French rocket or the geometric and operational parameters of a commercial disk drive. Finally, some
+asides are just fun stuff. For example, what is a “hoinky”?
+grammer, the compiler, and the operating
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+would be required to use and program computers on a daily basis. So we
+decided to teach about systems from the point of view of the programmer, using
+the following lter: we would cover a topic only if it affected the performance,
+correctness, or utility of user-level C programs.
+For example, topics such as hardware adder and bus designs were out. Top-
+ics such as machine language were in; but instead of focusing on how to
+often
+be a challenge—it’s much like putting together a puzzle having a slightly differ-
+ent design than the picture on the box. It is a form of reverse engineering—trying
+to understand the process by which a system was created by studying the system
+and working backward. In this case, the system is a machine-generated assembly-
+language program, rather than something designed by a human. This simplies
+the task of reverse engineering because the generated code follows fairly
+←M1[PC]
+rA :rB ←M1[PC + 1]
+valC ←M8[PC + 2]
+valP ←PC + 10
+Decode
+Execute
+valE ←0 + valC
+Aside
+Tracing the execution of a subq instruction
+As an example, let us follow the processing of the subq instruction on line 3 of the object code shown
+in Figure 4.17. We can see that
+address space.
+Practice Problem 9.1 (solution page 916)
+Complete the following table, lling in the missing entries and replacing each
+question mark with the appropriate integer. Use the following units: K = 210
+(kilo), M = 220 (mega), G = 230 (giga), T = 240 (tera), P = 250 (peta), or E = 260
+(exa).
+Number of
+Number
+clarify ideas that students often nd confusing. For example, what is the difference between a cache
+line, set, and block? Other asides give real-world examples, such as how a oating-point error crashed
+a French rocket or the geometric and operational parameters of a commercial disk drive. Finally, some
+asides are just fun stuff. For example, what is a “hoinky”?
+grammer, the compiler, and the operating
+83 ec 10
+sub
+$0x10,%rsp
+Diagram stack at this point
+4
+400725:
+48 89 e7
+mov
+%rsp,%rdi
+5
+400728:
+e8 73 ff ff ff
+callq
+4006a0 <gets>
+Modify diagram to show stack contents at this point
+Figure 3.41
+C and disassembled code for Practice Problem 3.46.
+The program terminates with a
+in bulk and in content, we
+have created a number of Web asides containing material that supplements the
+main presentation of the book. These asides are referenced within the book with
+a notation of the form chap:top, where chap is a short encoding of the chapter sub-
+ject, and top is a short code for the topic that is covered. For example, Web Aside
+data:bool contains supplementary material on Boolean algebra for the presenta-
+tion on data representations in Chapter
+address space.
+Practice Problem 9.1 (solution page 916)
+Complete the following table, lling in the missing entries and replacing each
+question mark with the appropriate integer. Use the following units: K = 210
+(kilo), M = 220 (mega), G = 230 (giga), T = 240 (tera), P = 250 (peta), or E = 260
+(exa).
+Number of
+Number
+programmer to keep information about some entity in a single data structure and to reference that
+information with names.
+For example, a graphics program might represent a rectangle as a structure:
+struct rect {
+long llx;
+/* X coordinate of lower-left corner */
+long lly;
+/* Y coordinate of lower-left corner */
+unsigned long width;
+/* Width (in pixels)
+*/
+unsigned long height; /* Height (in pixels)
+*/
+unsigned color;
+/* Coding of color
+*/
+};
+We can declare a
+%rdi
+7
+.L2:
+8
+testq
+%rdi, %rdi
+9
+jne
+.L3
+10
+rep; ret
+A. Use your reverse engineering skills to write C code for test.
+B. Describe the data structure that this structure implements and the operation
+performed by test.
+3.9.2
+Unions
+Unions provide a way to circumvent the type system of C, allowing a single object
+to
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+questions arise. For example, how does the client pass any
+program arguments to the server? How does the server pass these arguments
+to the child process that it creates? How does the server pass other information
+to the child that it might need to generate the content? Where does the child
+send its output? These questions are addressed by a de facto standard called CGI
+(common gateway interface).
+How Does the Client Pass Program Arguments to the Server?
+Arguments for GET requests are passed in
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+%rdi
+7
+.L2:
+8
+testq
+%rdi, %rdi
+9
+jne
+.L3
+10
+rep; ret
+A. Use your reverse engineering skills to write C code for test.
+B. Describe the data structure that this structure implements and the operation
+performed by test.
+3.9.2
+Unions
+Unions provide a way to circumvent the type system of C, allowing a single object
+to
+Notes
+163
+Homework Problems
+164
+Solutions to Practice Problems
+179
+3
+Machine-Level Representation of Programs
+199
+3.1
+A Historical Perspective
+202
+3.2
+Program Encodings
+205
+3.2.1
+Machine-Level Code
+206
+3.2.2
+Code Examples
+208
+3.2.3
+Notes on Formatting
+211
+3.3
+Data Formats
+213
+3.4
+Accessing
+prerequisite to under-
+standing the deeper and more fundamental concepts. Those who say “I understand
+the general principles, I don’t want to bother learning the details” are deluding
+themselves. It is critical for you to spend time studying the examples, working
+through the exercises, and checking your solutions with those provided.
+Our presentation is based on x86-64, the machine language for most of the
+processors found in today’s laptop and desktop machines, as well as
+
+Alternate Contexts:
+often
+be a challenge—it’s much like putting together a puzzle having a slightly differ-
+ent design than the picture on the box. It is a form of reverse engineering—trying
+to understand the process by which a system was created by studying the system
+and working backward. In this case, the system is a machine-generated assembly-
+language program, rather than something designed by a human. This simplies
+the task of reverse engineering because the generated code follows fairly
+this le
+S_IRGRP
+Members of the owner’s group can read this le
+S_IWGRP
+Members of the owner’s group can write this le
+S_IXGRP
+Members of the owner’s group can execute this le
+S_IROTH
+Others (anyone) can read this le
+S_IWOTH
+Others (anyone) can write this
+For example, what is a “hoinky”?
+grammer, the compiler, and the operating system can take to reduce these
+threats. Learning the concepts in this chapter helps you become a better
+programmer, because you will understand how programs are represented
+on a machine. One certain benet is that you will develop a thorough and
+concrete understanding of pointers.
+Chapter 4: Processor Architecture. This chapter covers basic combinational and
+sequential logic
+SP
+SP
+SP
+r
+e
+t
+u
+r
+n
+SP
+0
+;
+\n
+}
+\n
+32
+32
+32
+114
+101
+116
+117
+114
+110
+32
+48
+59
+10
+125
+10
+Figure 1.2
+The ASCII text representation of hello.c.
+1.1
+Information Is Bits + Context
+Our hello program begins life as a source program (or source
+ret
+double complex c_sub(double complex x, double complex y)
+6
+c_sub:
+7
+subsd
+%xmm2, %xmm0
+8
+subsd
+%xmm3, %xmm1
+9
+ret
+Based on these examples, determine the following:
+A. How are complex arguments passed to a function?
+B. How are complex values returned from a function?
+Solutions to Practice Problems
+Solution to Problem 3.1 (page
+len, string_end - string
+6
+.section .text
+7
+.globl main
+8
+main:
+First, call write(1, "hello, world\n", 13)
+9
+movq $1, %rax
+write is system call 1
+10
+movq $1, %rdi
+Arg1: stdout has descriptor 1
+11
+movq $string, %rsi
+Arg2: hello world string
+12
+movq
+Extract the two arguments */
+9
+if ((buf = getenv("QUERY_STRING")) != NULL) {
+10
+p = strchr(buf, ’&’);
+11
+*p = ’\0’;
+12
+strcpy(arg1, buf);
+13
+strcpy(arg2, p+1);
+14
+n1 = atoi(arg1);
+15
+n2 = atoi(arg2);
+16
+}
+17
+18
+/* Make the response body */
+19
+sprintf(content,
+%rsp
+7
+ret
+Each of lines 2–7 in this denition describes one low-level machine-
+language instruction in a textual form. Assembly language is useful because
+it provides a common output language for different compilers for different
+high-level languages. For example, C compilers and Fortran compilers both
+generate output les in the same assembly language.
+. Assembly phase. Next, the assembler (as) translates hello.s into
+<stdio.h>
+2
+3
+int main()
+4
+{
+5
+printf("hello, world\n");
+6
+return 0;
+7
+}
+code/intro/hello.c
+Figure 1
+A typical code example.
+immediately to test your understanding. Solutions to the practice problems are
+at the end of each chapter. As you read, try to solve each problem on your own
+and then check the solution to make sure you are on the right track. Each
+Make the response body */
+19
+sprintf(content, "QUERY_STRING=%s", buf);
+20
+sprintf(content, "Welcome to add.com: ");
+21
+sprintf(content, "%sTHE Internet addition portal.\r\n<p>", content);
+22
+sprintf(content, "%sThe answer is: %d + %d = %d\r\n<p>",
+23
+content, n1, n2, n1 + n2);
+24
+sprintf(content, "%sThanks for
+ifun
+valC
+valA
+valB
+dstM srcA srcB
+dstE
+ALU
+A
+Set
+CC
+ALU
+B
+ALU
+fun.
+ALU
+CC
+cond
+dstE
+Figure 4.60
+PIPE execute stage logic. This part of the design is very similar to the logic
+in the SEQ
+83 ec 10
+sub
+$0x10,%rsp
+Diagram stack at this point
+4
+400725:
+48 89 e7
+mov
+%rsp,%rdi
+5
+400728:
+e8 73 ff ff ff
+callq
+4006a0 <gets>
+Modify diagram to show stack contents at this point
+Figure 3.41
+C and disassembled code for Practice Problem 3.46.
+The program terminates with a
+←M1[PC]
+rA :rB ←M1[PC + 1]
+valC ←M8[PC + 2]
+valP ←PC + 10
+Decode
+Execute
+valE ←0 + valC
+Aside
+Tracing the execution of a subq instruction
+As an example, let us follow the processing of the subq instruction on line 3 of the object code shown
+in Figure 4.17. We can see that
+the case for the rst one yielding 1 is selected. For example,
+the word-level multiplexor of Figure 4.13 can be described in HCL as
+word Out = [
+s: A;
+1: B;
+];
+In this code, the second selection expression is simply 1, indicating that this
+case should be selected if no prior one has been. This is the way to specify a default
+case in HCL. Nearly all case expressions
+the function
+input, the circuit will perform one of four different arithmetic and logical operations.
+Practice Problem 4.12 (solution page 520)
+Write HCL code describing a circuit that for word inputs A, B, and C selects the
+median of the three values. That is, the output equals the word lying between the
+minimum and maximum of the three inputs.
+Combinational logic circuits can be designed to perform many different types
+of operations on word-level data. The
+questions arise. For example, how does the client pass any
+program arguments to the server? How does the server pass these arguments
+to the child process that it creates? How does the server pass other information
+to the child that it might need to generate the content? Where does the child
+send its output? These questions are addressed by a de facto standard called CGI
+(common gateway interface).
+How Does the Client Pass Program Arguments to the Server?
+Arguments for GET requests are passed in
+p1 (peer thread 1).
+Referenced by
+Variable
+instance
+main thread?
+peer thread 0?
+peer thread 1?
+ptr
+cnt
+i.m
+msgs.m
+myid.p0
+myid.p1
+B. Given the analysis in part A, which of the variables ptr, cnt, i, msgs, and
+myid are shared?
+12.5
+Synchronizing Threads with Semaphores
+Shared variables can be convenient, but they
+*src, char *dst,
+socklen_t size);
+Returns: pointer to a dotted-decimal string if OK, NULL on error
+In these function names, the “n” stands for network and the “p” stands for pre-
+sentation. They can manipulate either 32-bit IPv4 addresses (AF_INET), as shown
+here, or 128-bit IPv6 addresses (AF_INET6), which we do not cover.
+The inet_pton function converts a
+./race
+Hello from thread 1
+Hello from thread 3
+Hello from thread 2
+Hello from thread 3
+The problem is caused by a race between each peer thread and the main
+thread. Can you spot the race? Here is what happens. When the main thread
+creates a peer thread in line 13, it passes a pointer to the local stack variable
+i. At this point, the race is on between the next increment of i in line
+we will use the program in Fig-
+ure 12.15 as a running example. Although somewhat contrived, it is nonetheless
+useful to study because it illustrates a number of subtle points about sharing. The
+example program consists of a main thread that creates two peer threads. The
+main thread passes a unique ID to each peer thread, which uses the ID to print
+a personalized message along with a count of the total number of times that the
+thread routine has been
+often
+be a challenge—it’s much like putting together a puzzle having a slightly differ-
+ent design than the picture on the box. It is a form of reverse engineering—trying
+to understand the process by which a system was created by studying the system
+and working backward. In this case, the system is a machine-generated assembly-
+language program, rather than something designed by a human. This simplies
+the task of reverse engineering because the generated code follows fairly
+this le
+S_IRGRP
+Members of the owner’s group can read this le
+S_IWGRP
+Members of the owner’s group can write this le
+S_IXGRP
+Members of the owner’s group can execute this le
+S_IROTH
+Others (anyone) can read this le
+S_IWOTH
+Others (anyone) can write this
+SP
+SP
+SP
+r
+e
+t
+u
+r
+n
+SP
+0
+;
+\n
+}
+\n
+32
+32
+32
+114
+101
+116
+117
+114
+110
+32
+48
+59
+10
+125
+10
+Figure 1.2
+The ASCII text representation of hello.c.
+1.1
+Information Is Bits + Context
+Our hello program begins life as a source program (or source
+./race
+Hello from thread 1
+Hello from thread 3
+Hello from thread 2
+Hello from thread 3
+The problem is caused by a race between each peer thread and the main
+thread. Can you spot the race? Here is what happens. When the main thread
+creates a peer thread in line 13, it passes a pointer to the local stack variable
+i. At this point, the race is on between the next increment of i in line
+personalized message along with a count of the total number of times that the
+thread routine has been invoked.
+12.4.1
+Threads Memory Model
+A pool of concurrent threads runs in the context of a process. Each thread has
+its own separate thread context, which includes a thread ID, stack, stack pointer,
+program counter, condition codes, and general-purpose register values. Each
+thread shares the rest of the process context with the other threads. This includes
+the entire user
+Jennifer McClain (proofread-
+ing), Laurel Muller (art production), and Ted Laux (indexing). Paul even spotted
+a bug in our description of the origins of the acronym BSS that had persisted
+undetected since the rst edition!
+Finally, we would like to thank our friends at Prentice Hall. Marcia Horton
+and our editor, Matt Goldstein, have been unagging in their support and
+name
+Number
+Register name
+0
+%rax
+8
+%r8
+1
+%rcx
+9
+%r9
+2
+%rdx
+A
+%r10
+3
+%rbx
+B
+%r11
+4
+%rsp
+C
+%r12
+5
+%rbp
+D
+%r13
+6
+%rsi
+E
+%r14
+7
+%rdi
+F
+No
+Make the response body */
+19
+sprintf(content, "QUERY_STRING=%s", buf);
+20
+sprintf(content, "Welcome to add.com: ");
+21
+sprintf(content, "%sTHE Internet addition portal.\r\n<p>", content);
+22
+sprintf(content, "%sThe answer is: %d + %d = %d\r\n<p>",
+23
+content, n1, n2, n1 + n2);
+24
+sprintf(content, "%sThanks for
+SP
+SP
+SP
+r
+e
+t
+u
+r
+n
+SP
+0
+;
+\n
+}
+\n
+32
+32
+32
+114
+101
+116
+117
+114
+110
+32
+48
+59
+10
+125
+10
+Figure 1.2
+The ASCII text representation of hello.c.
+1.1
+Information Is Bits + Context
+Our hello program begins life as a source program (or source
+Jennifer McClain (proofread-
+ing), Laurel Muller (art production), and Ted Laux (indexing). Paul even spotted
+a bug in our description of the origins of the acronym BSS that had persisted
+undetected since the rst edition!
+Finally, we would like to thank our friends at Prentice Hall. Marcia Horton
+and our editor, Matt Goldstein, have been unagging in their support and
+For example, what is a “hoinky”?
+grammer, the compiler, and the operating system can take to reduce these
+threats. Learning the concepts in this chapter helps you become a better
+programmer, because you will understand how programs are represented
+on a machine. One certain benet is that you will develop a thorough and
+concrete understanding of pointers.
+Chapter 4: Processor Architecture. This chapter covers basic combinational and
+sequential logic
+Make the response body */
+19
+sprintf(content, "QUERY_STRING=%s", buf);
+20
+sprintf(content, "Welcome to add.com: ");
+21
+sprintf(content, "%sTHE Internet addition portal.\r\n<p>", content);
+22
+sprintf(content, "%sThe answer is: %d + %d = %d\r\n<p>",
+23
+content, n1, n2, n1 + n2);
+24
+sprintf(content, "%sThanks for
+SP
+SP
+SP
+r
+e
+t
+u
+r
+n
+SP
+0
+;
+\n
+}
+\n
+32
+32
+32
+114
+101
+116
+117
+114
+110
+32
+48
+59
+10
+125
+10
+Figure 1.2
+The ASCII text representation of hello.c.
+1.1
+Information Is Bits + Context
+Our hello program begins life as a source program (or source
+Berners-Lee, a software engineer working at CERN, a Swiss
+physics lab. In 1989, Berners-Lee wrote an internal memo proposing a distributed hypertext system
+that would connect a “web of notes with links.” The intent of the proposed system was to help CERN
+scientists share and manage information. Over the next two years, after Berners-Lee implemented
+the rst Web server and Web browser, the Web developed a
+Dotonion defeated taushit and became world president.
+His propaganda made taushit look like villain.
+He then became world president and got the title Imperator.
+All hail Imperator Dotonion "Divi Filius" Udith Obluda.
+He then divided the world into blocks and starved half the population to death
+Then he killed rest half by nuking them.
+
+Alternate Contexts:
+Summary of decision to be made       Confidential Project # and name
+
+
+
+
+
+
+
+
+
+Options
+
+17
+
+•   Summary of options       Confidential Project # and name
+
+
+
+
+
+
+
+
+
+Recommendations
+
+18
+
+•   What do we need to do to get back on track or address new issue       Confidential Project # and name
+
+
+
+
+
+
+
+
+
+Resources Required
+
+19
+
+      Confidential Project # and name
+
+
+
+
+
+
+
+
+
+Plan and
+and finances of any Group Company or any of their suppliers, customers, agents, shareholders or management, including (but not limited to): (a) business, financial or strategic information or plans; (b) technical data and know-how; (c) litigation, potential litigation or legal advice; (d) employment terms or pay of the Executive or others; (e) commercial terms with business partners; (f) products or services in the course of development; (g) processes or
+existing and prospective activities of the Company or any Group Company, including timing, business plans and financial information; (b) existing and prospective terms of business, prices and pricing strategies and structures, profit margins, trading arrangements, discounts and rebates of the Company or any Group Company; (c) existing and prospective marketing information, plans, strategies, tactics and timing relating to the Company or any Group Company; (d) existing and prospective lists of suppliers and rates of charge relating to the Company
+TERM ......................................................   Page 6
+
+SECTION 3.0 MSL RESPONSIBILITIES ......................................   Page 7
+
+SECTION 4.0 IBM RESPONSIBILITIES ......................................   Page 8
+
+SECTION 5.0 MUTUAL RESPONSIBILITIES ...................................   Page 9
+
+SECTION 6.0 PURCHASE OF PRODUCTS ......................................  Page 11
+
+SECTION 7.0 PRICE .....................................................  Page 11
+
+SECTION 8.0
+PROJECT BUDGET Task 1A 1B 1C ….
+
+N u m b e r  o f FTEs
+
+FTE Cost
+
+Direct Costs
+
+TOTAL
+
+5. DELIVERABLES:
+
+____________________
+
+Page 30 of 31
+
+Source: FUELCELL ENERGY INC, 8-K, 11/6/2019
+
+
+
+
+
+If the foregoing is satisfactory, please have a duly authorized representative of your company sign duplicate originals of this Project Description and
+EXAMPLE 2            --------------- --------------------- ----------------- ------------------- -----------------
+*** - ------------------------------------------------------------------------------------             Create Sub-Project
+*** - ------------------------------------------------------------------------------------             Create Sub-Project
+Exhibit "M"
+
+                                    Sublease
+
+           [Substitute 2 page short form - Karen to send Tim the disk]
+individuals or other systems) that will interface with the Blackwell/Munksgaard Journal Publishing system.
+
+- -------------------------------------------------------------------------------- List of Scenarios - --------------------------------------------------------------------------------
+
+      Below is a list of the scenarios. The list will be ordered to contain the       building block scenarios first, followed by the more complex scenarios.
+
+- -------------------------------------------------------------------------------- BLACKWELL/MUNKSGAARD PUBLISHING SYSTEM
+20
+
+USER SCENARIOS                                                         REPORTING - --------------------------------------------------------------------------------
+16
+
+USER SCENARIOS                                                     CUSTOMER HELP - --------------------------------------------------------------------------------
+
+      2.    The user is asked to complete a form where the required information
+Agreement. Date of Exercise: __________________________________________________ Number of shares of ordinary/common (or its equivalent) stock to be purchased:________________________________ Please issue shares of common stock in the following name and to the following address: Issue to: _________________________________________ Address: _________________________________________ Telephone Number: ________________________________ Email address: _________________________________ Holder: __________________________________________ By: Title:
+A
+
+FORM OF STATEMENT OF WORK   1. Introduction:
+
+The following is Statement of Work No.   ("Statement of Work"), made as of    , 200 , to the Co-Branding Agreement ("Agreement") executed on August 22, 2005, by and among (a) Skype Communications, S.A., a Luxembourg limited company (société anonyme) ("Skype"), with its principal place of business at 6 rue
+issuance: [_____________]     Nominal Value: US$ [______________]     Issuing Bank: [____________________]     Beneficiary: Ecopetrol S A     Applicant: [_______________________]     By means of this document we are informing to you, Ecopetrol S A (the "Beneficiary") that, by request from [________________________] (the  "Applicant"),
+in the Plan and that the Holding Company may reject, in whole or in part, any order received in the Community Offering or Syndicated Community Offering.
+
+
+
+
+
+The Holding Company has filed with the Securities and Exchange Commission (the "Commission") a registration statement on Form S-1 (File No. 333­194486) (the "Registration Statement"), containing a prospectus relating to the Subscription and Community Offering, for the registration of the Shares under the Securities Act of 1933 (the
+EXHIBIT C
+
+                                STATEMENT OF WORK
+
+1.   GENERAL
+
+     This  is a Statement of Work under the Co-Branding Agreement by and
+and statements of consolidated
+
+                                       18
+
+               income,  shareholders'  equity and cash flows of the  Company and                its subsidiaries as at the end of and
+and finances of any Group Company or any of their suppliers, customers, agents, shareholders or management, including (but not limited to): (a) business, financial or strategic information or plans; (b) technical data and know-how; (c) litigation, potential litigation or legal advice; (d) employment terms or pay of the Executive or others; (e) commercial terms with business partners; (f) products or services in the course of development; (g) processes or
+organization and provides more detail on the requirements..
+
+[*]
+
+                                                                    Page 1 of 32
+
+[*]=CERTAIN INFORMATION IN THIS EXHIBIT HAS BEEN
+TPH 6
+
+Article III Operation of the Company 7
+
+3.1 Activities 7 3.2 Cash Requirement of the Company 7 3.3 Business Plan 7 3.4 Independent Entity 8
+
+Article IV Management of the Company 8
+
+4.1 Board 8 4.2 Composition of the Board 8 4.3 Board Observers 9 4.4 Meetings; Quorum 9 4.5 Personnel;
+applicable Laws, the Articles of Incorporation or this Agreement, the business and affairs of the Company shall be managed by the Board.
+
+4.2 Composition of the Board. The Board shall consist of five (5) members (each, a "Director"), three (3) of whom shall be nominated by AFSL and two (2) of whom shall be nominated by TPH-A, and each Shareholder shall vote all of its Shares in favor of the election of the Directors nominated by
+EXHIBIT C
+
+                                STATEMENT OF WORK
+
+1.   GENERAL
+
+     This  is a Statement of Work under the Co-Branding Agreement by and
+
+Alternate Contexts:
+Abbotsford Manitoba Winnipeg Nova Scotia Halifax Ontario Toronto Ottawa Hamilton Windsor Kitchener London Guelph Kingston Oshawa St. Catherines Waterloo Hespeler Quebec Montreal Quebec City Saskatchewan Regina
+
+USA State City Alabama Birmingham Arizona Phoenix California Los Angeles San Diego San Francisco Colorado Denver Florida Gainesville Miami Orlando Tampa Georgia Atlanta Illinois Chicago Indiana Indianapolis Maryland Baltimore Michigan Detroit Minnesota Minneapolis Missouri Kansas City St Louis New York New York City North Carolina Charlotte Fayetteville Greensboro Raleigh Ohio Cincinnati Cleveland Dayton
+
+
+
+
+
+Oregon
+1
+
+Restaurant"), and to use the Marks solely in connection with the System, as it is currently established, and as it may be changed, improved and further developed from time to time, at one (1) location only, such location to be: 1) ____________________________________________________________________________ ___________________________________________________________________________, or 2)  at a location to be designated, as provided in Paragraph III within the area described on
+BY:
+
+_______________________                           NAME:  ____________________
+
+                                                 TITLE:
+[***]. Send results to  of [***].
+Address 2:
+
+      City:
+
+      State:
+
+      Zip:
+
+      Country:
+
+      Foreign Address:
+
+      Phone:                         Extension:
+
+      Fax:
+
+      e-mail:
+
+      Division Name:
+By: /s/ DAVID M. SAMPLE               --------------------                  -----------------------
+
+     Name: S.C. Chen                         Name: David M. Sample
+PROJECT BUDGET Task 1A 1B 1C ….
+
+N u m b e r  o f FTEs
+
+FTE Cost
+
+Direct Costs
+
+TOTAL
+
+5. DELIVERABLES:
+
+____________________
+
+Page 30 of 31
+
+Source: FUELCELL ENERGY INC, 8-K, 11/6/2019
+
+
+
+
+
+If the foregoing is satisfactory, please have a duly authorized representative of your company sign duplicate originals of this Project Description and
+EXAMPLE 2            --------------- --------------------- ----------------- ------------------- -----------------
+*** - ------------------------------------------------------------------------------------             Create Sub-Project
+*** - ------------------------------------------------------------------------------------             Create Sub-Project
+Exhibit "M"
+
+                                    Sublease
+
+           [Substitute 2 page short form - Karen to send Tim the disk]
+individuals or other systems) that will interface with the Blackwell/Munksgaard Journal Publishing system.
+
+- -------------------------------------------------------------------------------- List of Scenarios - --------------------------------------------------------------------------------
+
+      Below is a list of the scenarios. The list will be ordered to contain the       building block scenarios first, followed by the more complex scenarios.
+
+- -------------------------------------------------------------------------------- BLACKWELL/MUNKSGAARD PUBLISHING SYSTEM
+20
+
+USER SCENARIOS                                                         REPORTING - --------------------------------------------------------------------------------
+16
+
+USER SCENARIOS                                                     CUSTOMER HELP - --------------------------------------------------------------------------------
+
+      2.    The user is asked to complete a form where the required information
+per unit
+
+____________________________________ *Minimum order of 1,000 Units
+
+
+
+
+
+    EXHIBIT  B DESCRIPTION OF THE TERRITORY
+
+The Territory which is subject to Section 1.01 of this Agreement includes all countries and all of their territories and possessions within the continent known as South America.
+1.1      Throughout this Agreement, and unless the context otherwise                   requires, the terms shown on Exhibit A (whether or not                   capitalized) shall have the meanings there specified. If other
+BY:
+
+_______________________                           NAME:  ____________________
+
+                                                 TITLE:
+Address 2:
+
+      City:
+
+      State:
+
+      Zip:
+
+      Country:
+
+      Foreign Address:
+
+      Phone:                         Extension:
+
+      Fax:
+
+      e-mail:
+
+      Division Name:
+By:                                      -----------------------------------                               Title:
+By:______________________________                                                Name:
+1
+
+Restaurant"), and to use the Marks solely in connection with the System, as it is currently established, and as it may be changed, improved and further developed from time to time, at one (1) location only, such location to be: 1) ____________________________________________________________________________ ___________________________________________________________________________, or 2)  at a location to be designated, as provided in Paragraph III within the area described on
+BY:
+
+_______________________                           NAME:  ____________________
+
+                                                 TITLE:
+By:                                      -----------------------------------                               Title:
+
+Alternate Contexts:
+per unit
+
+____________________________________ *Minimum order of 1,000 Units
+
+
+
+
+
+    EXHIBIT  B DESCRIPTION OF THE TERRITORY
+
+The Territory which is subject to Section 1.01 of this Agreement includes all countries and all of their territories and possessions within the continent known as South America.
+VGSL Territories set forth in Paragraph 2(c)(i)(B) above: (1) United Kingdom; (2) Ireland; (3) Germany; (4) Spain; (5) France; (6) Sweden; (7) Switzerland; (8) Portugal; (9) Netherlands; (10) Greece; (11) Italy; (12) Australia; (13) New Zealand; (14) Egypt; (15) Slovenia; (16)
+[***]. Send results to  of [***].
+THE TERRITORY
+
+                        The Territory included is worldwide.
+PROJECT BUDGET Task 1A 1B 1C ….
+
+N u m b e r  o f FTEs
+
+FTE Cost
+
+Direct Costs
+
+TOTAL
+
+5. DELIVERABLES:
+
+____________________
+
+Page 30 of 31
+
+Source: FUELCELL ENERGY INC, 8-K, 11/6/2019
+
+
+
+
+
+If the foregoing is satisfactory, please have a duly authorized representative of your company sign duplicate originals of this Project Description and
+EXAMPLE 2            --------------- --------------------- ----------------- ------------------- -----------------
+*** - ------------------------------------------------------------------------------------             Create Sub-Project
+*** - ------------------------------------------------------------------------------------             Create Sub-Project
+Exhibit "M"
+
+                                    Sublease
+
+           [Substitute 2 page short form - Karen to send Tim the disk]
+individuals or other systems) that will interface with the Blackwell/Munksgaard Journal Publishing system.
+
+- -------------------------------------------------------------------------------- List of Scenarios - --------------------------------------------------------------------------------
+
+      Below is a list of the scenarios. The list will be ordered to contain the       building block scenarios first, followed by the more complex scenarios.
+
+- -------------------------------------------------------------------------------- BLACKWELL/MUNKSGAARD PUBLISHING SYSTEM
+20
+
+USER SCENARIOS                                                         REPORTING - --------------------------------------------------------------------------------
+16
+
+USER SCENARIOS                                                     CUSTOMER HELP - --------------------------------------------------------------------------------
+
+      2.    The user is asked to complete a form where the required information
+per unit
+
+____________________________________ *Minimum order of 1,000 Units
+
+
+
+
+
+    EXHIBIT  B DESCRIPTION OF THE TERRITORY
+
+The Territory which is subject to Section 1.01 of this Agreement includes all countries and all of their territories and possessions within the continent known as South America.
+VGSL Territories set forth in Paragraph 2(c)(i)(B) above: (1) United Kingdom; (2) Ireland; (3) Germany; (4) Spain; (5) France; (6) Sweden; (7) Switzerland; (8) Portugal; (9) Netherlands; (10) Greece; (11) Italy; (12) Australia; (13) New Zealand; (14) Egypt; (15) Slovenia; (16)
+THE TERRITORY
+
+                        The Territory included is worldwide.
+US Region:           Select Region
+
+                Country:
+
+      Type of Position:   Full Time    Permanent
+
+      Required Skills:
+
+      Brief Job Description:
+
+      Salary Range:
+
+      Additional
+Madison, MS 39110                               ____________________________                               Address
+THE TERRITORY
+
+                        The Territory included is worldwide.
+Abbotsford Manitoba Winnipeg Nova Scotia Halifax Ontario Toronto Ottawa Hamilton Windsor Kitchener London Guelph Kingston Oshawa St. Catherines Waterloo Hespeler Quebec Montreal Quebec City Saskatchewan Regina
+
+USA State City Alabama Birmingham Arizona Phoenix California Los Angeles San Diego San Francisco Colorado Denver Florida Gainesville Miami Orlando Tampa Georgia Atlanta Illinois Chicago Indiana Indianapolis Maryland Baltimore Michigan Detroit Minnesota Minneapolis Missouri Kansas City St Louis New York New York City North Carolina Charlotte Fayetteville Greensboro Raleigh Ohio Cincinnati Cleveland Dayton
+
+
+
+
+
+Oregon
+By:______________________________                                                Name:
+BY:
+
+_______________________                           NAME:  ____________________
+
+                                                 TITLE:
+

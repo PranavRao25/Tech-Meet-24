@@ -39,7 +39,7 @@ def vb_prep():
     HOST = "127.0.0.1"
     PORT = 8666
 
-    return VectorStoreClient(host=HOST, port=PORT)
+    return VectorStoreClient(host=HOST, port=PORT, timeout=120)
 
 # Define cached loading functions for each model
 @st.cache_resource
