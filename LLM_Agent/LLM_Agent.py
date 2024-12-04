@@ -61,16 +61,17 @@ class LLMAgent:
             # Reasoning: [Explain how you arrived at the answer using the context]
 
             # Sources: [List the relevant sources from the context]
-            template="""
-            You are a helpful AI assistant. Using the provided context, answer the question.
-            Format your response in the following way:
-            Answer: [Provide a clear, direct answer]
+            template=self.decide_template("{context}", "{question}")
+            # """
+            # You are a helpful AI assistant. Using the provided context, answer the question.
+            # Format your response in the following way:
+            # Answer: [Provide a clear, direct answer]
 
-            The inputs are
-            Context: {context}
+            # The inputs are
+            # Context: {context}
 
-            Question: {question}
-            """
+            # Question: {question}
+            # """
         )
         self._context = ''
 
@@ -85,6 +86,26 @@ class LLMAgent:
                 "context": RunnableLambda(lambda x: self._context)  # peak
             } | self.prompt_template | self.llm
         )
+    def decide_template(self, context, question):
+        if context=="":
+            return f"""
+            You are a helpful AI assistant. Answer the question in the following way.
+            Answer: [Provide a clear, direct answer]
+
+            The input is
+            Question: {question}
+            """
+        else:
+            return f"""
+            You are a helpful AI assistant. Using the provided context, answer the question.
+            Format your response in the following way:
+            Answer: [Provide a clear, direct answer]
+
+            The inputs are
+            Context: {context}
+
+            Question: {question}
+            """
         
     def process_query(
         self,
@@ -134,5 +155,5 @@ if __name__ == "__main__":
     France, in Western Europe, encompasses medieval cities, alpine villages and Mediterranean beaches. Paris, its capital, is famed for its fashion houses, classical art museums including the Louvre and monuments like the Eiffel Tower. The country is also renowned for its wines and sophisticated cuisine. Lascaux’s ancient cave drawings, Lyon’s Roman theater and the vast Palace of Versailles attest to its rich history.\
     ",
     "France is really Beautiful."]
-    output=llm.process_query(question="What is the capital of France",context=context_france)
+    output=llm.process_query(question="hello",context=[])
     print(output)
