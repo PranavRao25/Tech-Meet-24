@@ -50,7 +50,7 @@ embedder = LangChainToLlamaIndexEmbedder(langchain_embedder=embedder)
 class PDFParser(pw.UDF):
     def __wrapped__(self, contents: bytes) -> list[tuple[str, dict]]:
         try:
-            docs: list[tuple[str, dict]] = [(contents.decode("utf-8"), {})]
+            docs: list[tuple[str, dict]] = [(" ".join(contents.decode("utf-8").split()), {})]
             return docs
         except:
             pdfile = BytesIO(contents)

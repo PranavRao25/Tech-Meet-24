@@ -279,7 +279,7 @@ class RAG:
         self._RAGraph.add_node("simple pipeline", _simple_pipeline)
         self._RAGraph.add_node("intermediate pipeline", _intermediate_pipeline)
         self._RAGraph.add_node("complex pipeline", _complex_pipeline)
-        self._RAGraph.add_node("thresholder", _OOD)
+        self._RAGraph.add_node("OOD", _OOD)
         self._RAGraph.add_node("thresholder", _threshold)
         self._RAGraph.add_node("llm", _answer)
         self._RAGraph.add_node("web", _search)
@@ -291,7 +291,7 @@ class RAG:
                 "simple": "simple pipeline",
                 "intermediate": "intermediate pipeline",
                 "complex": "complex pipeline",
-                "OOD": "llm"
+                "OOD": "OOD"
             }
         )
         self._RAGraph.add_edge("simple pipeline", "thresholder")
@@ -306,6 +306,7 @@ class RAG:
                 "web_llm": "web_llm"
             }
         )
+        self._RAGraph.add_edge("OOD", "llm")
         self._RAGraph.add_edge("llm", END)
         self._RAGraph.add_edge("web", END)
         self._RAGraph.add_edge("web_llm", END)
