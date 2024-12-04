@@ -5,9 +5,7 @@ from .models import GoogleModel
 from abc import ABC
 from typing import List, Optional
 
-
 import toml
-
 
 config = toml.load("../config.toml")
 GEMINI_API = config["GEMINI_API"]
@@ -61,7 +59,7 @@ def hard(query: str, ground_truth_url: Optional[List[str]]) -> list[str]:
 
 
 # Function to handle medium queries
-def medium(query: str, ground_truth_url: List[str]) -> list[str]:
+def medium(query: str, ground_truth_url: List[str], model) -> list[str]:
     """
     Handles medium queries by performing multiple searches.
 
@@ -73,14 +71,7 @@ def medium(query: str, ground_truth_url: List[str]) -> list[str]:
         str: The result of the mid search query.
     """
     # Configuration for GoogleModel
-    gemini_kwargs = {
-        'api_key': GEMINI_API,
-        'temperature': 1.0,
-        'top_p': 1
-    }
-
-    # Initialize language model
-    student_engine_lm = GoogleModel(model='models/gemini-1.5-flash', max_tokens=500, **gemini_kwargs)
+    student_engine_lm = model
     
     # Initialize retrievers
     rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3)
@@ -113,11 +104,11 @@ def easy(query: str, exclude_urls: Optional[List[str]]) -> list[str]:
         str: The result of the search.
     """
     # Initialize retrievers
-    rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3)    
     rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3)
-    rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
+    rm1 = DuckDuckGoSearchRM(k=5, snippet_chunk_size=5000, safe_search='On', region='us-en')
+    rm2 = SerperRM(serper_search_api_key=SERPER_API, k=5, snippet_chunk_size=10000)    
     rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3)
-    retriever = Retriever(available_retrievers=[rm2, rm0, rm1, rm3])
+    retriever = Retriever(available_retrievers=[rm1, rm2, rm0, rm3])
 
     # Perform the search
     sources = retriever.forward(queries=[query], exclude_urls=exclude_urls)
@@ -142,16 +133,10 @@ class WebAgent(ABC):
             Determines the complexity of the query and retrieves information using either a single search or multiple searches.
     """
 
-    def __init__(self):
-        # Configuration for GoogleModel
-        gemini_kwargs = {
-            'api_key': GEMINI_API,
-            'temperature': 1.0,
-            'top_p': 1
-        }
-
+    def __init__(self, model):
         # Initialize triage model
-        self.triage = GoogleModel(model='models/gemini-1.5-flash', max_tokens=500, **gemini_kwargs)
+        self.model = model
+        
         
     def query(self, query: str) -> list[str]:
         """
@@ -166,23 +151,16 @@ class WebAgent(ABC):
         # Prompt to determine query difficulty
         prompt = f"You are given a query and you can only use Google search to answer it. \
             The query could be \
-            -Hard: requires breaking the query into sub topics and search \
-            -Medium: requires multiple searches \
+            -Hard: requires multiple searches \
             -Easy: A single search(top 5 results) is sufficient. \
-            Answer if the query is 'Hard', 'Medium' or 'Easy' in one word. \
+            Answer if the query is 'Hard' or 'Easy' in one word. No explanation should be provided\
             The Query: {query}"
         
-        # Determine the difficulty of the query
-        difficulty = self.triage(prompt)[0]
-        
-        # print(difficulty)
-        
-        # Handle the query based on its difficulty
-        if 'Hard' in difficulty:
-            ans = hard(query, ground_truth_url=[''])
-        elif 'Medium' in difficulty:
-            ans = medium(query, ground_truth_url=[''])
-        elif 'Easy' in difficulty:
+        difficulty = self.model.invoke(prompt)
+        difficulty = difficulty[len(prompt):].lower().strip()
+        if 'hard' in difficulty:
+            ans = medium(query, ground_truth_url=[''], model=self.model)
+        elif 'easy' in difficulty:
             ans = easy(query, exclude_urls=[''])
         else:
             ans = ["Unable to determine query difficulty."]
@@ -192,6 +170,13 @@ class WebAgent(ABC):
 
 if __name__ == '__main__':
 
+    from langchain_community.llms import HuggingFaceHub
+    import os
+    os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
+    model=HuggingFaceHub( #change this to the correct model
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
+    )
     query = str(input())
-    agent = WebAgent()
+    agent = WebAgent(model=model)
     print(agent.query(query=query))

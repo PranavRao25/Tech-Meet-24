@@ -150,7 +150,7 @@ class RAG:
 
         self._thresholder = Thresholder(model=model) # make it runnable please
 
-    def web_search_prep(self):
+    def web_search_prep(self, model):
         """
         Sets up a Web Search Agent.
 
@@ -158,7 +158,7 @@ class RAG:
         model: The web search model.
         """
 
-        self._web_search_agent = RunnableLambda(WebAgent().query)
+        self._web_search_agent = RunnableLambda(WebAgent(model=model).query)
 
     def step_back_prompt_prep(self, model):
         """
@@ -207,7 +207,6 @@ class RAG:
             _answer =  self._moe_agent.invoke(state['question'])
             print(_answer)
             return _answer
-            return "simple"
 
         def _simple_pipeline(state):
             """
@@ -241,14 +240,11 @@ class RAG:
             grades = self._thresholder.grade(state['question'], state['context'])
             print(grades)
             
-            if grades.count(1) / len(grades) >= 0.25:
-                state["path"] = "llm"
+            if grades.count(1) / len(grades) >= 0.2:
                 return "llm"
-            elif grades.count(0) / len(grades) >= 0.2:
-                state["path"] = "web_llm"
+            elif grades.count(0) / len(grades) >= 0.4:
                 return "web_llm"
             else:
-                state["path"] = "web"
                 return "web"
 
         def _answer(state):
