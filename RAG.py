@@ -234,6 +234,9 @@ class RAG:
         
         def _threshold(state):
             return {"question": state["question"], "context": state["context"], "answer": state["answer"]}
+        
+        def _OOD(state):
+            return {"question": state["question"], "context": state["context"], "answer": state["answer"]}
 
         def _classify_answer(state):
             
@@ -276,6 +279,7 @@ class RAG:
         self._RAGraph.add_node("simple pipeline", _simple_pipeline)
         self._RAGraph.add_node("intermediate pipeline", _intermediate_pipeline)
         self._RAGraph.add_node("complex pipeline", _complex_pipeline)
+        self._RAGraph.add_node("thresholder", _OOD)
         self._RAGraph.add_node("thresholder", _threshold)
         self._RAGraph.add_node("llm", _answer)
         self._RAGraph.add_node("web", _search)
@@ -286,7 +290,8 @@ class RAG:
             {
                 "simple": "simple pipeline",
                 "intermediate": "intermediate pipeline",
-                "complex": "complex pipeline"
+                "complex": "complex pipeline",
+                "OOD": "llm"
             }
         )
         self._RAGraph.add_edge("simple pipeline", "thresholder")
