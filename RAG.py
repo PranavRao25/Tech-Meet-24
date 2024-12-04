@@ -291,7 +291,7 @@ class RAG:
                 "simple": "simple pipeline",
                 "intermediate": "intermediate pipeline",
                 "complex": "complex pipeline",
-                "OOD": "OOD"
+                "trivial": "OOD"
             }
         )
         self._RAGraph.add_edge("simple pipeline", "thresholder")
