@@ -17,7 +17,7 @@ class ToTAgent:
 
         self.vb = vb
         self.model = model_pair[0]
-        self.rereanker = reranker
+        self._reranker = reranker
         self.threshold = threshold
         self.breadth = breadth
         self.deeped_contexts=set()
@@ -44,15 +44,16 @@ class ToTAgent:
         """Expand a context into more specific topics using the LLM."""
         prompt_template = PromptTemplate.from_template("""
         Take the context "{context}" and list {breadth} specific subtopics or related areas of interest.
-        Give a single sentence on a subtopic and seperate each subtopic with \n
+        Give a single sentence on a subtopic and seperate each subtopic with a new line.
         """)
 
         chain1 = prompt_template | self.model
         response = chain1.invoke({"context": context, "breadth": self.breadth})
         print("response")
+        response=response.split("Give a single sentence on a subtopic and seperate each subtopic with a new line.")[1]
         # print(response.content)
         # Parse the response into clean topics
-        return self.parse_topics(response.content)
+        return self.parse_topics(response)
 
     def evaluate_topic(self, topic: str, query: str) -> int:
         """
@@ -64,7 +65,7 @@ class ToTAgent:
 
         Topic: "{topic}"
 
-        Respond with only a single number from 0 to 10.
+        Respond with only a single number from 0 to 10, with 10 being the most relevant and 0 the least relevant.
         """)
 
         chain1 = prompt_template | self.model
@@ -72,7 +73,7 @@ class ToTAgent:
 
         try:
             # Extract just the number from the response
-            score = int(re.search(r'\d+', response.content).group())
+            score = int(re.search(r'\d+', response).group())
             return min(max(score, 0), 10)  # Ensure score is between 0 and 10
         except (ValueError, AttributeError):
             print("could not evaluate topic")
@@ -188,15 +189,25 @@ if __name__ == "__main__":
     import os
     from langchain_google_genai import ChatGoogleGenerativeAI
     from pathway.xpacks.llm.vector_store import VectorStoreClient # better to use pathway's default client as we can set a timeout limit on it
+    from langchain_community.llms import HuggingFaceHub
+
+    config = toml.load("../config.toml")
+    HF_TOKEN = config['HF_TOKEN']
+    GEMINI_API = config['GEMINI_API']
+    os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
 
     client = VectorStoreClient(HOST, PORT, timeout=60)
 
-    config = toml.load('../config.toml')
-    os.environ["GOOGLE_API_KEY"] = config["GEMINI_API"]
-    model = ChatGoogleGenerativeAI(model="gemini-pro")
+    # model = ChatGoogleGenerativeAI(model="gemini-pro")
+    model = HuggingFaceHub(
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512}
+    )
     
     HOST = "127.0.0.1"
     PORT = 8666
-
-    tb = ToTAgent(vb=client, model_pair=(model, None), reranker=None, best=3, threshold=3, breadth=5, max_depth=2)    
-    tb.query("What is pathway?")
+    
+    tb = ToTAgent(vb=client, model_pair=(model, None), reranker=None, best=3, threshold=1, breadth=2, max_depth=2)
+    while True:
+        question = input("prompt:") 
+        print(tb.query(question))
