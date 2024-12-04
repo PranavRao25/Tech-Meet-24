@@ -293,7 +293,7 @@ class DuckDuckGoSearchRM(dspy.Retrieve):
 
     def __init__(
         self,
-        k: int = 3,
+        k: int = 10,
         is_valid_source: Callable = None,
         min_char_count: int = 150,
         snippet_chunk_size: int = 1000,
@@ -561,11 +561,11 @@ class SerperRM(dspy.Retrieve):
     def __init__(
         self,
         serper_search_api_key=None,
-        k=3,
+        k=5,
         query_params=None,
         ENABLE_EXTRA_SNIPPET_EXTRACTION=False,
         min_char_count: int = 150,
-        snippet_chunk_size: int = 1000,
+        snippet_chunk_size: int = 5000,
         webpage_helper_max_threads=5,
     ):
         """Args:

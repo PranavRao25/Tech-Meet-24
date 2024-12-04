@@ -26,7 +26,7 @@ class AutoWrapper:
         self.model = self.model.to(device)
         return self
 
-def chunk_text(text, chunk_size=250, overlap=25):
+def chunk_text(text, chunk_size=500, overlap=25):
     words = text.split()
     chunks = []
     for i in range(0, len(words), chunk_size - overlap):

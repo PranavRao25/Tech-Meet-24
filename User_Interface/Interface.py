@@ -119,7 +119,7 @@ rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
 rag.reranker_prep(reranker=bge_m3_model, mode="complex")
 rag.moe_prep(moe_model)
 rag.step_back_prompt_prep(model=smol_lm_model)
-rag.web_search_prep()
+rag.web_search_prep(model=smol_lm_model)
 rag.thresholder_prep(model=thresolder_model)
 rag.set()
 
