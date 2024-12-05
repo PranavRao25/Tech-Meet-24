@@ -193,26 +193,15 @@ if question := st.chat_input("Type your question here:"):
         # Display the answer after processing
         st.markdown(f"**Bot:** {answer}")
 
-    # Add thumbs-up and thumbs-down buttons
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("👍 Like"):
-            st.session_state.likes += 1  # Increment likes
-
-    with col2:
-        if st.button("👎 Dislike"):
-            st.session_state.dislikes += 1  # Increment dislikes
-
     # Add additional feedback (Yes/No)
     col1, col2, _ = st.columns([1, 1, 6])  # Adjust proportions for reduced spacing
     with col1:
-        if st.button("👍 Yes"):
+        if st.button("👍 Like"):
             st.session_state["positive_feedback"] += 1
             # st.success("Thank you for your feedback! 😊")
 
     with col2:
-        if st.button("👎 No"):
+        if st.button("👎 Dislike"):
             st.session_state["negative_feedback"] += 1
             # st.error("Thank you for your feedback! We will improve. 😔")
 
@@ -234,6 +223,10 @@ if st.button("Send Report"):
     # Send the email report
     send_email("Chatbot Interaction Report", report_body)
 
+# Sidebar footer
+st.sidebar.text("RAG Pipeline Chatbot with Streamlit")
+st.sidebar.text("Developed with LangGraph & LangChain")
+
 # Data for Pie Chart
 feedback_data = pd.DataFrame({
     "Feedback": ["Positive", "Negative"],
@@ -242,10 +235,6 @@ feedback_data = pd.DataFrame({
         st.session_state["negative_feedback"]
     ]
 })
-
-# Sidebar footer
-st.sidebar.text("RAG Pipeline Chatbot with Streamlit")
-st.sidebar.text("Developed with LangGraph & LangChain")
 
 # Sidebar: Pie Chart
 st.sidebar.title("Feedback Summary")
