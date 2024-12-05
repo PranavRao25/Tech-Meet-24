@@ -80,7 +80,7 @@ class QueryClassifier:
 
             complexity Classification Guidelines:
             1. trivial Query:
-            - Queries that do not require any reasoning or database retrieval.
+            - Queries that do not require any reasoning or context.
             - These are basic greetings, conversational inputs, or simple factual questions that are commonly known by many language models.
             - Examples: "What is 2+2?", "Hello, how are you?"
 

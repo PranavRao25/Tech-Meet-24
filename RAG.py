@@ -244,7 +244,7 @@ class RAG:
             print("complex pipeline has been chosen\n")
             with ThreadPoolExecutor() as executor: # noob
                 future_web_results = executor.submit(self._web_search_agent.invoke, state["question"])
-                future_context = executor.submit(self._intermediate_pipeline.invoke, state["question"])
+                future_context = executor.submit(self._complex_pipeline.invoke, state["question"])
     
                 self.web_results = future_web_results.result()
                 context = future_context.result()
