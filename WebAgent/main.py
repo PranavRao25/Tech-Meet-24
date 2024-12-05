@@ -4,7 +4,7 @@ from .search import DuckDuckGoSearchRM, GoogleSearch, SerperRM, BraveRM, Retriev
 from .models import GoogleModel
 from abc import ABC
 from typing import List, Optional
-
+import logging
 import toml
 
 config = toml.load("../config.toml")
@@ -12,7 +12,7 @@ GEMINI_API = config["GEMINI_API"]
 SERPER_API = config["SERPER_API"]
 GOOGLE_API = config["GOOGLE_API"]
 BRAVE_API = config["BRAVE_API"]
-
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 # Function to handle hard queries
 def hard(query: str, ground_truth_url: Optional[List[str]]) -> list[str]:
@@ -149,6 +149,7 @@ class WebAgent(ABC):
             str: The result of the query based on its difficulty.
         """
         # Prompt to determine query difficulty
+        logging.info("WebAgent Started")
         prompt = f"You are given a query and you can only use Google search to answer it. \
             The query could be \
             -Hard: requires multiple searches \
@@ -165,7 +166,7 @@ class WebAgent(ABC):
         else:
             ans = ["Unable to determine query difficulty."]
 
-        print(ans)
+        logging.info("WebAgent Finished")
         return ans
 
 if __name__ == '__main__':
