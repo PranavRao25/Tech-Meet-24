@@ -34,6 +34,7 @@ class RetrieverClient:
         self.k = k
     def query(self, text:str):
         return self.retriever.query(text, k=self.k)
+    __call__ = query
 
 # Function to start the VectorStoreServer
 @st.cache_resource
@@ -51,31 +52,36 @@ def vb_prep():
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
-    return BGE_M3(DEVICE), None
+    return BGE_M3(), None
 
 @st.cache_resource
-def load_smol_lm():
-    return AutoWrapper("mistralai/Mistral-7B-Instruct-v0.3",HF_TOKEN)
-
+def load_smol_lm(temp=0.5):
+    return HuggingFaceHub(
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        model_kwargs={"temperature": temp, "max_length": 64, "max_new_tokens": 512, "return_full_text":False}
+    )
+    
 @st.cache_resource
 def load_colbert():
-    model = colBERT(DEVICE)
+    model = colBERT()
     # model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
     # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, None
 
 @st.cache_resource
 def load_thresholder():
-    return AutoWrapper("mistralai/Mistral-7B-Instruct-v0.3",HF_TOKEN)
+    return HuggingFaceHub( #change this to the correct model
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        model_kwargs={"temperature": 0.3, "max_length": 64, "max_new_tokens": 512, "return_full_text":False}
+    )
+
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
-smol_lm_model.to(DEVICE)
-moe_model = load_smol_lm()
+moe_model = load_smol_lm(temp=0.3)
 gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
 thresolder_model = load_thresholder()
-thresolder_model.to(DEVICE)
 client = vb_prep()
 
 # Initialize session state for question history if it doesn't exist

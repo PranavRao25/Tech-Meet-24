@@ -20,6 +20,9 @@ from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
 from Thresholder.Thresholder import Thresholder
 from concurrent.futures import ThreadPoolExecutor
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 class Pipeline:
     """
@@ -50,7 +53,7 @@ class Pipeline:
         Returns:
         list[str]: The ranked context.
         """
-
+        logging.info("Retriever Started")
         if self.step_back_agent is not None:
             questions = self.step_back_agent(question)
             contexts = []
@@ -59,7 +62,7 @@ class Pipeline:
         else:
             contexts = self.simple_retrieval_agent.invoke(question)
         new_context = self.simple_reranker.rerank(question, contexts)
-
+        logging.info("Retriever Finished")
         return new_context
 
 
@@ -206,6 +209,7 @@ class RAG:
             # "simple"
             # "intermediate"
             # "complex"
+            return "simple"
             _answer =  self._moe_agent.invoke(state['question'])
             print(_answer)
             return _answer
@@ -239,7 +243,7 @@ class RAG:
             with ThreadPoolExecutor() as executor: # noob
                 future_web_results = executor.submit(self._web_search_agent.invoke, state["question"])
                 future_context = executor.submit(self._intermediate_pipeline.invoke, state["question"])
-
+    
                 self.web_results = future_web_results.result()
                 context = future_context.result()
             return {"question": state["question"], "context": context, "answer": state["answer"]}
@@ -289,7 +293,9 @@ class RAG:
             
             web_result = self.web_results
             self.web_results = None
-            context = state["context"]
+            context = ["retrieved context:\n"]
+            context.extend(state["context"])
+            context.extend(["web results:\n"])
             context.extend(web_result)
             bot_answer = self._llm.process_query(state["question"], context)
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
