@@ -13,10 +13,9 @@ def test_guardrails(query)->str:
     try:
         # Test failing response
         Gibberish_guard.validate(query)
-        NSFW_guard.validate(query)
-        return None
     except Exception as e:
-        print(e)
+        return "I'm sorry, I didn't quite understand that. Could you please rephrase or clarify your question?"
+    
     NSFW_guard = Guard().use(
     NSFWText, threshold=0.8, validation_method="sentence", on_fail="exception")
 
@@ -24,6 +23,6 @@ def test_guardrails(query)->str:
         # Test failing response
         Gibberish_guard.validate(query)
         NSFW_guard.validate(query)
-        return None
     except Exception as e:
-        print(e)
+        return "I'm sorry, but I cannot engage in that topic. Let's keep the conversation respectful and appropriate."
+    return None
