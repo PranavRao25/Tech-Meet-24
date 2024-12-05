@@ -16,6 +16,7 @@ from Step_back.stepback import QuestionGen
 from langchain.schema.runnable import RunnableLambda
 from transformers import pipeline
 from QueryAgent.ToTAgent import ToTAgent
+from QueryAgent.BasicAgent import BasicAgent
 from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
 from Thresholder.Thresholder import Thresholder
@@ -104,11 +105,11 @@ class RAG:
         """
 
         if mode == "simple":
-            self._cot_agent = RunnableLambda(CoTAgent(self._vb, (q_model, parser), reranker).query)
+            self._basic_agent = RunnableLambda(BasicAgent(self._vb, (q_model, parser), reranker).query)
         elif mode == "intermediate":
-            self._mcot_agent = RunnableLambda(MCoTAgent(self._vb, (q_model, parser), reranker).query)
+            self._cot_agent = RunnableLambda(CoTAgent(self._vb, (q_model, parser), reranker).query)
         elif mode == "complex":
-            self._tot_agent = RunnableLambda(ToTAgent(self._vb, (q_model, parser), reranker).query)
+            self._mcot_agent = RunnableLambda(MCoTAgent(self._vb, (q_model, parser), reranker).query)
         else:
             raise ValueError("Incorrect mode")
 
@@ -179,9 +180,9 @@ class RAG:
         Configures the retrieval pipelines.
         """
 
-        self._simple_pipeline = RunnableLambda(Pipeline(self._cot_agent, self._simple_reranker).retrieve)
-        self._intermediate_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker, step_back_agent=self._step_back_agent).retrieve)
-        self._complex_pipeline = RunnableLambda(Pipeline(self._tot_agent, self._complex_reranker, step_back_agent=self._step_back_agent).retrieve)
+        self._simple_pipeline = RunnableLambda(Pipeline(self._basic_agent, self._simple_reranker).retrieve)
+        self._intermediate_pipeline = RunnableLambda(Pipeline(self._cot_agent, self._simple_reranker).retrieve)
+        self._complex_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker, step_back_agent=self._step_back_agent).retrieve)
 
     def _context_prep(self, question:str):
         """
