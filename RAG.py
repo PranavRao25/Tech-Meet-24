@@ -56,6 +56,7 @@ class Pipeline:
         logging.info("Retriever Started")
         if self.step_back_agent is not None:
             questions = self.step_back_agent(question)
+            questions.append(question)
             contexts = []
             for question in questions:
                 contexts += self.simple_retrieval_agent.invoke(question)

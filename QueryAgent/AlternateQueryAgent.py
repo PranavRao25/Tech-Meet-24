@@ -12,7 +12,7 @@ class AlternateQueryAgent:
     Alternate Query Agent class that generates multiple alternate questions based on a given input question.
     """
 
-    def __init__(self, model_pair, no_q=3):
+    def __init__(self, model_pair, no_q=2):
         """
         Initializes the AlternateQueryAgent with a model pair and the number of alternate questions to generate.
 

@@ -105,7 +105,8 @@ class SubQueryAgent(ContextAgent):
         """
 
         # Generate initial sub-question and retrieve initial context
-        sub_q = self._sub_q_gen1.sub_questions_gen(question)
+        # sub_q = self._sub_q_gen1.sub_questions_gen(question)
+        sub_q = question # kyu karna hai, be simple
         logger.info(f"sub question:- {sub_q}")
         initial_context = self._fetch(sub_q)
         total_contexts = set(cont["text"] for cont in initial_context)
