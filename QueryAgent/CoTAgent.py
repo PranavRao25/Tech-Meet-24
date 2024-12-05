@@ -46,7 +46,7 @@ class CoTAgent(ContextAgent):
         subqueries = small_chain.invoke(question).strip()#[len(template):]
         logging.info(f"COT AGENT SUBQUERIES GENERATION FINISHED")
         # Retrieve and accumulate answers for each sub-question
-        for subquery in subqueries.split('?'):
+        for subquery in [question, *subqueries.split('?')]:
             if subquery == "":
                 continue
             subquery = str(subquery).strip()  # Clean and format subquery

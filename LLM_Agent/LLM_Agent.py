@@ -98,6 +98,7 @@ class LLMAgent:
         else:
             return f"""
             You are a helpful AI assistant. Using the provided context, answer the question.
+            Prioritise the retrieved context over web results
             Format your response in the following way:
             Answer: [Provide a clear, direct answer]
 

@@ -267,7 +267,9 @@ class RAG:
         def _ambiguous(state):
             logger.info("Documents are Ambigious")
             web_result = self._web_search_agent.invoke(state['question'])
-            context = state["context"]
+            context = ["Retrieved Context:"]
+            context.extend(state["context"])
+            context.extend(["Web Results:"])
             context.extend(web_result)
             bot_answer = self._llm.process_query(state["question"], context)       
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
