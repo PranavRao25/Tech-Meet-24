@@ -13,6 +13,7 @@ def query(query):
     # find the scores of label noise and label word_salad
     noise_score=0
     salad_score=0
+    print(response_json)
     for i in response_json[0]:
         if i['label']=='noise':
             noise_score=i['score']
