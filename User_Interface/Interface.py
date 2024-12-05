@@ -54,12 +54,9 @@ def load_bge_m3():
     return BGE_M3(DEVICE), None
 
 @st.cache_resource
-def load_smol_lm(temp=0.5):
-    return HuggingFaceHub(
-        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
-        model_kwargs={"temperature": temp, "max_length": 64, "max_new_tokens": 512, "return_full_text":False}
-    )
-    
+def load_smol_lm():
+    return AutoWrapper("mistralai/Mistral-7B-Instruct-v0.3",HF_TOKEN)
+
 @st.cache_resource
 def load_colbert():
     model = colBERT(DEVICE)
@@ -69,18 +66,16 @@ def load_colbert():
 
 @st.cache_resource
 def load_thresholder():
-    return HuggingFaceHub( #change this to the correct model
-        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
-        model_kwargs={"temperature": 0.1, "max_length": 64, "max_new_tokens": 512, "return_full_text":False}
-    )
-
+    return AutoWrapper("mistralai/Mistral-7B-Instruct-v0.3",HF_TOKEN)
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
-moe_model = load_smol_lm(temp=0.1)
+smol_lm_model.to(DEVICE)
+moe_model = load_smol_lm()
 gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
 thresolder_model = load_thresholder()
+thresolder_model.to(DEVICE)
 client = vb_prep()
 
 # Initialize session state for question history if it doesn't exist
