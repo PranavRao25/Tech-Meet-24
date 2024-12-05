@@ -141,15 +141,19 @@ for entry in st.session_state.history:
 
 # Process new question if entered
 if question := st.chat_input("Type your question here:"):
-    with st.spinner("Retrieving answer..."):
+    # Immediately display the question
+    st.markdown(f"**You:** {question}")
+
+    with st.spinner("Processing..."):
         # Get the answer from the RAG pipeline
         answer = rag.query(question)
+
         # Store question and answer in the session history
         st.session_state.history.append({"question": question, "answer": answer})
 
-        # Display the current answer immediately in the chat
-        st.markdown(f"**You:** {question}")
+        # Display the answer after processing
         st.markdown(f"**Bot:** {answer}")
+
 
 # Sidebar footer
 st.sidebar.text("RAG Pipeline Chatbot with Streamlit")
