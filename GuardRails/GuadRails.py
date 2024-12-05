@@ -7,17 +7,17 @@ def validate_query(query)->str:
     Return None if the input is valid, otherwise return the error message.
     """
     # Use the Guard with the validator
-    Gibberish_guard = Guard().use(
-        GibberishText, threshold=0.5, validation_method="sentence", on_fail="exception"
-    )
-    try:
-        # Test failing response
-        Gibberish_guard.validate(query)
-    except Exception as e:
-        return "I'm sorry, I didn't quite understand that. Could you please rephrase or clarify your question?"
+    # Gibberish_guard = Guard().use(
+    #     GibberishText, threshold=0.5, validation_method="sentence", on_fail="exception"
+    # )
+    # try:
+    #     # Test failing response
+    #     Gibberish_guard.validate(query)
+    # except Exception as e:
+    #     return "I'm sorry, I didn't quite understand that. Could you please rephrase or clarify your question?"
     
     NSFW_guard = Guard().use(
-    NSFWText, threshold=0.8, validation_method="sentence", on_fail="exception")
+    NSFWText, threshold=0.2, validation_method="sentence", on_fail="exception")
 
     try:
         # Test failing response
