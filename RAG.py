@@ -21,6 +21,7 @@ from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
 from Thresholder.Thresholder import Thresholder
 from concurrent.futures import ThreadPoolExecutor
+from GuardRails import validate_query
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -358,6 +359,10 @@ class RAG:
         Returns:
         str: The generated answer.
         """
+        
+        val = validate_query(question)
+        if val is not None:
+            return val
         
         self._question = question
         state = {"question": self._question, "context": "", "answer": ""}
