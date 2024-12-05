@@ -21,7 +21,7 @@ from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
 from Thresholder.Thresholder import Thresholder
 from concurrent.futures import ThreadPoolExecutor
-# from GuardRails import validate_query
+from GuardRails.GuardRails import validate_query
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
