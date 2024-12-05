@@ -41,11 +41,12 @@ class QuestionGen:
                 "to some more generic step-back questions, which are easier to answer.\n"
                 "Here are a few examples:\n"
                 f"{examples_text}\n"
+                "Now, output three step-back questions for the following input question.\n"
                 f"Input: {question}\nOutput:"
             )
             # Use the Hugging Face model to generate output
             results = self.q_model(prompt, max_length=100, num_return_sequences=1).strip()#[len(prompt):]
-            return results.split('\n')[:3]  # changed from: results[0].split("\nOutput:")[-1].split('\n')[0].split(',')[0]
+            return results.split('\n')[:2]  # changed from: results[0].split("\nOutput:")[-1].split('\n')[0].split(',')[0]
 
         # Combine the model output with the parser
         return RunnableLambda(generate_questions) 
