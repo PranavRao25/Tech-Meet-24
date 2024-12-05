@@ -105,7 +105,7 @@ class QueryClassifier:
             """
         prompt = ChatPromptTemplate.from_template(template)
         small_chain = {"query": RunnablePassthrough()} | prompt | self.llm_model #.invoke(prompt.format(question=question))
-        llm_response = small_chain.invoke(query)[len(template):].split("complexity:")[-1].strip()
+        llm_response = small_chain.invoke(query).split("complexity:")[-1].strip()
         
         llm_response = llm_response.strip()
         if "trivial" in llm_response:
