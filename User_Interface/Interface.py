@@ -91,11 +91,6 @@ if "history" not in st.session_state:
 # Streamlit interface
 st.title(".pathway Chatbot")
 
-# Sidebar for configuration
-st.sidebar.header("Pipeline Configuration")
-retrieval_mode = st.sidebar.selectbox("Select Retrieval Mode", ["simple", "intermediate", "complex"])
-reranker_mode = st.sidebar.selectbox("Select Reranker Mode", ["simple", "intermediate", "complex"])
-
 # Initialize your RAG pipeline using these cached models
 rag = RAG(vb=client, llm=gemini_model)
 
@@ -131,6 +126,17 @@ rag.web_search_prep(model=smol_lm_model)
 rag.thresholder_prep(model=thresolder_model)
 rag.set()
 
+# Sidebar for configuration
+st.sidebar.header("Pipeline Configuration")
+# retrieval_mode = st.sidebar.selectbox("Select Retrieval Mode", ["simple", "intermediate", "complex"])
+# reranker_mode = st.sidebar.selectbox("Select Reranker Mode", ["simple", "intermediate", "complex"])
+
+# Initialize like/dislike counters in session state if they don't exist
+if "likes" not in st.session_state:
+    st.session_state.likes = 0
+if "dislikes" not in st.session_state:
+    st.session_state.dislikes = 0
+
 # Main chat interface using `st.chat`
 st.header("Team_41")
 
@@ -154,6 +160,21 @@ if question := st.chat_input("Type your question here:"):
         # Display the answer after processing
         st.markdown(f"**Bot:** {answer}")
 
+    # Add thumbs-up and thumbs-down buttons
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("👍 Like"):
+            st.session_state.likes += 1  # Increment likes
+
+    with col2:
+        if st.button("👎 Dislike"):
+            st.session_state.dislikes += 1  # Increment dislikes
+
+# Sidebar: Display the stats
+st.sidebar.header("Feedback Stats")
+st.sidebar.write(f"👍 Likes: {st.session_state.likes}")
+st.sidebar.write(f"👎 Dislikes: {st.session_state.dislikes}")
 
 # Sidebar footer
 st.sidebar.text("RAG Pipeline Chatbot with Streamlit")
