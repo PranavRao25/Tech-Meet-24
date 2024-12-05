@@ -1,18 +1,18 @@
 from typing import List
 from langchain.schema import BaseOutputParser
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
+from langchain_core.prompts import ChatPromptTemplate
 import logging
-
+import os
+import getpass
 
 class ResponseSchema(BaseModel):
     """Schema for structured output"""
     answer: str = Field(description="The direct answer to the question")
 
 
-class GeminiOutputParser(BaseOutputParser):
+class OpenAIParser(BaseOutputParser):
     """Parser to structure the LLM output"""
 
     def parse(self, text: str) -> ResponseSchema:
@@ -29,19 +29,21 @@ class LLMAgent:
 
     def __init__(
         self,
-        google_api_key: str,
-        model_name: str = "gemini-1.5-flash",
-        temperature: float = 0.5,
-        max_tokens: int = 2000,
+        model_name: str = "gpt-4o-mini",
+        temperature: float = 0.7,
+        max_tokens: int = 256,
     ):
+
+        if "OPENAI_API_KEY" not in os.environ:
+            os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter your OpenAI API key: ")
+
         """Initialize the LLM Agent"""
-        self.llm = ChatGoogleGenerativeAI(
-            google_api_key=google_api_key,
+        self.llm = ChatOpenAI(
             model=model_name,
             temperature=temperature,
-            max_output_tokens=max_tokens,
+            max_tokens=max_tokens,
         )
-        self.output_parser = GeminiOutputParser()
+        self.output_parser = OpenAIParser()
 
     @staticmethod
     def decide_template(context: str, question: str) -> str:
@@ -92,14 +94,33 @@ class LLMAgent:
         prompt_text = self.decide_template(formatted_context, question)
 
         # Create a dynamic prompt template and chain
-        prompt_template = PromptTemplate(input_variables=[], template=prompt_text)
-        chain = LLMChain(llm=self.llm, prompt=prompt_template)
+        
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "You are a helpful assistant that helps everyone and behaves nicely.",
+                ),
+                ("human", prompt_text),
+            ]
+        )
+        chain = prompt | self.llm
 
         # Get response from the LLM
         logging.info(f"Context:\n{formatted_context}")
         logging.info(f"Prompt:\n{prompt_text}")
-        response = chain.run({})
+        response = chain.invoke({
+            "context" : formatted_context,
+            "question" : question
+        })
         logging.info(f"Response: {response}")
 
         # Parse and return the structured output
-        return self.output_parser.parse(response).answer
+        return self.output_parser.parse(response.content).answer
+
+if __name__ == '__main__':
+    
+    agent = LLMAgent(model_name="gpt-4o-mini", temperature=0.7, max_tokens=256) #max_tokens=1024???
+    question = input("Enter a question: ")
+    context = "france is a country in europe"
+    print(agent.process_query(question, context))
