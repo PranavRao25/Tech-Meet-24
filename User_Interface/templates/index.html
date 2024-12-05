@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathway</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="info">
+        <p>RAG Pipeline Chatbot with Streamlit</p>
+        <p>Developed with LangGraph & LangChain </p>
+    </div>
+
+    <div class="ans">
+        {% for i in ans %}
+            <p> You: {{ i[0] }}</p>
+            <p> Model: {{ i[1] }}</p>
+        {% endfor %}
+    </div>
+
+    <form action="/" method='POST' onsubmit="waitload()">
+        <!-- <label for="mode">Choose a mode:</label> -->
+        <select id="mode" name="mode">
+            <option value="Normal">Normal</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Expert">Expert</option>
+        </select>
+  <input type="submit">
+        <label for="intext"></label>
+        <input class="intext" id="intext" name="intext" type="text" required>
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- <div class="loader" id="loading"></div> -->
+
+    <div class="loader" id="loading">
+
+        <section class="sec-loading">
+            <div class="one">
+            </div>
+        </section>
+    </div>
+
+
+
+    
+    <script>
+        function waitload() {
+            document.getElementById("loading").style.display = "block";
+        }
+    </script>
+</body>
+
+</html>
