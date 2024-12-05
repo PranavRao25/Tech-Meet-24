@@ -132,7 +132,7 @@ class LLMAgent:
         # Get response from LLM
         self._context = formatted_context
         logging.info(f"Context : {formatted_context}\n")
-        response = self.chain.invoke(question).content
+        response = self.chain.invoke(question)
         logging.info(f"response: {response}")
         # Parse and return structured output
         return self.output_parser.parse(response).answer
