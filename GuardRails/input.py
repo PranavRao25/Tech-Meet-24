@@ -1,0 +1,29 @@
+# Import Guard and Validator
+from guardrails.hub import GibberishText
+from guardrails.hub import NSFWText
+from guardrails import Guard
+def test_guardrails(query)->str:
+    """
+    Return None if the input is valid, otherwise return the error message.
+    """
+    # Use the Guard with the validator
+    Gibberish_guard = Guard().use(
+        GibberishText, threshold=0.5, validation_method="sentence", on_fail="exception"
+    )
+    try:
+        # Test failing response
+        Gibberish_guard.validate(query)
+        NSFW_guard.validate(query)
+        return None
+    except Exception as e:
+        print(e)
+    NSFW_guard = Guard().use(
+    NSFWText, threshold=0.8, validation_method="sentence", on_fail="exception")
+
+    try:
+        # Test failing response
+        Gibberish_guard.validate(query)
+        NSFW_guard.validate(query)
+        return None
+    except Exception as e:
+        print(e)
