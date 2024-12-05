@@ -193,17 +193,23 @@ if question := st.chat_input("Type your question here:"):
         # Display the answer after processing
         st.markdown(f"**Bot:** {answer}")
 
-    # Add additional feedback (Yes/No)
+    # Main chat interface for feedback buttons
     col1, col2, _ = st.columns([1, 1, 6])  # Adjust proportions for reduced spacing
     with col1:
-        if st.button("👍 Likes"):
-            st.session_state["positive_feedback"] += 1
-            # st.success("Thank you for your feedback! 😊")
+        if st.session_state.liked:  # Disable if liked
+            st.button("👍 Like", disabled=True)
+        else:
+            if st.button("👍 Like"):
+                st.session_state["positive_feedback"] += 1
+                st.session_state.liked = True  # Set liked to True
 
     with col2:
-        if st.button("👎 Dislikes"):
-            st.session_state["negative_feedback"] += 1
-            # st.error("Thank you for your feedback! We will improve. 😔")
+        if st.session_state.disliked:  # Disable if disliked
+            st.button("👎 Dislike", disabled=True)
+        else:
+            if st.button("👎 Dislike"):
+                st.session_state["negative_feedback"] += 1
+                st.session_state.disliked = True  # Set disliked to True
 
 # Sidebar: Display Feedback Stats
 st.sidebar.header("Feedback Stats")
@@ -223,18 +229,18 @@ if st.button("Send Report"):
     # Send the email report
     send_email("Chatbot Interaction Report", report_body)
 
+# Sidebar footer
+st.sidebar.text("RAG Pipeline Chatbot with Streamlit")
+st.sidebar.text("Developed with LangGraph & LangChain")
+
 # Data for Pie Chart
 feedback_data = pd.DataFrame({
     "Feedback": ["Positive", "Negative"],
     "Count": [
-        st.session_state["positive_feedback"],
-        st.session_state["negative_feedback"]
+        st.session_state.get("positive_feedback", 0),
+        st.session_state.get("negative_feedback", 0)
     ]
 })
-
-# Sidebar footer
-st.sidebar.text("RAG Pipeline Chatbot with Streamlit")
-st.sidebar.text("Developed with LangGraph & LangChain")
 
 # Sidebar: Pie Chart
 st.sidebar.title("Feedback Summary")
