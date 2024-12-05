@@ -2,7 +2,7 @@
 from guardrails.hub import GibberishText
 from guardrails.hub import NSFWText
 from guardrails import Guard
-def test_guardrails(query)->str:
+def validate_query(query)->str:
     """
     Return None if the input is valid, otherwise return the error message.
     """
@@ -21,8 +21,11 @@ def test_guardrails(query)->str:
 
     try:
         # Test failing response
-        Gibberish_guard.validate(query)
+        # Gibberish_guard.validate(query)
         NSFW_guard.validate(query)
     except Exception as e:
         return "I'm sorry, but I cannot engage in that topic. Let's keep the conversation respectful and appropriate."
     return None
+if __name__ == '__main__':
+    
+    print(validate_query(input("Enter a query: ")))
