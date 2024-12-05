@@ -18,7 +18,7 @@ headers = {"Authorization": "Bearer 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"}
 
 def query(query):
     if query.strip() == "":
-        return "I'm sorry, please give valid query"
+        return "I'm sorry, Could you please provide some input so I can assist you?"
     payload={"inputs": query}
     for i in range(3):
         try:
@@ -38,6 +38,7 @@ def query(query):
                 return "I'm sorry, I didn't quite understand that. Could you please rephrase or clarify your question?"
             break
         except:
+            print(i)
             if i == 2:
                 return "It seems like there was internal error" # when API POST Request
     

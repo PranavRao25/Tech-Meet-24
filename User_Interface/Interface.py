@@ -81,16 +81,16 @@ def load_colbert():
     return model, None
 
 @st.cache_resource
-def load_thresholder():
+def load_thresholder(temp=0.3):
     return HuggingFaceHub( #change this to the correct model
         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
-        model_kwargs={"temperature": 0.3, "max_length": 64, "max_new_tokens": 512, "return_full_text":False}
+        model_kwargs={"temperature": 0.3, "max_length": 64, "max_new_tokens": 16, "return_full_text":False}
     )
 
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
-moe_model = load_smol_lm(temp=0.3)
+moe_model = load_thresholder(temp=0.3)
 gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
 thresolder_model = load_thresholder()
@@ -193,26 +193,15 @@ if question := st.chat_input("Type your question here:"):
         # Display the answer after processing
         st.markdown(f"**Bot:** {answer}")
 
-    # Add thumbs-up and thumbs-down buttons
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("👍 Like"):
-            st.session_state.likes += 1  # Increment likes
-
-    with col2:
-        if st.button("👎 Dislike"):
-            st.session_state.dislikes += 1  # Increment dislikes
-
     # Add additional feedback (Yes/No)
     col1, col2, _ = st.columns([1, 1, 6])  # Adjust proportions for reduced spacing
     with col1:
-        if st.button("👍 Yes"):
+        if st.button("👍 Likes"):
             st.session_state["positive_feedback"] += 1
             # st.success("Thank you for your feedback! 😊")
 
     with col2:
-        if st.button("👎 No"):
+        if st.button("👎 Dislikes"):
             st.session_state["negative_feedback"] += 1
             # st.error("Thank you for your feedback! We will improve. 😔")
 

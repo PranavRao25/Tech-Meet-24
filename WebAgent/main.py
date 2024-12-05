@@ -78,7 +78,7 @@ def medium(query: str, ground_truth_url: List[str], model) -> list[str]:
     rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3)
     rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
     rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3)
-    retriever = Retriever(available_retrievers=[rm3, rm0, rm1, rm2])
+    retriever = Retriever(available_retrievers=[rm3, rm0, rm2, rm1])
     
     # Initialize MidSearch
     midesearch = MidSearch(
@@ -108,7 +108,7 @@ def easy(query: str, exclude_urls: Optional[List[str]]) -> list[str]:
     rm1 = DuckDuckGoSearchRM(k=5, snippet_chunk_size=5000, safe_search='On', region='us-en')
     rm2 = SerperRM(serper_search_api_key=SERPER_API, k=5, snippet_chunk_size=10000)    
     rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3)
-    retriever = Retriever(available_retrievers=[rm1, rm2, rm0, rm3])
+    retriever = Retriever(available_retrievers=[rm2, rm0, rm1, rm3])
 
     # Perform the search
     sources = retriever.forward(queries=[query], exclude_urls=exclude_urls)

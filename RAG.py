@@ -21,7 +21,7 @@ from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
 from Thresholder.Thresholder import Thresholder
 from concurrent.futures import ThreadPoolExecutor
-from GuardRails.GuardRails import validate_query
+from GuardRails.GuardRails import query
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -212,7 +212,7 @@ class RAG:
             # "simple"
             # "intermediate"
             # "complex"
-            # return "intermediate"
+            return "complex"
             _answer =  self._moe_agent.invoke(state['question'])
             print(_answer)
             return _answer
@@ -360,9 +360,9 @@ class RAG:
         str: The generated answer.
         """
         
-        # val = validate_query(question)
-        # if val is not None:
-        #     return val
+        val = query(question)
+        if val is not None:
+            return val
         
         self._question = question
         state = {"question": self._question, "context": "", "answer": ""}
