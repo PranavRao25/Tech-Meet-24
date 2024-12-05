@@ -1,0 +1,193 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: black; 
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image: url("https://images.unsplash.com/photo-1671931815172-ab0a187bbc87?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+}
+
+.info {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.ans {
+    height: 70vh;
+    width: 80%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.6));
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-y: auto; 
+    position: absolute;
+    top: 15%; 
+    left: 50%;
+    transform: translateX(-50%); 
+    word-wrap: break-word; 
+    overflow-wrap: break-word; 
+    white-space: normal; 
+}
+
+.ans p {
+    margin: 5px;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.intext {
+    width: 80%;
+    padding: 10px;
+    border-radius: 8px;
+    position: fixed;
+    bottom: 20px;
+    border: none;
+    font-size: 16px;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.4));
+    color: white;
+    outline: none;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    position: fixed;
+    right: 10vw;
+    bottom: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+:root {
+    --border-width: 7px;
+  }
+
+  #loading {
+    display: none; 
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 20px;
+}
+
+
+
+  
+  .sec-loading {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sec-loading .one {
+    height: 80px;
+    width: 80px;
+    border: var(--border-width) solid white;
+    transform: rotate(45deg);
+    border-radius: 0 50% 50% 50%;
+    position: relative;
+    animation: move 0.5s linear infinite alternate-reverse;
+  }
+  .sec-loading .one::before {
+    content: "";
+    position: absolute;
+    height: 55%;
+    width: 55%;
+    border-radius: 50%;
+    border: var(--border-width) solid transparent;
+    border-top-color: white;
+    border-bottom-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: rotate 1s linear infinite;
+  }
+  
+  @keyframes rotate {
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+  @keyframes move {
+    to {
+      transform: translateY(15px) rotate(45deg);
+    }
+  }
+  
+
+/* Style for the label */
+label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #f1f1f1; /* Light color for dark background */
+    margin-right: 10px;
+}
+
+/* Style for the dropdown */
+select {
+    font-size: 14px;
+    padding: 10px;
+    position: fixed;
+    left: 10vw;
+    top: 10px;
+    border: 2px solid #555; /* Darker border */
+    border-radius: 5px;
+    background-color: #333; /* Dark background */
+    color: #f1f1f1; /* Light text color */
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover and focus effects */
+select:hover, select:focus {
+    border-color: #1e90ff; /* Lighter blue for focus */
+    box-shadow: 0 0 5px rgba(30, 144, 255, 0.5);
+}
+
+/* Dropdown options */
+select option {
+    font-size: 14px;
+    padding: 5px;
+    background-color: #333; /* Match the dropdown background */
+    color: #f1f1f1; /* Light text for options */
+}
+
+/* Optional styling for body to match dark theme */
+body {
+    background-color: #121212; /* Dark background */
+    color: #f1f1f1; /* Light text */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Optional container styling for alignment */
+div {
+    margin: 20px 0;
+}
