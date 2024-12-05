@@ -20,20 +20,26 @@ def query(query):
     if query.strip() == "":
         return "I'm sorry, please give valid query"
     payload={"inputs": query}
-    response = requests.post(API_URL, headers=headers, json=payload)
-    response_json= response.json()
-    # print(response_json[0])
-    # find the scores of label noise and label word_salad
-    noise_score=0
-    salad_score=0
-    print(response_json)
-    for i in response_json[0]:
-        if i['label']=='noise':
-            noise_score=i['score']
-        if i['label']=='word salad':
-            salad_score=i['score']
-    if noise_score > 0.75 or salad_score>0.9:
-        return "I'm sorry, I didn't quite understand that. Could you please rephrase or clarify your question?"
+    for i in range(3):
+        try:
+            response = requests.post(API_URL, headers=headers, json=payload)
+            response_json= response.json()
+            # print(response_json[0])
+            # find the scores of label noise and label word_salad
+            noise_score=0
+            salad_score=0
+            print(response_json)
+            for i in response_json[0]:
+                if i['label']=='noise':
+                    noise_score=i['score']
+                if i['label']=='word salad':
+                    salad_score=i['score']
+            if noise_score > 0.75 or salad_score>0.9:
+                return "I'm sorry, I didn't quite understand that. Could you please rephrase or clarify your question?"
+            break
+        except:
+            if i == 2:
+                return "It seems like there was internal error" # when API POST Request
     
     inputs = tokenizer(query, return_tensors="pt", truncation=True, padding=True, max_length=512)
     
