@@ -157,7 +157,7 @@ class WebAgent(ABC):
             The Query: {query}"
         
         difficulty = self.model.invoke(prompt)
-        difficulty = difficulty[len(prompt):].lower().strip()
+        difficulty = difficulty.lower().strip()
         if 'hard' in difficulty:
             ans = medium(query, ground_truth_url=[''], model=self.model)
         elif 'easy' in difficulty:

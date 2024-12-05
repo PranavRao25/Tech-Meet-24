@@ -3,7 +3,7 @@ from pathway.xpacks.llm.vector_store import VectorStoreServer
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 # from langchain.text_splitter import TextSplitter
 from io import BytesIO
-# from utils import IndexServer
+from utils import IndexServer
 import pathway as pw
 import pymupdf
 import torch
@@ -92,10 +92,11 @@ documents.append(fs_files)
 #     index="lsh"
 #     )
 
-server = VectorStoreServer.from_llamaindex_components(
+server = IndexServer.from_llamaindex_components(
     *documents,
-    transformations=[TokenTextSplitter(chunk_size=100, chunk_overlap=20, separator=" "), embedder],
-    parser=PDFParser()
+    transformations=[TokenTextSplitter(chunk_size=300, chunk_overlap=50, separator=" "), embedder],
+    parser=PDFParser(),
+    index="usearch"
 )
 
 HOST = "127.0.0.1"

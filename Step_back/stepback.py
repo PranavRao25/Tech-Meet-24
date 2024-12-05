@@ -44,7 +44,7 @@ class QuestionGen:
                 f"Input: {question}\nOutput:"
             )
             # Use the Hugging Face model to generate output
-            results = self.q_model(prompt, max_length=100, num_return_sequences=1)[len(prompt):]
+            results = self.q_model(prompt, max_length=100, num_return_sequences=1).strip()#[len(prompt):]
             return results.split('\n')[:3]  # changed from: results[0].split("\nOutput:")[-1].split('\n')[0].split(',')[0]
 
         # Combine the model output with the parser

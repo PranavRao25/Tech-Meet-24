@@ -1,6 +1,5 @@
 from pathway.xpacks.llm.vector_store import VectorStoreServer
 from pathway.stdlib.indexing import default_usearch_knn_document_index, default_vector_document_index, default_lsh_knn_document_index, default_brute_force_knn_document_index
-from pathway.stdlib.indexing.data_index import _SCORE, DataIndex
 from typing import Callable
 import pathway as pw
 
@@ -112,4 +111,12 @@ class IndexServer:
             splitter=splitter, 
             parser=parser,
             )
+        return vector_store
+    def from_llamaindex_components(*docs, transformations, parser, index=None) -> VectorStoreServer:
+        if index == None:
+            vector_store = VectorStoreServer.from_llamaindex_components(*docs, transformations=transformations, parser=parser)
+            return vector_store
+        index_fn = INDEXES[index]
+        VectorStoreServer._build_graph = _give_build_fn(index_fn)
+        vector_store = VectorStoreServer.from_llamaindex_components(*docs, transformations=transformations, parser=parser)
         return vector_store

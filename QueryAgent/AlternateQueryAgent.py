@@ -24,10 +24,10 @@ class AlternateQueryAgent:
         self._q_model = model_pair[0]
         self._parser = model_pair[1]
         self._turn = no_q
-        template="""You are given a question [{question}].
-                  Generate """ + "two" + """ alternate questions (same question content with different syntactic structure) based on it. They should be numbered and separated by newlines.
+        self._template="""You are given a question [{question}].
+                  Generate """ + "two" + """ more questions which have same meaning but different structure based on it. They should be numbered and separated by newlines.
                   Do not answer the questions.""".strip()
-        self._prompt = ChatPromptTemplate.from_template(template)
+        self._prompt = ChatPromptTemplate.from_template(self._template)
         # Define a chain for generating alternate questions
         
         self._chain = {"question": RunnablePassthrough()} | self._prompt | self._q_model | self._parser
@@ -46,8 +46,9 @@ class AlternateQueryAgent:
         """
 
         # Generate alternate questions and include the original question in the list
-        mul_qs = [q.strip() for q in self._chain.invoke(question).split('\n') if q != ""]
-        logger.info("multiple questions generated")
+        # mul_qs = [q.strip() for q in self._chain.invoke(question)[len(self._template) + len(question) - len("{question}"):].split('\n') if q != ""]
+        mul_qs = [q.strip() for q in self._chain.invoke(question).strip().split('\n') if q != ""]
+        logger.info(f"multiple questions generated:\n {mul_qs}")
         return mul_qs
 
 # if __name__ == '__main__':
