@@ -371,7 +371,7 @@ class RAG:
         self._answer = answer_state["answer"]
         return self._answer
 
-    def ragas_evaluate(self, raise_exceptions=False):
+    def ragas_evaluate(self, questions: list[str], ground_truths:list[str], raise_exceptions=False):
         """
         Evaluates the RAG output using the RAGAS framework.
 
@@ -381,13 +381,19 @@ class RAG:
         Returns:
         DataFrame: Evaluation results as a DataFrame.
         """
-        data = {
-            "question": [self._question],
-            "answer": [self._answer],
-            "contexts": [[self._context]],
-            "ground_truth": [self._ground_truth]
-        }
-        dataset = Dataset.from_dict(data)
+        
+        answers = []
+        contexts = []
+        for question in questions:
+            answers.append(self.query(question))
+            contexts.append(self._context)
+         
+        dataset = Dataset.from_dict({
+            "question": questions,
+            "answer": answers,
+            "contexts": [contexts],
+            "ground_truth": ground_truths
+        })
         result = evaluate(
             dataset=dataset,
             metrics=[
