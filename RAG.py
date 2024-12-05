@@ -16,9 +16,14 @@ from Step_back.stepback import QuestionGen
 from langchain.schema.runnable import RunnableLambda
 from transformers import pipeline
 from QueryAgent.ToTAgent import ToTAgent
+from QueryAgent.BasicAgent import BasicAgent
 from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
 from Thresholder.Thresholder import Thresholder
+from concurrent.futures import ThreadPoolExecutor
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 class Pipeline:
     """
@@ -49,16 +54,17 @@ class Pipeline:
         Returns:
         list[str]: The ranked context.
         """
-
+        logging.info("Retriever Started")
         if self.step_back_agent is not None:
             questions = self.step_back_agent(question)
+            questions.append(question)
             contexts = []
             for question in questions:
                 contexts += self.simple_retrieval_agent.invoke(question)
         else:
             contexts = self.simple_retrieval_agent.invoke(question)
         new_context = self.simple_reranker.rerank(question, contexts)
-
+        logging.info("Retriever Finished")
         return new_context
 
 
@@ -88,6 +94,7 @@ class RAG:
         """
         self._vb = vb
         self._llm = llm
+        self.web_results = None
 
     def retrieval_agent_prep(self, q_model, parser, reranker, mode):
         """
@@ -101,11 +108,11 @@ class RAG:
         """
 
         if mode == "simple":
-            self._cot_agent = RunnableLambda(CoTAgent(self._vb, (q_model, parser), reranker).query)
+            self._basic_agent = RunnableLambda(BasicAgent(self._vb, (q_model, parser), reranker).query)
         elif mode == "intermediate":
-            self._mcot_agent = RunnableLambda(MCoTAgent(self._vb, (q_model, parser), reranker).query)
+            self._cot_agent = RunnableLambda(CoTAgent(self._vb, (q_model, parser), reranker).query)
         elif mode == "complex":
-            self._tot_agent = RunnableLambda(ToTAgent(self._vb, (q_model, parser), reranker).query)
+            self._mcot_agent = RunnableLambda(MCoTAgent(self._vb, (q_model, parser), reranker).query)
         else:
             raise ValueError("Incorrect mode")
 
@@ -176,9 +183,9 @@ class RAG:
         Configures the retrieval pipelines.
         """
 
-        self._simple_pipeline = RunnableLambda(Pipeline(self._cot_agent, self._simple_reranker).retrieve)
-        self._intermediate_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker, step_back_agent=self._step_back_agent).retrieve)
-        self._complex_pipeline = RunnableLambda(Pipeline(self._tot_agent, self._complex_reranker, step_back_agent=self._step_back_agent).retrieve)
+        self._simple_pipeline = RunnableLambda(Pipeline(self._basic_agent, self._simple_reranker).retrieve)
+        self._intermediate_pipeline = RunnableLambda(Pipeline(self._cot_agent, self._simple_reranker).retrieve)
+        self._complex_pipeline = RunnableLambda(Pipeline(self._mcot_agent, self._intermediate_reranker, step_back_agent=self._step_back_agent).retrieve)
 
     def _context_prep(self, question:str):
         """
@@ -204,6 +211,7 @@ class RAG:
             # "simple"
             # "intermediate"
             # "complex"
+            # return "intermediate"
             _answer =  self._moe_agent.invoke(state['question'])
             print(_answer)
             return _answer
@@ -221,7 +229,12 @@ class RAG:
             Executes the intermediate pipeline for a given state.
             """
             print("intermediate pipeline has been chosen\n")
-            context = self._intermediate_pipeline.invoke(state["question"])
+            with ThreadPoolExecutor() as executor: # noob
+                future_web_results = executor.submit(self._web_search_agent.invoke, state["question"])
+                future_context = executor.submit(self._intermediate_pipeline.invoke, state["question"])
+
+                self.web_results = future_web_results.result()
+                context = future_context.result()
             return {"question": state["question"], "context": context, "answer": state["answer"]}
         
         def _complex_pipeline(state):
@@ -229,7 +242,12 @@ class RAG:
             Executes the complex pipeline for a given state.
             """
             print("complex pipeline has been chosen\n")
-            context = self._complex_pipeline.invoke(state["question"])
+            with ThreadPoolExecutor() as executor: # noob
+                future_web_results = executor.submit(self._web_search_agent.invoke, state["question"])
+                future_context = executor.submit(self._intermediate_pipeline.invoke, state["question"])
+    
+                self.web_results = future_web_results.result()
+                context = future_context.result()
             return {"question": state["question"], "context": context, "answer": state["answer"]}
         
         def _threshold(state):
@@ -260,16 +278,28 @@ class RAG:
 
         def _search(state):
             logger.info("Documents are Irrelevant")
-            web_result = self._web_search_agent.invoke(state['question'])
+            
+            if self.web_results is None:
+                self.web_results = self._web_search_agent.invoke(state['question'])
+            
+            web_result = self.web_results
+            self.web_results = None
             bot_answer = self._llm.process_query(state["question"], web_result)
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         def _ambiguous(state):
             logger.info("Documents are Ambigious")
-            web_result = self._web_search_agent.invoke(state['question'])
-            context = state["context"]
+            
+            if self.web_results is None:
+                self.web_results = self._web_search_agent.invoke(state['question'])
+            
+            web_result = self.web_results
+            self.web_results = None
+            context = ["retrieved context:\n"]
+            context.extend(state["context"])
+            context.extend(["web results:\n"])
             context.extend(web_result)
-            bot_answer = self._llm.process_query(state["question"], context)       
+            bot_answer = self._llm.process_query(state["question"], context)
             return {"question": state["question"], "context": state["context"], "answer": bot_answer}
 
         self._pipeline_setup()

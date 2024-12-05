@@ -9,7 +9,7 @@ if __name__ == "__main__":
     client = VectorStoreClient(HOST, PORT, timeout=500)
     start = time()
     print("vector client initialized:",start-begin)
-    output = client.query("who is imperator dotonion?", k=10)
+    output = client.query("when was the agreement between birch first global and mount knowledge holdings?", k=20)
     print(len(output))
     print("\n====\n".join([item["text"] for item in output]))
     end = time()

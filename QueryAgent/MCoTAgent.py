@@ -47,7 +47,7 @@ class MCoTAgent:
         """
 
         # Generate alternate questions based on the input question
-        logger.info(f"Input question: {question}")
+        logger.info(f"Step-Back-Questions: {question}")
         alt_qs = self._alt_q.invoke(question) # this is actually giving a string instead of list -> fixed
         alternate_context = []
         # For each alternate question, generate sub-queries and collect their contexts
@@ -59,6 +59,7 @@ class MCoTAgent:
                 contexts.add(i)
             alternate_context.append("\n".join(contexts))
         # Log to file or console
+        self._log_output("No of Alternate Questions:", len(alt_qs))
         self._log_output("Alternate Contexts:", alternate_context)
         # Clean and rerank the contexts based on relevance
         final_context = self._clean(alternate_context)

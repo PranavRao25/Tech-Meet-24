@@ -29,21 +29,22 @@ class SubQueryGenAgent:
         self._q_model = agent_model[0]
         self._parser = agent_model[1]
         self._mode = mode
-
         if self._mode:
             # Define prompt for mode with question only
+            self._template = """You are given a main Question {question}. You must generate ONE subquestion for the same. Output should in the format: sub-question : <sub_question>. Do not answer the question"""
             self._prompt = ChatPromptTemplate.from_template(
-                """You are given a main Question {question}. You must generate ONE subquestion for the same. Output should in the format: sub-question : <sub_question>"""
+                self._template
             )
             self._chain = {
                              "question": RunnablePassthrough()
                          } | self._prompt | self._q_model | self._parser
             logger.info("Sub Query with question only")
         else:
+            self._context = "" 
             # Define prompt for mode with question and context
-            self._context = ""
+            self._template = """You are given a main Question {question} and a context {context}. You must generate a subquestion for the same. Output should in the format: sub-question : <sub_question>. Do not answer the question"""
             self._prompt = ChatPromptTemplate.from_template(
-                """You are given a main Question {question} and a context {context}. You must generate a subquestion for the same. Output should in the format: sub-question : <sub_question>"""
+                self._template
             )
             self._chain = {
                              "question": RunnablePassthrough(),
@@ -64,7 +65,7 @@ class SubQueryGenAgent:
         str: Generated sub-question.
         """
         logger.info("Sub queries being generated")
-        return self._chain.invoke(question)
+        return self._chain.invoke(question).strip()
 
 
 class SubQueryAgent(ContextAgent):
@@ -104,7 +105,8 @@ class SubQueryAgent(ContextAgent):
         """
 
         # Generate initial sub-question and retrieve initial context
-        sub_q = self._sub_q_gen1.sub_questions_gen(question)
+        # sub_q = self._sub_q_gen1.sub_questions_gen(question)
+        sub_q = question # kyu karna hai, be simple
         logger.info(f"sub question:- {sub_q}")
         initial_context = self._fetch(sub_q)
         total_contexts = set(cont["text"] for cont in initial_context)

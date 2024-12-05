@@ -70,12 +70,12 @@ class Thresholder:
 
                 self._docs = chunk
                 answer = self._chain.invoke(question)
-                check = answer
+                check = answer.strip()#[len(self.template) + len(question) + len(self._docs) - len("{question}{document}"):] # why not working?
                 print(f"CHECK: {check}\n")
             
-                relevant = len(re.findall(r'\brelevant\b', check, re.IGNORECASE)) - 2
-                ambiguous = len(re.findall(r'\bambiguous\b', check, re.IGNORECASE)) - 1
-                irrelevant = len(re.findall(r'\birrelevant\b', check, re.IGNORECASE)) - 1
+                relevant = len(re.findall(r'\brelevant\b', check, re.IGNORECASE))
+                ambiguous = len(re.findall(r'\bambiguous\b', check, re.IGNORECASE))
+                irrelevant = len(re.findall(r'\birrelevant\b', check, re.IGNORECASE))
                 
                 print(f"relevant: {relevant} ")
                 print(f"ambiguous: {ambiguous}\n")

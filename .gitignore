@@ -3,5 +3,6 @@ credentials.json
 test*
 Cache
 env
+rough.py
 # documents*
 # *.toml
