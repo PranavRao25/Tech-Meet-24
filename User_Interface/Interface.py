@@ -59,7 +59,7 @@ def vb_prep():
     HOST = "127.0.0.1"
     PORT = 8666
 
-    return RetrieverClient(host=HOST, port=PORT, k=10, timeout=120)
+    return RetrieverClient(host=HOST, port=PORT, k=20, timeout=120)
 
 # Define cached loading functions for each model
 @st.cache_resource
@@ -196,20 +196,20 @@ if question := st.chat_input("Type your question here:"):
     # Main chat interface for feedback buttons
     col1, col2, _ = st.columns([1, 1, 6])  # Adjust proportions for reduced spacing
     with col1:
-        if st.session_state.liked:  # Disable if liked
+        if st.session_state.likes:  # Disable if likes
             st.button("👍 Like", disabled=True)
         else:
             if st.button("👍 Like"):
                 st.session_state["positive_feedback"] += 1
-                st.session_state.liked = True  # Set liked to True
+                st.session_state.likes = True  # Set likes to True
 
     with col2:
-        if st.session_state.disliked:  # Disable if disliked
+        if st.session_state.dislikes:  # Disable if dislikes
             st.button("👎 Dislike", disabled=True)
         else:
             if st.button("👎 Dislike"):
                 st.session_state["negative_feedback"] += 1
-                st.session_state.disliked = True  # Set disliked to True
+                st.session_state.dislikes = True  # Set dislikes to True
 
 # Sidebar: Display Feedback Stats
 st.sidebar.header("Feedback Stats")

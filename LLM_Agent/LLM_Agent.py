@@ -59,7 +59,7 @@ class LLMAgent:
         else:  # Context provided
             print("context provided")
             return f"""
-            You are a helpful AI assistant. Using the provided context, answer the question.
+            You are a helpful AI assistant. Using the provided context, answer the question detailedly.
             Prioritize the retrieved context over external knowledge or assumptions.
             Format your response in the following way:
             Answer: [Provide a clear, direct answer]
