@@ -29,6 +29,11 @@ Create an Agentic RAG (Retrieval-Augmented Generation) system using Pathway that
 python -m venv my_env
 ```
 
+### 2. Activate the environment
+```bash
+source my_env/bin/activate
+```
+
 ### 2. Install Dependencies  
 Run the following command:  
 ```bash
@@ -45,7 +50,8 @@ python DataBase/setup.py
 1. Open a new terminal.  
 2. Run the Streamlit UI using:
    ```bash
-   streamlit run User_Interface/Interface.py
+   cd User_Interface
+   streamlit run Interface.py
    ```
 
 ---
