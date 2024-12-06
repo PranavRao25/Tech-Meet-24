@@ -12,7 +12,7 @@ rag = RAG(vb, llm)
 
 os.environ['OPENAI_API_KEY'] = ''
 
-with open("test_data.json", 'r') as f:
+with open("test50.json", 'r') as f:
 	data = json.load(f)
 
 list_qa = data['data']
