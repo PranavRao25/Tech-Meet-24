@@ -17,11 +17,14 @@ fi
 echo "Installing required packages..."
 pip install -r requirements.txt
 
-# Set up the database
+# Set up the database in the background
 echo "Setting up the database..."
-python DataBase/setup.py
-# echo "Database setup completed"
+python DataBase/setup.py &
 
-# # running the interface
+# Wait for 400 seconds before starting the interface
+echo "Waiting for 400 seconds to ensure the database is set up..."
+sleep 500
+
+# Running the interface
 cd User_Interface
 streamlit run Interface.py
