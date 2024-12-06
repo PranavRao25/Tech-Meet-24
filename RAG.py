@@ -385,15 +385,15 @@ class RAG:
         """
         
         answers = []
-        contexts = []
+        contexts: list[list[str]] = []
         for question in questions:
             answers.append(self.query(question))
-            contexts.append(self._context)
+            contexts.append(["\n".join(self._context)])
          
         dataset = Dataset.from_dict({
-            "question": questions,
-            "answer": answers,
-            "contexts": [contexts],
+            "question": questions,  # list[str]
+            "answer": answers,  # list[str]
+            "contexts": contexts,  # list[list[str]]
             "ground_truth": ground_truths
         })
         result = evaluate(
