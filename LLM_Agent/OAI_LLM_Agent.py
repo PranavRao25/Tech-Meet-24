@@ -46,12 +46,12 @@ class LLMAgent:
         self.output_parser = OpenAIParser()
 
     @staticmethod
-    def decide_template(context: str, question: str) -> str:
+    def decide_template(context: str) -> str:
         print("deciding template")
         """Decide the appropriate template based on the presence of context"""
         if not context.strip():  # No context provided
             print("no context")
-            return f"""
+            return """
             You are a helpful AI assistant. Answer the question in the following way.
             Answer: [Provide a clear, direct answer]
 
@@ -60,7 +60,7 @@ class LLMAgent:
             """
         else:  # Context provided
             print("context provided")
-            return f"""
+            return """
             You are a helpful AI assistant. Using the provided context, answer the question.
             Prioritize the retrieved context over external knowledge or assumptions.
             Format your response in the following way:
@@ -91,7 +91,7 @@ class LLMAgent:
         formatted_context = "\n".join(context)
 
         # Dynamically create the prompt using the decided template
-        prompt_text = self.decide_template(formatted_context, question)
+        prompt_text = self.decide_template(formatted_context)
 
         # Create a dynamic prompt template and chain
         

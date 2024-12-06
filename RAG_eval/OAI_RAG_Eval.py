@@ -8,7 +8,6 @@ import pandas as pd
 import altair as alt
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import streamlit as st
 from transformers import pipeline
 from pathway.xpacks.llm.vector_store import VectorStoreClient
 from langchain_core.output_parsers import StrOutputParser
@@ -17,20 +16,20 @@ from pathway.xpacks.llm.vector_store import VectorStoreClient
 import toml
 import torch
 from langchain_community.llms import HuggingFaceHub
-from langchain.llms.ollama import Ollama
 # from ..rerankers.models.models import colBERT
 
 PATHWAY_PORT = 8765
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Add the project folder to the Python path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
+# Add the project folder to the Python path
+
 from RAG import RAG
 from AutoWrapper import AutoWrapper
-from LLM_Agent.LLM_Agent import LLMAgent
+from LLM_Agent.OAI_LLM_Agent import LLMAgent
 from rerankers.models.models import colBERT, BGE_M3
 
-config = toml.load("./config.toml")
+config = toml.load("../config.toml")
 HF_TOKEN = config['HF_TOKEN']
 GEMINI_API = config['GEMINI_API']
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
@@ -44,7 +43,6 @@ class RetrieverClient:
     __call__ = query
 
 # Function to start the VectorStoreServer
-@st.cache_resource
 def vb_prep():
     # return VectorStoreClient(
     #     host="127.0.0.1",
@@ -57,25 +55,21 @@ def vb_prep():
     return RetrieverClient(host=HOST, port=PORT, k=20, timeout=120)
 
 # Define cached loading functions for each model
-@st.cache_resource
 def load_bge_m3():
     return BGE_M3(), None
 
-@st.cache_resource
 def load_smol_lm(temp=0.5):
     return HuggingFaceHub(
         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
         model_kwargs={"temperature": temp, "max_length": 64, "max_new_tokens": 512, "return_full_text":False}
     )
     
-@st.cache_resource
 def load_colbert():
     model = colBERT()
     # model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
     # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, None
 
-@st.cache_resource
 def load_thresholder(temp=0.3):
     return HuggingFaceHub( #change this to the correct model
         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
@@ -86,16 +80,16 @@ def load_thresholder(temp=0.3):
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
 moe_model = load_thresholder(temp=0.3)
-gemini_model = LLMAgent(google_api_key=GEMINI_API)
+oai_model = LLMAgent(model_name="gpt-4o-mini", temperature=0.7, max_tokens=256)
 colbert_model, colbert_tokenizer = load_colbert()
 thresolder_model = load_thresholder()
 client = vb_prep()
 
 # Streamlit interface
-st.title(".pathway Chatbot")
+# st.title(".pathway Chatbot")
 
 # Initialize your RAG pipeline using these cached models
-rag = RAG(vb=client, llm=gemini_model)
+rag = RAG(vb=client, llm=oai_model)
 
 # Configure the RAG pipeline with your parser
 rag.retrieval_agent_prep(
@@ -130,14 +124,15 @@ rag.set()
 
 os.environ['OPENAI_API_KEY'] = ''
 
-with open("test50.json", 'r') as f:
+with open("./test50.json", 'r') as f:
 	data = json.load(f)
 
-list_qa = data['data']
+list_qa = data['data'][:5]
+
 questions = [qa['question'] for qa in list_qa]
 answers = [qa['answer'] for qa in list_qa]
 contexts = [qa['context'] for qa in list_qa]
 
 results_df = rag.ragas_evaluate(questions, answers)
-
 print(tabulate(results_df))
+results_df.to_csv("test_results.csv")

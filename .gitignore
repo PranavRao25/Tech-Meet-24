@@ -1,9 +1,10 @@
 __pycache__
 credentials.json
-test*
+test
 Cache
 env
 rough.py
 mcotagentlogs*
+testing_ui.py
 # documents*
 # *.toml

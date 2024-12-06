@@ -15,10 +15,10 @@ class ResponseSchema(BaseModel):
 class GeminiOutputParser(BaseOutputParser):
     """Parser to structure the LLM output"""
 
-    def parse(self, text: str) -> ResponseSchema:
+    def parse(self, text: dict) -> ResponseSchema:
         """Parse the LLM output into structured format"""
         try:
-            answer = text.replace("Answer: ", "").strip()
+            answer = text["text"].replace("Answer: ", "").strip()
             return ResponseSchema(answer=answer)
         except Exception as e:
             raise ValueError(f"Failed to parse LLM output: {e}")
@@ -44,12 +44,12 @@ class LLMAgent:
         self.output_parser = GeminiOutputParser()
 
     @staticmethod
-    def decide_template(context: str, question: str) -> str:
+    def decide_template(context: str) -> str:
         print("deciding template")
         """Decide the appropriate template based on the presence of context"""
         if not context.strip():  # No context provided
             print("no context")
-            return f"""
+            return """
             You are a helpful AI assistant. Answer the question in the following way.
             Answer: [Provide a clear, direct answer]
 
@@ -58,7 +58,7 @@ class LLMAgent:
             """
         else:  # Context provided
             print("context provided")
-            return f"""
+            return """
             You are a helpful AI assistant. Using the provided context, answer the question detailedly.
             Prioritize the retrieved context over external knowledge or assumptions.
             Format your response in the following way:
@@ -89,16 +89,15 @@ class LLMAgent:
         formatted_context = "\n".join(context)
 
         # Dynamically create the prompt using the decided template
-        prompt_text = self.decide_template(formatted_context, question)
-
+        prompt_text = self.decide_template(formatted_context)
         # Create a dynamic prompt template and chain
-        prompt_template = PromptTemplate(input_variables=[], template=prompt_text)
+        prompt_template = PromptTemplate(input_variables=["question", "context"], template=prompt_text)
         chain = LLMChain(llm=self.llm, prompt=prompt_template)
 
         # Get response from the LLM
         logging.info(f"Context:\n{formatted_context}")
         logging.info(f"Prompt:\n{prompt_text}")
-        response = chain.run({})
+        response = chain.invoke({"question":question, "context":formatted_context})
         logging.info(f"Response: {response}")
 
         # Parse and return the structured output

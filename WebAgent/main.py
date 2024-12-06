@@ -73,9 +73,9 @@ def medium(query: str, ground_truth_url: List[str], model) -> list[str]:
     student_engine_lm = model
     
     # Initialize retrievers
-    rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3)
+    rm2 = SerperRM(serper_search_api_key=SERPER_API, k=3, snippet_chunk_size=10000)
     rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3)
-    rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en')
+    rm1 = DuckDuckGoSearchRM(k=3, safe_search='On', region='us-en', snippet_chunk_size=10000)
     rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3)
     retriever = Retriever(available_retrievers=[rm2, rm0, rm3, rm1])
     
@@ -104,7 +104,7 @@ def easy(query: str, exclude_urls: Optional[List[str]]) -> list[str]:
     """
     # Initialize retrievers
     rm0 = GoogleSearch(google_search_api_key=GOOGLE_API, google_cse_id='d0b14c6884a6346d3', k=3)
-    rm1 = DuckDuckGoSearchRM(k=5, snippet_chunk_size=5000, safe_search='On', region='us-en')
+    rm1 = DuckDuckGoSearchRM(k=5, snippet_chunk_size=10000, safe_search='On', region='us-en')
     rm2 = SerperRM(serper_search_api_key=SERPER_API, k=5, snippet_chunk_size=10000)    
     rm3 = BraveRM(brave_search_api_key=BRAVE_API, k=3)
     retriever = Retriever(available_retrievers=[rm2, rm0, rm1, rm3])

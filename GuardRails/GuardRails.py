@@ -1,6 +1,9 @@
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 import os
 import toml
+import sys
+from pathlib import Path
+# sys.path.append(str(Path(__file__).resolve().parent.parent))
 config=toml.load('../config.toml')
 HF_TOKEN=config['HF_TOKEN']
 os.environ['HF_TOKEN']= HF_TOKEN

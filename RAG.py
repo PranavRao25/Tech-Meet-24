@@ -96,6 +96,7 @@ class RAG:
         self._vb = vb
         self._llm = llm
         self.web_results = None
+        self._context = ""
 
     def retrieval_agent_prep(self, q_model, parser, reranker, mode):
         """
@@ -369,6 +370,7 @@ class RAG:
         self._rag_graph()
         answer_state = self._ragchain.invoke(state)
         self._answer = answer_state["answer"]
+        self._context = answer_state["context"]
         return self._answer
 
     def ragas_evaluate(self, questions: list[str], ground_truths:list[str], raise_exceptions=False):
