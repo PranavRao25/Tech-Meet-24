@@ -1,6 +1,5 @@
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 import os
-import config
 import toml
 config=toml.load('config.toml')
 HF_TOKEN=config['HF_TOKEN']
