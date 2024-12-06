@@ -396,13 +396,13 @@ class RAG:
             elif not isinstance(self._context, str):
                 self._context = "No context"  # Default fallback for invalid types
             
-            contexts.append(self._context)  # Append as a string, no wrapping in a list
+            contexts.append([self._context])  # Append as a string, no wrapping in a list
         
         print("CONTEXTS ", contexts)
         dataset = Dataset.from_dict({
             "question": questions,  # list[str]
             "answer": answers,  # list[str]
-            "contexts": [contexts],  # list[list[str]]
+            "contexts": contexts,  # list[list[str]]
             "ground_truth": ground_truths
         })
         result = evaluate(
