@@ -25,19 +25,28 @@
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
-
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 from flask import Flask, render_template, request, session
 from transformers import pipeline
-from pathlib import Path
 import toml
 import os
 import torch
-
+from pathway.xpacks.llm.vector_store import VectorStoreClient
 from RAG import RAG
 from rerankers.models.models import colBERT, BGE_M3
 from langchain_community.llms import HuggingFaceHub
 from langchain_core.output_parsers import StrOutputParser
 from LLM_Agent.LLM_Agent import LLMAgent
+
+class RetrieverClient:
+    def __init__(self, host, port, k=10, timeout=60, *args, **kwargs):
+        self.retriever = VectorStoreClient(host=host, port=port, timeout=timeout, *args, **kwargs)
+        self.k = k
+    def query(self, text:str):
+        return self.retriever.query(text, k=self.k)
+    __call__ = query
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # For session management
@@ -52,7 +61,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Initialize RAG Pipeline
 def initialize_rag():
-    retriever_client = VectorStoreClient(host="127.0.0.1", port=8666, timeout=120)
+    retriever_client = RetrieverClient(host="127.0.0.1", port=8666, timeout=120)
 
     bge_m3_model = BGE_M3()
     colbert_model = colBERT()
@@ -62,11 +71,10 @@ def initialize_rag():
     )
 
     gemini_model = LLMAgent(google_api_key=GEMINI_API)
-    thresolder_model = HuggingFaceHub(
+    thresolder_moe_model = HuggingFaceHub(
         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
         model_kwargs={"temperature": 0.3, "max_length": 64, "max_new_tokens": 512, "return_full_text": False},
     )
-
     # Configure RAG Pipeline
     rag = RAG(vb=retriever_client, llm=gemini_model)
 
@@ -83,9 +91,11 @@ def initialize_rag():
     rag.reranker_prep(reranker=colbert_model, mode="simple")
     rag.reranker_prep(reranker=bge_m3_model, mode="intermediate")
     rag.reranker_prep(reranker=bge_m3_model, mode="complex")
-
-    rag.moe_prep(moe_model=smol_lm_model)
-    rag.thresholder_prep(model=thresolder_model)
+    rag.moe_prep(thresolder_moe_model)
+    rag.step_back_prompt_prep(model=smol_lm_model)
+    rag.web_search_prep(model=smol_lm_model)
+    rag.thresholder_prep(model=thresolder_moe_model)
+    rag.set()
 
     rag.set()
     return rag

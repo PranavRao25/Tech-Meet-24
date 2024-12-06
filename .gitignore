@@ -4,5 +4,6 @@ test*
 Cache
 env
 rough.py
+mcotagentlogs*
 # documents*
 # *.toml

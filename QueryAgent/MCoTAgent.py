@@ -59,7 +59,7 @@ class MCoTAgent:
                 contexts.add(i)
             alternate_context.append("\n".join(contexts))
         # Log to file or console
-        self._log_output("No of Alternate Questions:", len(alt_qs))
+        self._log_output("No of Alternate Questions:", [str(len(alt_qs))])
         self._log_output("Alternate Contexts:", alternate_context)
         # Clean and rerank the contexts based on relevance
         final_context = self._clean(alternate_context)

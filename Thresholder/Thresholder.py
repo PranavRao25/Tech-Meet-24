@@ -87,13 +87,15 @@ class Thresholder:
                     inter_grade.append(0)
                 else:
                     inter_grade.append(-1)
-                        
-            if inter_grade.count(1) / len(inter_grade) >= 0.15:
-                grades.append(1)
-            elif inter_grade.count(0) / len(inter_grade) >= 0.4:
-                grades.append(0)
-            else:
-                grades.append(-1)
+            try:            
+                if inter_grade.count(1) / len(inter_grade) >= 0.15:
+                    grades.append(1)
+                elif inter_grade.count(0) / len(inter_grade) >= 0.4:
+                    grades.append(0)
+                else:
+                    grades.append(-1)
+            except:
+                return [0]
             
         return grades
     

@@ -21,7 +21,7 @@ from WebAgent.main import WebAgent
 from rerankers.rerankers.reranker import *
 from Thresholder.Thresholder import Thresholder
 from concurrent.futures import ThreadPoolExecutor
-from GuardRails import validate_query
+from GuardRails.GuardRails import query
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -245,7 +245,7 @@ class RAG:
             print("complex pipeline has been chosen\n")
             with ThreadPoolExecutor() as executor: # noob
                 future_web_results = executor.submit(self._web_search_agent.invoke, state["question"])
-                future_context = executor.submit(self._intermediate_pipeline.invoke, state["question"])
+                future_context = executor.submit(self._complex_pipeline.invoke, state["question"])
     
                 self.web_results = future_web_results.result()
                 context = future_context.result()
@@ -360,7 +360,7 @@ class RAG:
         str: The generated answer.
         """
         
-        val = validate_query(question)
+        val = query(question)
         if val is not None:
             return val
         
