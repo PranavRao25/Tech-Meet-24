@@ -9,7 +9,8 @@ if __name__ == "__main__":
     client = VectorStoreClient(HOST, PORT, timeout=500)
     start = time()
     print("vector client initialized:",start-begin)
-    output = client.query("when was the agreement between birch first global and mount knowledge holdings?", k=20)
+    query = """Highlight the parts (if any) of this contract related to "Document Name" that should be reviewed by a lawyer. Details: The name of the contract"""
+    output = client.query(query, k=20)
     print(len(output))
     print("\n====\n".join([item["text"] for item in output]))
     end = time()

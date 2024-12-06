@@ -59,7 +59,7 @@ def vb_prep():
     HOST = "127.0.0.1"
     PORT = 8666
 
-    return RetrieverClient(host=HOST, port=PORT, k=10, timeout=120)
+    return RetrieverClient(host=HOST, port=PORT, k=20, timeout=120)
 
 # Define cached loading functions for each model
 @st.cache_resource

@@ -1,6 +1,7 @@
 import requests
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 import torch
+from time import sleep
 
 # Load the model and tokenizer
 model_name = "cardiffnlp/twitter-roberta-base-offensive"
@@ -41,6 +42,7 @@ def query(query):
             print(i)
             if i == 2:
                 return "It seems like there was internal error" # when API POST Request
+            sleep(0.5)
     
     inputs = tokenizer(query, return_tensors="pt", truncation=True, padding=True, max_length=512)
     
