@@ -23,7 +23,7 @@ python DataBase/setup.py &
 
 # Wait for 400 seconds before starting the interface
 echo "Waiting for 400 seconds to ensure the database is set up..."
-sleep 5
+sleep 500
 
 # Running the interface
 cd User_Interface
