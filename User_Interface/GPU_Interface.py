@@ -24,7 +24,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from RAG import RAG
 from AutoWrapper import AutoWrapper
-from LLM_Agent.LLM_Agent import LLMAgent
+from LLM_Agent.OAI_LLM_Agent import LLMAgent
 from rerankers.models.models import colBERT, BGE_M3
 from MOE.llm_query_classifier import QueryClassifier
 
@@ -91,7 +91,7 @@ def load_thresholder(temp=0.3):
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
 moe_model = load_thresholder(temp=0.1)
-gemini_model = LLMAgent(google_api_key=GEMINI_API)
+oai_model = LLMAgent(model_name="gpt-4o-mini", temperature=0.7, max_tokens=256)
 colbert_model, colbert_tokenizer = load_colbert()
 thresolder_model = load_thresholder()
 client = vb_prep()
@@ -100,7 +100,7 @@ client = vb_prep()
 st.title(".pathway Chatbot")
 
 # Initialize your RAG pipeline using these cached models
-rag = RAG(vb=client, llm=gemini_model)
+rag = RAG(vb=client, llm=oai_model)
 
 # Configure the RAG pipeline with your parser
 rag.retrieval_agent_prep(

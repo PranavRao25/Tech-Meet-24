@@ -1,7 +1,7 @@
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 import os
 import toml
-config=toml.load('config.toml')
+config=toml.load('../config.toml')
 HF_TOKEN=config['HF_TOKEN']
 os.environ['HF_TOKEN']= HF_TOKEN
 import torch
@@ -17,7 +17,7 @@ tokenizer = RobertaTokenizer.from_pretrained(model_name)
 model = RobertaForSequenceClassification.from_pretrained(model_name)
 
 # Ensure the model uses the CPU (default behavior)
-device = torch.device('cpu')  # Set device to CPU
+device = torch.device('cuda' if torch.cuda.is_available() else "cpu")  # Set device to CPU
 
 # Move the model to CPU (though it's already on CPU by default)
 model.to(device)
