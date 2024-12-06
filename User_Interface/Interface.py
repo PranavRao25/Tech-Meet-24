@@ -64,7 +64,7 @@ def vb_prep():
 # Define cached loading functions for each model
 @st.cache_resource
 def load_bge_m3():
-    return BGE_M3(), None
+    return BGE_M3(device=DEVICE), None
 
 @st.cache_resource
 def load_smol_lm(temp=0.5):
@@ -75,7 +75,7 @@ def load_smol_lm(temp=0.5):
     
 @st.cache_resource
 def load_colbert():
-    model = colBERT()
+    model = colBERT(device=DEVICE)
     # model = AutoModel.from_pretrained("colbert-ir/colbertv2.0")
     # tokenizer = AutoTokenizer.from_pretrained("colbert-ir/colbertv2.0")
     return model, None
@@ -90,7 +90,7 @@ def load_thresholder(temp=0.3):
 # Load all models
 bge_m3_model, bge_m3_tokenizer = load_bge_m3()
 smol_lm_model = load_smol_lm()
-moe_model = load_thresholder(temp=0.3)
+moe_model = load_thresholder(temp=0.1)
 gemini_model = LLMAgent(google_api_key=GEMINI_API)
 colbert_model, colbert_tokenizer = load_colbert()
 thresolder_model = load_thresholder()

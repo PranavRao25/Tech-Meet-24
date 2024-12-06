@@ -1,7 +1,7 @@
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 import os
 import toml
-config=toml.load('config.toml')
+config=toml.load('../config.toml')
 HF_TOKEN=config['HF_TOKEN']
 os.environ['HF_TOKEN']= HF_TOKEN
 import torch
