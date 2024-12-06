@@ -29,19 +29,11 @@ from RAG import RAG
 from AutoWrapper import AutoWrapper
 from LLM_Agent.LLM_Agent import LLMAgent
 from rerankers.models.models import colBERT, BGE_M3
-from MOE.llm_query_classifier import QueryClassifier
 
-config = toml.load("../config.toml")
+config = toml.load("./config.toml")
 HF_TOKEN = config['HF_TOKEN']
 GEMINI_API = config['GEMINI_API']
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
-
-# Your SMTP details
-SMTP_SERVER = "smtp.gmail.com"  # Example for Gmail
-SMTP_PORT = 587
-SENDER_EMAIL = "your_email@example.com"
-SENDER_PASSWORD = "your_email_password"
-RECIPIENT_EMAIL = "recipient_email@example.com"
 
 class RetrieverClient:
     def __init__(self, host, port, k=10, timeout=60, *args, **kwargs):
