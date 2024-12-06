@@ -44,6 +44,7 @@ class LLMAgent:
             max_tokens=max_tokens,
         )
         self.output_parser = OpenAIParser()
+        self.conversations = [("system", "You are a helpful assistant that helps everyone and behaves nicely.")]
 
     @staticmethod
     def decide_template(context: str, question: str) -> str:
@@ -95,15 +96,9 @@ class LLMAgent:
 
         # Create a dynamic prompt template and chain
         
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    "You are a helpful assistant that helps everyone and behaves nicely.",
-                ),
-                ("human", prompt_text),
-            ]
-        )
+        input = self.conversations
+        input.append(("user", prompt_text))
+        prompt = ChatPromptTemplate.from_messages(input)        
         chain = prompt | self.llm
 
         # Get response from the LLM
@@ -114,13 +109,18 @@ class LLMAgent:
             "question" : question
         })
         logging.info(f"Response: {response}")
-
         # Parse and return the structured output
-        return self.output_parser.parse(response.content).answer
+        output = self.output_parser.parse(response.content).answer
+
+        self.conversations.append(("user", question))
+        self.conversations.append(("assistant", output))
+        
+        return output
 
 if __name__ == '__main__':
     
     agent = LLMAgent(model_name="gpt-4o-mini", temperature=0.7, max_tokens=256) #max_tokens=1024???
-    question = input("Enter a question: ")
-    context = "france is a country in europe"
-    print(agent.process_query(question, context))
+    while True:
+        question = input("Enter a question: ")
+        context = ["france is a country in europe"]
+        print(agent.process_query(question, context))
