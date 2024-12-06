@@ -19,6 +19,7 @@ Create an Agentic RAG (Retrieval-Augmented Generation) system using Pathway that
 ## **System Requirements**  
 1. Python 3.12 (Ensure Python is installed and added to your system's PATH).  
 2. Linux OS (with a Bash terminal for command execution).  
+4. x86 architecture (The system works only on x86 architecture).
 
 ---
 
