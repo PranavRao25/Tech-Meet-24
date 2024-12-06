@@ -385,15 +385,24 @@ class RAG:
         """
         
         answers = []
-        contexts: list[list[str]] = []
+        contexts: list[str] = []
         for question in questions:
             answers.append(self.query(question))
-            contexts.append(["\n".join(self._context)])
-         
+            print("CONTEXT", self._context, question)
+            
+            # Ensure _context is a string
+            if isinstance(self._context, list):
+                self._context = "\n".join(self._context)
+            elif not isinstance(self._context, str):
+                self._context = "No context"  # Default fallback for invalid types
+            
+            contexts.append(self._context)  # Append as a string, no wrapping in a list
+        
+        print("CONTEXTS ", contexts)
         dataset = Dataset.from_dict({
             "question": questions,  # list[str]
             "answer": answers,  # list[str]
-            "contexts": contexts,  # list[list[str]]
+            "contexts": [contexts],  # list[list[str]]
             "ground_truth": ground_truths
         })
         result = evaluate(
